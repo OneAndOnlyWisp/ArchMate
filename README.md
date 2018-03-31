@@ -10,8 +10,9 @@ Under developent, not working for now. Later on use at your own risk.
 
 ## How to get it
 ### With git
-- Get list of packages and install git: `pacman -Sy git`
-- get the script: `git clone git://github.com/OneAndOnlyWisp/ArchMate`
+- Install and/or sync git: `pacman -Sy git`
+- Get the script: `git clone git://github.com/OneAndOnlyWisp/ArchMate`
 
 ### Without git
-- get the script: ` wget https://raw.githubusercontent.com/OneAndOnlyWisp/ArchMate/master/sysconfig.sh `
+- Get the script: ` wget https://raw.githubusercontent.com/OneAndOnlyWisp/ArchMate/master/sysconfig.sh `
+- Shorter: ` wget https://git.io/vxKC5 `
