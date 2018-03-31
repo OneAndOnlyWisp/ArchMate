@@ -14,4 +14,4 @@ Under developent, not working for now. Later on use at your own risk.
 - get the script: `git clone git://github.com/OneAndOnlyWisp/ArchMate`
 
 ### Without git
-- get the script: ` wget https://git.io/vxKCT `
+- get the script: ` wget https://github.com/OneAndOnlyWisp/ArchMate `
