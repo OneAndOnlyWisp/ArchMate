@@ -14,5 +14,5 @@ Under developent, not working for now. Later on use at your own risk.
 - Get the script: `git clone git://github.com/OneAndOnlyWisp/ArchMate`
 
 ### Without git
-- Get the script: ` wget https://raw.githubusercontent.com/OneAndOnlyWisp/ArchMate/master/sysconfig.sh `
-- Shorter: ` wget https://git.io/vxKC5 `
+- Get the script: ` wget https://raw.githubusercontent.com/OneAndOnlyWisp/ArchMate/master/Main.sh `
+- Shorter: ` wget https://git.io/vxK80 -O Main.sh`
