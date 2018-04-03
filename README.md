@@ -5,7 +5,7 @@ Under development for now. Use at your own risk.
 Working features:
 - Change kernel from default to lts or reverse
 - Install CPU drivers (Microcode, CPU Graphics)
-- Install GPU drivers (Nvidia, Radeon)
+- Install GPU drivers (Nvidia, Radeon, VirtualBox)
 
 Will be implemented:
 - ?Usermanagement?
