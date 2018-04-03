@@ -5,7 +5,7 @@ CPUID=$(lscpu | sed -n 's/^Model name:[[:space:]]*//p')
 #Menu
 while [ "$INPUT_OPTION" != "end" ]
 do
-  #clear
+  clear
   echo "This system has a \"$CPUID\" processor. (Press \"ESC\" to go back.)"
   echo "Available CPU options:"
   case $CPU_MANUFACTURER in
