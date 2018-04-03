@@ -1,7 +1,17 @@
 # ArchMate
-Under developent, not working for now. Later on use at your own risk.
-- Arch linux from terminal to working dektop system automation tool
-- Will be capeable of reading config files.
+Arch linux from terminal to working dektop system automation tool.
+Under development for now. Use at your own risk.
+
+Working features:
+- Change kernel from default to lts or reverse
+- Install CPU drivers (Microcode, CPU Graphics)
+- Install GPU drivers (Nvidia, Radeon)
+
+Will be implemented:
+- ?Usermanagement?
+- Desktop install
+- Custom Apps install
+- Read from premade config file
 
 ## Prerequisites
 
