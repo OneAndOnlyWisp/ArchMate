@@ -36,5 +36,3 @@ do
       ;;
   esac
 done
-
-Intel(R) Core(TM) i7-
