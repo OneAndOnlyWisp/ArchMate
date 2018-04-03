@@ -10,8 +10,8 @@ INPUT_OPTION=default
 while [ "$INPUT_OPTION" != "end" ]
 do
   #Menu
-	echo "Please type the number of selected task! (Press \"ESC\" to quit.)"
-	echo "1. Kernel"
+  echo "Please type the number of selected task! (Press \"ESC\" to quit.)"
+  echo "1. Kernel"
   echo "2. CPU"
   echo "3. GPU"
   read -sn1 INPUT_OPTION
