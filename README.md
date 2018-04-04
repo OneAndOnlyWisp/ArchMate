@@ -2,7 +2,7 @@
 Arch linux from terminal to working dektop system automation tool.
 Under development for now. Use at your own risk.
 
-Working features:
+(almost)Working features:
 - Change kernel from default to lts or reverse
 - Install CPU drivers (Microcode, CPU Graphics)
 - Install GPU drivers (Nvidia, Radeon, VirtualBox)
