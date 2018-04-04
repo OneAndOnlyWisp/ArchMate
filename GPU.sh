@@ -5,8 +5,8 @@ GPU=$(lspci | grep -o 'VGA compatible controller: .*' | sed 's/.*: //')
 while [ "$INPUT_OPTION" != "end" ]
 do
   clear
-  echo "(Press \"ESC\" to go back.)"
-  echo "Graphical adapters found:"
+  #echo "(Press \"ESC\" to go back.)"
+  echo "Graphical adapters found:                 (Press \"ESC\" to go back.)"
   echo "- $GPU"
   echo "Available options:"
   #Create menu items
