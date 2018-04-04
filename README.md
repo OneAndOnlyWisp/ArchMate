@@ -11,7 +11,8 @@ Will be implemented:
 - ?Usermanagement?
 - Desktop install
 - Custom Apps install
-- Read from premade config file
+- Read from config file (automatize the process)
+- Run custom end script (optional)
 
 ## Prerequisites
 
