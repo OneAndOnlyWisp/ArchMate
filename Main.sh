@@ -1,12 +1,14 @@
-	#!/bin/sh
+#!/bin/sh
+clear
 
-#My script path
+#Locals
 ME="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/$0"
-
-#Contents
 KERNEL="Kernel.sh"
 CPU="CPU.sh"
 GPU="GPU.sh"
+
+#Init
+sh Functions.sh Init
 
 #Main loop
 INPUT_OPTION=default
@@ -20,9 +22,9 @@ do
   read -sn1 INPUT_OPTION
 
   case $INPUT_OPTION in
-    '1') /bin/bash $KERNEL $ME; clear;;
-    '2') /bin/bash $CPU; clear;;
-    '3') /bin/bash $GPU; clear;;
+    '1') sh $KERNEL $ME; clear;;
+    '2') sh $CPU; clear;;
+    '3') sh $GPU; clear;;
     $'\e') clear; break;;
   esac
 done
