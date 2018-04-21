@@ -54,21 +54,10 @@ function ReadBootCFG {
       fi
     fi
   done < $BootFile
-
-  echo "Available versions:" ${#Version_Stash[*]}
-  echo ""
-  echo "Default linux:" ${VM_Linuz_default[0]}
-  echo "UUID line number:" ${VM_Linuz_default[1]}
-  echo "IMG line number:" ${VM_Linuz_default[2]}
-  echo ""
-  echo "Version stash:" ${Version_Stash[*]}
-  echo "UUID stash:" ${UUID_Stash[*]}
-  echo "IMG stash:" ${IMG_Stash[*]}
-
 }
 
 ReadBootCFG
 #Set default kernel to load                                         UUID_Stash Set here ˇ
-sh Functions.sh ReplaceLineByNumber ${VM_Linuz_default[1]} "$(sed -n -e "${UUID_Stash[1]}p" $BootFile | sed 's/\//\\\//g' | cut -c 2-)" $BootFile
+#sh Functions.sh ReplaceLineByNumber ${VM_Linuz_default[1]} "$(sed -n -e "${UUID_Stash[1]}p" $BootFile | sed 's/\//\\\//g' | cut -c 2-)" $BootFile
 #Set default kernel to load                                         IMG_Stash Set here ˇ
-sh Functions.sh ReplaceLineByNumber ${VM_Linuz_default[2]} "$(sed -n -e "${IMG_Stash[1]}p" $BootFile | sed 's/\//\\\//g' | cut -c 2-)" $BootFile
+#sh Functions.sh ReplaceLineByNumber ${VM_Linuz_default[2]} "$(sed -n -e "${IMG_Stash[1]}p" $BootFile | sed 's/\//\\\//g' | cut -c 2-)" $BootFile

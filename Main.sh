@@ -19,7 +19,7 @@ do
   echo "1. Kernel"
   echo "2. CPU"
   echo "3. GPU"
-  echo "4. Custom desktop+apps"
+  echo "4. Custom desktop+apps+defaultadmin"
   read -sn1 INPUT_OPTION
 
   case $INPUT_OPTION in
@@ -30,10 +30,10 @@ do
       #"Multimedia engine"
       pacman -S --noconfirm pulseaudio pulseaudio-alsa xorg xorg-xinit
       #Desktop
-      pacman -S --noconfirm plasma-desktop  
+      pacman -S --noconfirm plasma-desktop
       echo "exec startkde" > ~/.xinitrc
       #Custom apps
-      pacman -S --noconfirm konsole dolphin chromium atom sddm    
+      pacman -S --noconfirm konsole dolphin chromium atom sddm
       #Apply services
       systemctl enable sddm.service
       #Admin-User stuff

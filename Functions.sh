@@ -2,7 +2,7 @@
 
 function Init {
 	#Check and add .bashrc for root
-	! [ -e ~root/.bashrc ] && cp /etc/skel/.bash* ~root || echo "Root .bashrc found."
+	! [ -e ~root/.bashrc ] && cp /etc/skel/.bash* ~root
 	#Read or create ini file
 	if ! [ -e ArchMate.ini ]; then
 		#Create
