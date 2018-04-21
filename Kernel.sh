@@ -96,6 +96,9 @@ do
   echo "Active kernel:" $ACTIVE_KERNEL
   echo "Grub default kernel:" $DEFAULT_KERNEL
   echo ""
+
+  #CASE list (AVAILABLE-INSTALLED)
+
   #-----------------------------------------------------------------------------
   echo "Available kernel options:"
   case $ACTIVE_KERNEL in
@@ -105,7 +108,7 @@ do
       case $INPUT_OPTION in
         '1')
           echo "Trying to install LTS Kernel..."
-          #pacman -S --noconfirm --noprogressbar --quiet linux-lts linux-lts-headers
+          #pacman -S --noconfirm linux-lts linux-lts-headers
           #Reconfigure to bootloader
           #grub-mkconfig -o /boot/grub/grub.cfg
           ;;

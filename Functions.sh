@@ -37,25 +37,31 @@ function AutoStartSwitch {
 	fi
 }
 
+#UNDER DEVELOPMENT--NOT WORKING YET
 #AUR package manager
 function GetAurman {
   #AUR packages default dependancy
-  pacman -S --needed --noconfirm --noprogressbar --quiet base-devel
+  pacman -S --needed --noconfirm base-devel
   #Git clone the package
-  git clone https://aur.archlinux.org/aurman.git
+	if ! git clone https://aur.archlinux.org/aurman.git; then
+		if ! git fetch https://aur.archlinux.org/aurman.git; then
+			clear
+		  echo "Failed to sync with repository!"
+		fi
+	fi
   #Enter PACKAGE directory
-  cd aurman
+  #cd aurman
   #Install package
-  makepkg -si --noconfirm --noprogressbar
+  #makepkg -si --noconfirm
 }
 
 #Helper functions---------------------------------------------------------------
 function FindAndReplaceAll {
-  sed "s/""$1""/""$2""/g" $3
+  sed -ni "s/""$1""/""$2""/g" $3
 }
 
 function ReplaceLineByNumber {
-  sed -n "$1s/.*/$2/p" $3
+  sed -ni "$1s/.*/$2/p" $3
 }
 #-------------------------------------------------------------------------------
 

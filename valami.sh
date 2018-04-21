@@ -1,8 +1,11 @@
 #!/bin/sh
+clear
 
-#Git clone the package
-git clone https://aur.archlinux.org/linux-lqx.git
-#Enter PACKAGE directory
-cd linux-lqx
-#Install package
-makepkg -si --noconfirm --noprogressbar
+function FindAndReplaceAll {
+  sed "s/""$1""/""$2""/g" $3
+}
+
+FindAndReplaceAll "# %wheel ALL=(ALL) ALL" "%wheel ALL=(ALL) ALL" /etc/sudoers
+
+#NEED TO TEST
+#FindAndReplaceAll "# %wheel ALL=(ALL) ALL" "%wheel ALL=(ALL) ALL" /etc/sudoers | sudo EDITOR='tee -a' visudo
