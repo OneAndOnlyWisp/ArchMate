@@ -19,7 +19,7 @@ do
   echo "1. Kernel"
   echo "2. CPU"
   echo "3. GPU"
-  echo "4. "
+  echo "4. Custom desktop+apps"
   read -sn1 INPUT_OPTION
 
   case $INPUT_OPTION in
