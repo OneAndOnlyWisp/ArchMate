@@ -36,6 +36,8 @@ do
       pacman -S --noconfirm konsole dolphin chromium atom sddm    
       #Apply services
       systemctl enable sddm.service
+      #Admin-User stuff
+      pacman -S --noconfirm sudo
       ;;
     $'\e') clear; break;;
   esac
