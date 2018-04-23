@@ -6,6 +6,7 @@ ME="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/$0"
 KERNEL="Kernel.sh"
 CPU="CPU.sh"
 GPU="GPU.sh"
+USER="User.sh"
 
 #Init
 sh Functions.sh Init
@@ -19,14 +20,15 @@ do
   echo "1. Kernel"
   echo "2. CPU"
   echo "3. GPU"
-  echo "4. Custom desktop+apps+defaultadmin"
+  echo "5. Custom desktop+apps+defaultadmin"
   read -sn1 INPUT_OPTION
 
   case $INPUT_OPTION in
     '1') sh $KERNEL $ME; clear;;
     '2') sh $CPU; clear;;
     '3') sh $GPU; clear;;
-    '4')
+    '4') sh $USER; clear;;
+    '5')
       #"Multimedia engine"
       pacman -S --noconfirm pulseaudio pulseaudio-alsa xorg xorg-xinit
       #Desktop

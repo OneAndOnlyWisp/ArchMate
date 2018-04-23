@@ -119,7 +119,7 @@ do
       echo "1. Change to default Kernel."
       read -sn1 INPUT_OPTION
       case $INPUT_OPTION in
-        '1') echo "Trying to install default Kernel..."; pacman -S --noconfirm --noprogressbar --quiet linux linux-headers;;
+        '1') echo "Trying to install default Kernel..."; pacman -S --noconfirm linux linux-headers;;
         $'\e') break;;
       esac
       ;;
