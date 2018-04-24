@@ -37,6 +37,13 @@ function AutoStartSwitch {
 	fi
 }
 
+function InstallSUDO {
+  #Install sudo
+  pacman -S --noconfirm sudo
+  #Allow admin rigths for wheel group
+  FindAndReplaceAll "# %wheel ALL=(ALL) ALL" "%wheel ALL=(ALL) ALL" /etc/sudoers | sudo EDITOR='tee' visudo
+}
+
 #UNDER DEVELOPMENT--NOT WORKING YET
 #AUR package manager
 function GetAurman {
