@@ -6,11 +6,11 @@ Under development for now. Use at your own risk.
 - Change kernel from default to lts or reverse
 - Install CPU drivers (Microcode, CPU Graphics)
 - Install GPU drivers (Nvidia, Radeon, VirtualBox)
-
-Will be implemented:
-- ?Usermanagement?
 - Desktop install
 - Custom Apps install
+- Usermanagement
+
+Will be implemented:
 - Read from config file (automatize the process)
 - Run custom end script (optional)
 
