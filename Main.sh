@@ -2,11 +2,14 @@
 clear
 
 #Locals
-ME="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/$0"
-KERNEL="Kernel.sh"
-CPU="CPU.sh"
-GPU="GPU.sh"
-USER="User.sh"
+Source_Path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/"
+ME="$Source_Path$0"
+KERNEL=$Source_Path"Kernel.sh"
+CPU=$Source_Path"CPU.sh"
+GPU=$Source_Path"GPU.sh"
+USER=$Source_Path"User.sh"
+DESKTOP=$Source_Path"Desktop.sh"
+CUSTOM=$Source_Path"Custom.sh"
 
 #Init
 sh Functions.sh Init
@@ -20,7 +23,12 @@ do
   echo "1. Kernel"
   echo "2. CPU"
   echo "3. GPU"
-  echo "5. Custom desktop+apps+defaultadmin"
+  echo "4. User"
+  echo "5. Desktop"
+  if [[ -e $CUSTOM ]]; then
+    echo "6. Run custom script"
+  fi
+
   read -sn1 INPUT_OPTION
 
   case $INPUT_OPTION in
@@ -28,19 +36,8 @@ do
     '2') sh $CPU; clear;;
     '3') sh $GPU; clear;;
     '4') sh $USER; clear;;
-    '5')
-      #"Multimedia engine"
-      pacman -S --noconfirm pulseaudio pulseaudio-alsa xorg xorg-xinit
-      #Desktop
-      pacman -S --noconfirm plasma-desktop
-      echo "exec startkde" > ~/.xinitrc
-      #Custom apps
-      pacman -S --noconfirm konsole dolphin chromium atom sddm
-      #Apply services
-      systemctl enable sddm.service
-      #Admin-User stuff
-      pacman -S --noconfirm sudo
-      ;;
+    '5') sh $DESKTOP; clear;;
+    '6') [[ -e $CUSTOM ]] && sh $CUSTOM; clear;;
     $'\e') clear; break;;
   esac
 done
