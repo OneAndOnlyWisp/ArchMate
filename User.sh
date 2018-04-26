@@ -4,12 +4,12 @@
 isAuto="false"
 needSUDO="false"
 if [[ $isAuto = "true" ]] && [[ $needSUDO = "true" ]]; then
-  sh Functions.sh InstallSUDO
+  sh Functions.sh GetSUDO
 fi
 
 function CreateUser {
   if [[ $needSUDO = "true" ]]; then
-    sh Functions.sh InstallSUDO
+    sh Functions.sh GetSUDO
     needSUDO="false"
   fi
   if [[ $isAuto = "false" ]]; then

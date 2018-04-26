@@ -1,7 +1,9 @@
 #!/bin/sh
 clear
 
-echo "Hello World!"
+sh Functions.sh IntelCodename
+
+echo "Done!"
 
 #Custom apps
 #pacman -S --noconfirm konsole dolphin chromium atom sddm

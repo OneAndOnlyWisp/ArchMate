@@ -1,13 +1,13 @@
 #!/bin/sh
 
-#"Multimedia engine"
+#Audio
 if pacman -Qs pulseaudio pulseaudio-alsa > /dev/null ; then
   echo "The audio packages are installed"
 fi
+#Window system
 if pacman -Qs xorg xorg-xinit > /dev/null ; then
   echo "The window system packages are installed"
 fi
-#pacman -S --noconfirm pulseaudio pulseaudio-alsa xorg xorg-xinit
 
 read -sn1
 exit

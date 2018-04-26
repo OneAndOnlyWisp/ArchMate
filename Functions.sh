@@ -26,6 +26,7 @@ function Init {
 	fi
 }
 
+#Switch to turn on/off autostart
 function AutoStartSwitch {
 	if grep -q "ArchMate" ~root/.bashrc; then
 		sed -ie '/^ArchMate/,+2d' ~root/.bashrc
@@ -37,13 +38,7 @@ function AutoStartSwitch {
 	fi
 }
 
-function InstallSUDO {
-  #Install sudo
-  pacman -S --noconfirm sudo
-  #Allow admin rigths for wheel group
-  FindAndReplaceAll "# %wheel ALL=(ALL) ALL" "%wheel ALL=(ALL) ALL" /etc/sudoers | sudo EDITOR='tee' visudo
-}
-
+#Returns Intel microarchitecture codename
 function IntelCodename {
 	set -euo pipefail
 
@@ -53,14 +48,12 @@ function IntelCodename {
 	        echo "You don't seem to have an Intel processor" >&2
 	        exit 1
 	    fi
-
 	    name=$(sed 's/.*\s\(\S*\) CPU.*/\1/' <<<"$modelname")
-	    echo "Processor name: $name" >&2
 	else
 	    name=$1
 	fi
 
-	links=($(curl --silent "https://ark.intel.com/search?q=$name" | pup '.result-title a attr{href}'))
+	links=($(curl --silent "https://ark.intel.com/search?q=$name" | pup 'a attr{href}'))
 
 	results=${#links[@]}
 	if [[ $results == 0 ]]; then
@@ -80,22 +73,32 @@ function IntelCodename {
 	echo "$codename"
 }
 
-#UNDER DEVELOPMENT--NOT WORKING YET
+#Install sudo
+function GetSUDO {
+  #Install sudo
+  pacman -S --noconfirm sudo
+  #Allow admin rigths for wheel group
+  FindAndReplaceAll "# %wheel ALL=(ALL) ALL" "%wheel ALL=(ALL) ALL" /etc/sudoers | sudo EDITOR='tee' visudo
+}
+
 #AUR package manager
 function GetAurman {
   #AUR packages default dependancy
-  pacman -S --needed --noconfirm base-devel
+  if ! pacman -Qs base-devel > /dev/null ; then
+    pacman -S --needed --noconfirm base-devel
+  fi
   #Git clone the package
-	if ! git clone https://aur.archlinux.org/aurman.git; then
-		if ! git pull https://aur.archlinux.org/aurman.git; then
-			clear
-		  echo "Failed to sync with repository!"
-		fi
-	fi
-  #Enter PACKAGE directory
-  #cd aurman
+  cd $HOME
+  if ! [[ -d aurman ]]; then
+    git clone https://aur.archlinux.org/aurman.git
+    cd aurman
+  else
+    cd aurman
+    git fetch https://aur.archlinux.org/aurman.git
+    git checkout master
+  fi
   #Install package
-  #makepkg -si --noconfirm
+  makepkg -si --noconfirm
 }
 
 #Helper functions---------------------------------------------------------------

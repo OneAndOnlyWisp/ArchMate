@@ -55,10 +55,16 @@ function ReadBootCFG {
   done < $BootFile
 }
 
+#Gather required system information
 ReadBootCFG
-
 #ACTIVE_KERNEL
-[[ $(uname -r) = *"lts"* ]] && ACTIVE_KERNEL="Longterm" || ACTIVE_KERNEL="Stable"
+ACTIVE_KERNEL=$(uname -r)
+case $ACTIVE_KERNEL in
+  *"ck"* ) echo "CK kernel";;
+  *"lqx"* ) echo "Liquorix kernel";;
+  * ) [[ $ACTIVE_KERNEL = *"lts"* ]] && ACTIVE_KERNEL="Longterm" || ACTIVE_KERNEL="Stable"
+    ;;
+esac
 #DEFAULT_KERNEL
 DEFAULT_KERNEL=$(sed -n "${VM_Linuz_default[1]}p" $BootFile | sed 's/.*\///' | sed 's/\s.*$//')
 case $DEFAULT_KERNEL in
@@ -68,36 +74,36 @@ case $DEFAULT_KERNEL in
     ;;
 esac
 
-
 #Set default kernel to load                                         UUID_Stash Set here ˇ
 #sh Functions.sh ReplaceLineByNumber ${VM_Linuz_default[1]} "$(sed -n -e "${UUID_Stash[1]}p" $BootFile | sed 's/\//\\\//g' | cut -c 2-)" $BootFile
 #Set default kernel to load                                         IMG_Stash Set here ˇ
 #sh Functions.sh ReplaceLineByNumber ${VM_Linuz_default[2]} "$(sed -n -e "${IMG_Stash[1]}p" $BootFile | sed 's/\//\\\//g' | cut -c 2-)" $BootFile
-
-
-#Gather required system information
 
 #Menu
 while [ "$INPUT_OPTION" != "end" ]
 do
   clear
   #Boot stuff-------------------------------------------------------------------
-  echo "Available versions:" ${#Version_Stash[*]}
-  echo ""
-  echo "Default linux:" ${VM_Linuz_default[0]}
-  echo "UUID line number:" ${VM_Linuz_default[1]}
-  echo "IMG line number:" ${VM_Linuz_default[2]}
-  echo ""
-  echo "Version stash:" ${Version_Stash[*]}
-  echo "UUID stash:" ${UUID_Stash[*]}
-  echo "IMG stash:" ${IMG_Stash[*]}
-  echo ""
+  #echo "Available versions:" ${#Version_Stash[*]}
+  #echo ""
+  #echo "Default linux:" ${VM_Linuz_default[0]}
+  #echo "UUID line number:" ${VM_Linuz_default[1]}
+  #echo "IMG line number:" ${VM_Linuz_default[2]}
+  #echo ""
+  #echo "Version stash:" ${Version_Stash[*]}
+  #echo "UUID stash:" ${UUID_Stash[*]}
+  #echo "IMG stash:" ${IMG_Stash[*]}
+  #echo ""
   #TEST
   echo "Active kernel:" $ACTIVE_KERNEL
   echo "Grub default kernel:" $DEFAULT_KERNEL
   echo ""
 
+
   #CASE list (AVAILABLE-INSTALLED)
+  #sed -n "${VM_Linuz_default[1]}p" $BootFile
+  #sed -n "${IMG_Stash[1]}p" $BootFile
+  sed -n "${VM_Linuz_default[1]}p" $BootFile | sed 's/.*\///' | sed 's/\s.*$//'
 
   #-----------------------------------------------------------------------------
   echo "Available kernel options:"
@@ -108,9 +114,9 @@ do
       case $INPUT_OPTION in
         '1')
           echo "Trying to install LTS Kernel..."
-          #pacman -S --noconfirm linux-lts linux-lts-headers
+          pacman -S --noconfirm linux-lts linux-lts-headers
           #Reconfigure to bootloader
-          #grub-mkconfig -o /boot/grub/grub.cfg
+          grub-mkconfig -o /boot/grub/grub.cfg
           ;;
         $'\e') break;;
       esac
