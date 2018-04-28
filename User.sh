@@ -4,12 +4,15 @@
 isAuto="false"
 needSUDO="false"
 if [[ $isAuto = "true" ]] && [[ $needSUDO = "true" ]]; then
-  sh Functions.sh GetSUDO
+  sh Functions.sh InstallPackages "sudo"
+  FindAndReplaceAll "# %wheel ALL=(ALL) ALL" "%wheel ALL=(ALL) ALL" /etc/sudoers | sudo EDITOR='tee' visudo
 fi
 
 function CreateUser {
   if [[ $needSUDO = "true" ]]; then
-    sh Functions.sh GetSUDO
+    sh Functions.sh InstallPackages "sudo"
+    #Allow admin rigths for wheel group
+    FindAndReplaceAll "# %wheel ALL=(ALL) ALL" "%wheel ALL=(ALL) ALL" /etc/sudoers | sudo EDITOR='tee' visudo
     needSUDO="false"
   fi
   if [[ $isAuto = "false" ]]; then

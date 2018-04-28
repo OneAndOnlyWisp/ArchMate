@@ -1,5 +1,63 @@
 #!/bin/sh
 
+#Helper functions---------------------------------------------------------------
+#Find and replace all match
+# $1=ReplaceThis $2=ReplaceWith $3=Input
+function FindAndReplaceAll {
+  sed -ni "s/""$1""/""$2""/g" $3
+}
+
+#Replace a specific line
+# $1=LineToReplace(number) $2=ReplaceWith(text) $3=Input
+function ReplaceLineByNumber {
+  sed -ni "$1s/.*/$2/p" $3
+	#Add this to avoid issues with '/' in the line
+	# | sed 's/\//\\\//g'
+}
+
+#Check if a package is installed
+# $1=PackageName
+function _isInstalled {
+    package="$1";
+    check="$(sudo pacman -Qs --color always "${package}" | grep "local" | grep "${package} ")";
+    if [ -n "${check}" ] ; then
+        echo 0; #'0' means 'true' in Bash
+        return; #true
+    fi;
+    echo 1; #'1' means 'false' in Bash
+    return; #false
+}
+
+#Install packages if not installed already
+# $@PackageNames
+function InstallPackages {
+    # The packages that are not installed will be added to this array.
+    toInstall=();
+
+    for pkg; do
+        # If the package IS installed, skip it.
+        if [[ $(_isInstalled "${pkg}") == 0 ]]; then
+            echo "${pkg} is already installed.";
+            continue;
+        fi;
+
+        #Otherwise, add it to the list of packages to install.
+        toInstall+=("${pkg}");
+    done;
+
+    # If no packages were added to the "${toInstall[@]}" array,
+    #     don't do anything and stop this function.
+    if [[ "${toInstall[@]}" == "" ]] ; then
+        echo "All packages are already installed.";
+        return;
+    fi;
+
+    # Otherwise, install all the packages that have been added to the "${toInstall[@]}" array.
+    printf "Packages not installed:\n%s\n" "${toInstall[@]}";
+    pacman -S --noconfirm "${toInstall[@]}";
+}
+#-------------------------------------------------------------------------------
+
 function Init {
 	#Check and add .bashrc for root
 	! [ -e ~root/.bashrc ] && cp /etc/skel/.bash* ~root
@@ -73,14 +131,6 @@ function IntelCodename {
 	echo "$codename"
 }
 
-#Install sudo
-function GetSUDO {
-  #Install sudo
-  pacman -S --noconfirm sudo
-  #Allow admin rigths for wheel group
-  FindAndReplaceAll "# %wheel ALL=(ALL) ALL" "%wheel ALL=(ALL) ALL" /etc/sudoers | sudo EDITOR='tee' visudo
-}
-
 #AUR package manager
 function GetAurman {
   #AUR packages default dependancy
@@ -101,14 +151,5 @@ function GetAurman {
   makepkg -si --noconfirm
 }
 
-#Helper functions---------------------------------------------------------------
-function FindAndReplaceAll {
-  sed -ni "s/""$1""/""$2""/g" $3
-}
-
-function ReplaceLineByNumber {
-  sed -ni "$1s/.*/$2/p" $3
-}
-#-------------------------------------------------------------------------------
 
 "$@"
