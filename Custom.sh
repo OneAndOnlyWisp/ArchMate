@@ -1,7 +1,13 @@
 #!/bin/sh
 clear
 
-sh Functions.sh IntelCodename
+sh Functions.sh InstallAurman
+if [[ $(sh Functions.sh _isInstalled "aurman") == 0 ]]; then
+  sh Functions.sh InstallAURPackages "pup-git"
+  sh Functions.sh IntelCodename
+else
+  echo "failed to install aurman"
+fi
 
 echo "Done!"
 

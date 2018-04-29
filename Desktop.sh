@@ -39,12 +39,12 @@ function GenerateMenuList {
 }
 
 function SearchForDesktops {
-  echo "-----------------------------------------------"
+  #echo "-----------------------------------------------"
   for ThisPackage in ${!Packages[*]}; do
-    echo "Package: ${Packages[ThisPackage]} | Desktop: ${Available[ThisPackage]}"
-    #[[ $(sh Functions.sh _isInstalled "${Packages[ThisPackage]}") = 0 ]] && Installed+=("${Available[ThisPackage]}")
+    #echo "Package: ${Packages[ThisPackage]} | Desktop: ${Available[ThisPackage]}"
+    [[ $(sh Functions.sh _isInstalled "${Packages[ThisPackage]}") = 0 ]] && Installed+=("${Available[ThisPackage]}")
   done
-  #echo "Installed:" ${Installed[*]} "| Length:" ${#Installed[@]}
+  echo "Installed:" ${Installed[*]} "| Length:" ${#Installed[@]}
   echo "-----------------------------------------------"
 }
 
@@ -57,7 +57,7 @@ do
   SetDefaults
   SearchForDesktops
   #TEST
-  #Installed+=("${Available[2]}")
+  Installed+=("${Available[2]}")
   GenerateMenuList
   echo "AFTER------------------------------------------"
   echo "Available:" ${Available[*]} "| Length:" ${#Available[@]}

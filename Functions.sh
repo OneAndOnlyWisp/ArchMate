@@ -54,7 +54,7 @@ function InstallPackages {
 
     # Otherwise, install all the packages that have been added to the "${toInstall[@]}" array.
     printf "Packages not installed:\n%s\n" "${toInstall[@]}";
-    pacman -S --noconfirm "${toInstall[@]}";
+    pacman -S --noconfirm --quiet "${toInstall[@]}";
 }
 
 #Install AUR packages if not installed already
@@ -163,9 +163,9 @@ function IntelCodename {
 }
 
 #AUR package manager
-function GetAurman {
+function InstallAurman {
   #AUR packages default dependancy
-  if ! pacman -Qs base-devel > /dev/null ; then
+  if ! [[ $(_isInstalled "base-devel") == 0 ]]; then
     pacman -S --needed --noconfirm base-devel
   fi
   #Git clone the package
