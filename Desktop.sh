@@ -7,8 +7,8 @@ clear
 function SetDefaultLists {
   #Available options
   Available=("Plasma" "Gnome" "Budgie" "Lumina (AUR)")
-  echo "DEFAULT----------------------------------------"
-  echo "Available:" ${Available[*]} "| Length:" ${#Available[@]}
+  #echo "DEFAULT----------------------------------------"
+  #echo "Available:" ${Available[*]} "| Length:" ${#Available[@]}
   Packages=("plasma-desktop" "gnome" "budgie-desktop" "lumina-desktop")
   AutostartScripts=("startkde" "gnome-session" "budgie-desktop" "start-lumina-desktop")
   if ! [[ ${#Available[@]} = ${#Packages[@]} ]]; then
@@ -50,8 +50,8 @@ function SearchForDesktops {
     #echo "Package: ${Packages[ThisPackage]} | Desktop: ${Available[ThisPackage]}"
     [[ $(sh Functions.sh _isInstalled "${Packages[ThisPackage]}") = 0 ]] && Installed+=("${Available[ThisPackage]}")
   done
-  echo "Installed:" ${Installed[*]} "| Length:" ${#Installed[@]}
-  echo "-----------------------------------------------"
+  #echo "Installed:" ${Installed[*]} "| Length:" ${#Installed[@]}
+  #echo "-----------------------------------------------"
 }
 
 function SetAsDefault {
@@ -66,6 +66,7 @@ function SetAsDefault {
 #Menu
 while [ "$INPUT_OPTION" != "end" ]
 do
+  clear
   Available=()
   Packages=()
   AutostartScripts=()
@@ -137,6 +138,4 @@ do
       echo "exec ${AutostartScripts[$(($INPUT_OPTION - 2))]}" > ~/.xinitrc
     fi
   fi
-read -sn1
-clear
 done
