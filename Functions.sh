@@ -56,6 +56,37 @@ function InstallPackages {
     printf "Packages not installed:\n%s\n" "${toInstall[@]}";
     pacman -S --noconfirm "${toInstall[@]}";
 }
+
+#Install AUR packages if not installed already
+# $@PackageNames
+function InstallAURPackages {
+    # The packages that are not installed will be added to this array.
+    toInstall=();
+
+    for pkg; do
+        # If the package IS installed, skip it.
+        if [[ $(_isInstalled "${pkg}") == 0 ]]; then
+            echo "${pkg} is already installed.";
+            continue;
+        fi;
+
+        #Otherwise, add it to the list of packages to install.
+        toInstall+=("${pkg}");
+    done;
+
+    # If no packages were added to the "${toInstall[@]}" array,
+    #     don't do anything and stop this function.
+    if [[ "${toInstall[@]}" == "" ]] ; then
+        echo "All packages are already installed.";
+        return;
+    fi;
+
+    # Otherwise, install all the packages that have been added to the "${toInstall[@]}" array.
+    printf "Packages not installed:\n%s\n" "${toInstall[@]}";
+    if [[ $(_isInstalled aurman) == 0 ]]; then
+        aurman -S --noconfirm "${toInstall[@]}";
+    fi;
+}
 #-------------------------------------------------------------------------------
 
 function Init {
