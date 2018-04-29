@@ -6,18 +6,21 @@ function SetDefaultLists {
   Available=("Stable" "Longterm" "Zen" "CK (AUR)")
   echo "DEFAULT----------------------------------------"
   echo "Available:" ${Available[*]} "| Length:" ${#Available[@]}
-  Packages=("linux" "linux-lts" "linux-zen" "linux-ck")
+  Packages=("linux linux-headers" "linux-lts linux-lts-headers" "linux-zen linux-zen-headers" "linux-ck linux-ck-headers")
   if ! [[ ${#Available[@]} = ${#Packages[@]} ]]; then
     echo "Error"
     exit
   fi
 }
 
-function SearchForDesktops {
+function SearchForInstalled {
   #echo "-----------------------------------------------"
-  for ThisPackage in ${!Packages[*]}; do
-    #echo "Package: ${Packages[ThisPackage]} | Desktop: ${Available[ThisPackage]}"
-    [[ $(sh Functions.sh _isInstalled "${Packages[ThisPackage]}") = 0 ]] && Installed+=("${Available[ThisPackage]}")
+  for ThisPackageList in ${!Packages[*]}; do
+    #echo "Packages: ${Packages[ThisPackageList]} | Desktop: ${Available[ThisPackageList]}"
+    #Only search for installed kernels
+    if [[ $(sh Functions.sh _isInstalled "$(echo ${Packages[ThisPackageList]} | sed -e 's/\s.*$//')") = 0 ]]; then
+      Installed+=("${Available[ThisPackage]}")
+    fi
   done
   echo "Installed:" ${Installed[*]} "| Length:" ${#Installed[@]}
   echo "-----------------------------------------------"
@@ -103,16 +106,14 @@ function ReadBootCFG {
 #Gather required system information
 ReadBootCFG
 #ACTIVE_KERNEL
-ACTIVE_KERNEL=$(uname -r)
-case $ACTIVE_KERNEL in
+case $(uname -r) in
   *"ck"* ) echo "CK kernel";;
   *"lqx"* ) echo "Liquorix kernel";;
   * ) [[ $ACTIVE_KERNEL = *"lts"* ]] && ACTIVE_KERNEL="Longterm" || ACTIVE_KERNEL="Stable"
     ;;
 esac
 #DEFAULT_KERNEL
-DEFAULT_KERNEL=$(sed -n "${VM_Linuz_default[1]}p" $BootFile | sed 's/.*\///' | sed 's/\s.*$//')
-case $DEFAULT_KERNEL in
+case $(sed -n "${VM_Linuz_default[1]}p" $BootFile | sed 's/.*\///' | sed 's/\s.*$//') in
   *"ck"* ) echo "CK kernel";;
   *"lqx"* ) echo "Liquorix kernel";;
   * ) [[ $DEFAULT_KERNEL = *"lts"* ]] && DEFAULT_KERNEL="Longterm" || DEFAULT_KERNEL="Stable"
@@ -127,19 +128,6 @@ esac
 #Menu
 while [ "$INPUT_OPTION" != "end" ]
 do
-  Available=()
-  Packages=()
-  Installed=()
-  SetDefaultLists
-  SearchForDesktops
-  GenerateMenuList
-  echo "MENU-------------------------------------------"
-  echo "Available:" ${Available[*]} "| Length:" ${#Available[@]}
-  echo "Packages:" ${Packages[*]} "| Packages:" ${#Packages[@]}
-  echo "-----------------------------------------------"
-  read -sn1
-  exit
-
   #Boot stuff-------------------------------------------------------------------
   #echo "Available versions:" ${#Version_Stash[*]}
   #echo ""
@@ -152,39 +140,80 @@ do
   #echo "IMG stash:" ${IMG_Stash[*]}
   #echo ""
   #TEST
-  echo "Active kernel:" $ACTIVE_KERNEL
-  echo "Grub default kernel:" $DEFAULT_KERNEL
-  echo ""
-
-
-  #CASE list (AVAILABLE-INSTALLED)
   #sed -n "${VM_Linuz_default[1]}p" $BootFile
   #sed -n "${IMG_Stash[1]}p" $BootFile
   #sed -n "${VM_Linuz_default[1]}p" $BootFile | sed 's/.*\///' | sed 's/\s.*$//'
-
   #-----------------------------------------------------------------------------
-  echo "Available kernel options:"
-  case $ACTIVE_KERNEL in
-    "Stable")
-      echo "1. Change to LTS Kernel."
+  Available=()
+  Packages=()
+  Installed=()
+  SetDefaultLists
+  SearchForInstalled
+  #TEST---------------------------------------
+  #Installed+=("Longterm")
+  #-------------------------------------------
+  GenerateMenuList
+  echo "MENU-------------------------------------------"
+  echo "Available:" ${Available[*]} "| Length:" ${#Available[@]}
+  echo "Packages:" ${Packages[*]} "| Length:" ${#Packages[@]}
+  echo "-----------------------------------------------"
+  if [[ ${#Installed[@]} = 1 ]]; then #One kernel
+    echo "Currently using \"$ACTIVE_KERNEL\" kernel. (Press \"ESC\" to quit.)"
+    echo "Available options:"
+    for ThisEntry in "${!Available[@]}"; do #List menuentries
+      echo "$(($ThisEntry + 1)). Install ${Available[ThisEntry]} kernel."
+    done
+    read -sn1 INPUT_OPTION
+    if [[ $INPUT_OPTION = $'\e' ]]; then #Exit
+      break
+    elif ! [[ $INPUT_OPTION =~ ^[0-9]+$ ]]; then #Not number error
+      echo "Not number!"
+    elif [[ $INPUT_OPTION -gt $((${#Available[@]})) ]]; then #Invalid number error
+      echo "Invalid number!"
+    else #Install packages
+      if ! [[ "${Available[$(($INPUT_OPTION - 1))]}" = *"(AUR)"* ]]; then
+        echo "Normal"
+        #sh Functions.sh InstallPackages ${Packages[$(($INPUT_OPTION - 1))]]}
+      else
+        echo "AUR"
+        #sh Functions.sh InstallAURPackages ${Packages[$(($INPUT_OPTION - 1))]]}
+      fi
+      #grub-mkconfig -o /boot/grub/grub.cfg
+    fi
+  else #More than one kernel
+    echo "Currently using \"$ACTIVE_KERNEL\" kernel. (Press \"ESC\" to quit.)"
+    echo "Booting with \"$DEFAULT_KERNEL\" kernel by default."
+    echo "Available options:"
+    echo "1. Set default kernel."
+    for ThisEntry in "${!Available[@]}"; do
+      echo "$(($ThisEntry + 2)). Install ${Available[ThisEntry]} kernel."
+    done
+    #Menu options
+    read -sn1 INPUT_OPTION
+    if [[ $INPUT_OPTION = $'\e' ]]; then
+      break
+    elif ! [[ $INPUT_OPTION =~ ^[0-9]+$ ]]; then
+      echo "Not number!"
+    elif [[ $INPUT_OPTION -gt $((${#Available[@]} + 1)) ]]; then
+      echo "Invalid number!"
+    elif [[ $INPUT_OPTION = 1 ]]; then
+      echo "Choose default desktop:"
+      #INSTALLED DESKTOP LIST
+      for ThisEntry in "${!Installed[@]}"; do
+        echo "$(($ThisEntry + 1)). Set ${Installed[ThisEntry]} as default."
+      done
+      SetDefaultLists
       read -sn1 INPUT_OPTION
-      case $INPUT_OPTION in
-        '1')
-          echo "Trying to install LTS Kernel..."
-          pacman -S --noconfirm linux-lts linux-lts-headers
-          #Reconfigure to bootloader
-          grub-mkconfig -o /boot/grub/grub.cfg
-          ;;
-        $'\e') break;;
-      esac
-      ;;
-    "Longterm")
-      echo "1. Change to default Kernel."
-      read -sn1 INPUT_OPTION
-      case $INPUT_OPTION in
-        '1') echo "Trying to install default Kernel..."; pacman -S --noconfirm linux linux-headers;;
-        $'\e') break;;
-      esac
-      ;;
-  esac
+      SetAsDefault ${Installed[$(($INPUT_OPTION - 1))]}
+    else
+      if ! [[ "${Available[$(($INPUT_OPTION - 2))]}" = *"(AUR)"* ]]; then
+        echo "Normal"
+        #sh Functions.sh InstallPackages ${Packages[$(($INPUT_OPTION - 2))]]}
+      else
+        echo "AUR"
+        #sh Functions.sh InstallAURPackages ${Packages[$(($INPUT_OPTION - 2))]]}
+      fi
+      #grub-mkconfig -o /boot/grub/grub.cfg
+    fi
+  fi
 done

@@ -16,7 +16,7 @@ function SetDefaultLists {
   fi
 }
 
-function SearchForDesktops {
+function SearchForInstalled {
   #echo "-----------------------------------------------"
   for ThisPackage in ${!Packages[*]}; do
     #echo "Package: ${Packages[ThisPackage]} | Desktop: ${Available[ThisPackage]}"
@@ -71,31 +71,30 @@ do
   AutostartScripts=()
   Installed=()
   SetDefaultLists
-  SearchForDesktops
+  SearchForInstalled
   GenerateMenuList
   #echo "MENU-------------------------------------------"
   #echo "Available:" ${Available[*]} "| Length:" ${#Available[@]}
   #echo "Packages:" ${Packages[*]} "| Packages:" ${#Packages[@]}
   #echo "-----------------------------------------------"
-  #0 or 1 desktop
-  if [[ ${#Installed[@]} = 0 ]] || [[ ${#Installed[@]} = 1 ]]; then
-    if [[ ${#Installed[@]} = 0 ]]; then
+  if [[ ${#Installed[@]} = 0 ]] || [[ ${#Installed[@]} = 1 ]]; then #0 or 1 desktop
+    if [[ ${#Installed[@]} = 0 ]]; then #0 desktop text
       echo "No desktops installed on this system. (Press \"ESC\" to quit.)"
-    else
+    else #1 desktop text
       echo "${Installed[0]} desktop is already installed on this system. (Press \"ESC\" to quit.)"
     fi
-    echo "Available desktops:"
-    for ThisEntry in "${!Available[@]}"; do
+    echo "Available options:"
+    for ThisEntry in "${!Available[@]}"; do #List menuentries
       echo "$(($ThisEntry + 1)). Install ${Available[ThisEntry]} desktop environment."
     done
     read -sn1 INPUT_OPTION
-    if [[ $INPUT_OPTION = $'\e' ]]; then
+    if [[ $INPUT_OPTION = $'\e' ]]; then #Exit
       break
-    elif ! [[ $INPUT_OPTION =~ ^[0-9]+$ ]]; then
+    elif ! [[ $INPUT_OPTION =~ ^[0-9]+$ ]]; then #Not number error
       echo "Not number!"
-    elif [[ $INPUT_OPTION -gt $((${#Available[@]})) ]]; then
+    elif [[ $INPUT_OPTION -gt $((${#Available[@]})) ]]; then #Invalid number error
       echo "Invalid number!"
-    else
+    else #Install packages
       if ! [[ "${Available[$(($INPUT_OPTION - 1))]}" = *"(AUR)"* ]]; then
         sh Functions.sh InstallPackages ${Packages[$(($INPUT_OPTION - 1))]]}
       else
@@ -103,32 +102,30 @@ do
       fi
       echo "exec ${AutostartScripts[$(($INPUT_OPTION - 1))]}" > ~/.xinitrc
     fi
-  #More than 1 desktops
-  else
+  else #More than 1 desktops
     echo "Multiple desktops are installed on this system. (Press \"ESC\" to quit.)"
-    echo "Available desktops:"
+    echo "Available options:"
     echo "1. Set default desktop."
-    for ThisEntry in "${!Available[@]}"; do
+    for ThisEntry in "${!Available[@]}"; do #List menuentries
       echo "$(($ThisEntry + 2)). Install ${Available[ThisEntry]} desktop environment."
     done
     #Menu options
     read -sn1 INPUT_OPTION
-    if [[ $INPUT_OPTION = $'\e' ]]; then
+    if [[ $INPUT_OPTION = $'\e' ]]; then #Exit
       break
-    elif ! [[ $INPUT_OPTION =~ ^[0-9]+$ ]]; then
+    elif ! [[ $INPUT_OPTION =~ ^[0-9]+$ ]]; then #Not number error
       echo "Not number!"
-    elif [[ $INPUT_OPTION -gt $((${#Available[@]} + 1)) ]]; then
+    elif [[ $INPUT_OPTION -gt $((${#Available[@]} + 1)) ]]; then #Invalid number error
       echo "Invalid number!"
-    elif [[ $INPUT_OPTION = 1 ]]; then
+    elif [[ $INPUT_OPTION = 1 ]]; then #Select default
       echo "Choose default desktop:"
-      #INSTALLED DESKTOP LIST
-      for ThisEntry in "${!Installed[@]}"; do
+      for ThisEntry in "${!Installed[@]}"; do #Installed desktops list
         echo "$(($ThisEntry + 1)). Set ${Installed[ThisEntry]} as default."
       done
       SetDefaultLists
       read -sn1 INPUT_OPTION
-      SetAsDefault ${Installed[$(($INPUT_OPTION - 1))]}
-    else
+      SetAsDefault ${Installed[$(($INPUT_OPTION - 1))]} #Do the work
+    else #Install packages
       if ! [[ "${Available[$(($INPUT_OPTION - 2))]}" = *"(AUR)"* ]]; then
         sh Functions.sh InstallPackages ${Packages[$(($INPUT_OPTION - 2))]]}
       else
