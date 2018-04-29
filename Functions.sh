@@ -19,7 +19,7 @@ function ReplaceLineByNumber {
 # $1=PackageName
 function _isInstalled {
     package="$1";
-    check="$(sudo pacman -Qs --color always "${package}" | grep "local" | grep "${package} ")";
+    check="$(pacman -Qs --color always "${package}" | grep "local" | grep "${package} ")";
     if [ -n "${check}" ] ; then
         echo 0; #'0' means 'true' in Bash
         return; #true
@@ -93,11 +93,9 @@ function Init {
 	#Check and add .bashrc for root
 	! [ -e ~root/.bashrc ] && cp /etc/skel/.bash* ~root
 	#Read or create ini file
-	if ! [ -e ArchMate.ini ]; then
-		#Create
+	if ! [ -e ArchMate.ini ]; then #Create
 	  echo "TurnMeOff=false" > ArchMate.ini
-	else
-		#Read
+	else #Read
 		TurnMeOff=$(sed 's:.*TurnMeOff=::' ArchMate.ini)
 	  case "$TurnMeOff" in
 	    "true" )
@@ -113,6 +111,13 @@ function Init {
 				;;
 	  esac
 	fi
+  #Microcode for Intel CPUs
+  if [[ $(lscpu | sed -n 's/^Model name:[[:space:]]*//p') = *"Intel"* ]]; then
+    if ! [[ $(_isInstalled "intel-ucode") == 0 ]]; then
+      pacman -S --noconfirm --quiet "intel-ucode"
+      grub-mkconfig -o /boot/grub/grub.cfg
+    fi
+  fi
 }
 
 #Switch to turn on/off autostart
@@ -166,7 +171,7 @@ function IntelCodename {
 function InstallAurman {
   #AUR packages default dependancy
   if ! [[ $(_isInstalled "base-devel") == 0 ]]; then
-    pacman -S --needed --noconfirm base-devel
+    pacman -Sy --needed --noconfirm base-devel
   fi
   #Git clone the package
   cd $HOME

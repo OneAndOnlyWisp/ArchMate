@@ -1,8 +1,7 @@
 #!/bin/sh
-clear
 
 #Init "Multimedia engine" (Audio + Window system)
-#sh Functions.sh InstallPackages "pulseaudio" "pulseaudio-alsa" "xorg" "xorg-xinit"
+sh Functions.sh InstallPackages "pulseaudio" "pulseaudio-alsa" "xorg" "xorg-xinit"
 
 function SetDefaultLists {
   #Available options
@@ -15,6 +14,16 @@ function SetDefaultLists {
     echo "Error"
     exit
   fi
+}
+
+function SearchForDesktops {
+  #echo "-----------------------------------------------"
+  for ThisPackage in ${!Packages[*]}; do
+    #echo "Package: ${Packages[ThisPackage]} | Desktop: ${Available[ThisPackage]}"
+    [[ $(sh Functions.sh _isInstalled "${Packages[ThisPackage]}") = 0 ]] && Installed+=("${Available[ThisPackage]}")
+  done
+  #echo "Installed:" ${Installed[*]} "| Length:" ${#Installed[@]}
+  #echo "-----------------------------------------------"
 }
 
 function GenerateMenuList {
@@ -44,16 +53,6 @@ function GenerateMenuList {
   unset '_temp_exec'
 }
 
-function SearchForDesktops {
-  #echo "-----------------------------------------------"
-  for ThisPackage in ${!Packages[*]}; do
-    #echo "Package: ${Packages[ThisPackage]} | Desktop: ${Available[ThisPackage]}"
-    [[ $(sh Functions.sh _isInstalled "${Packages[ThisPackage]}") = 0 ]] && Installed+=("${Available[ThisPackage]}")
-  done
-  #echo "Installed:" ${Installed[*]} "| Length:" ${#Installed[@]}
-  #echo "-----------------------------------------------"
-}
-
 function SetAsDefault {
   FindMe=$1
   for index in "${!Available[@]}"; do
@@ -74,7 +73,7 @@ do
   SetDefaultLists
   SearchForDesktops
   GenerateMenuList
-  #echo "AFTER------------------------------------------"
+  #echo "MENU-------------------------------------------"
   #echo "Available:" ${Available[*]} "| Length:" ${#Available[@]}
   #echo "Packages:" ${Packages[*]} "| Packages:" ${#Packages[@]}
   #echo "-----------------------------------------------"

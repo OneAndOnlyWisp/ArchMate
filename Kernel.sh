@@ -1,4 +1,49 @@
 #!/bin/bash
+clear
+
+function SetDefaultLists {
+  #Available options
+  Available=("Stable" "Longterm" "Zen" "CK (AUR)")
+  echo "DEFAULT----------------------------------------"
+  echo "Available:" ${Available[*]} "| Length:" ${#Available[@]}
+  Packages=("linux" "linux-lts" "linux-zen" "linux-ck")
+  if ! [[ ${#Available[@]} = ${#Packages[@]} ]]; then
+    echo "Error"
+    exit
+  fi
+}
+
+function SearchForDesktops {
+  #echo "-----------------------------------------------"
+  for ThisPackage in ${!Packages[*]}; do
+    #echo "Package: ${Packages[ThisPackage]} | Desktop: ${Available[ThisPackage]}"
+    [[ $(sh Functions.sh _isInstalled "${Packages[ThisPackage]}") = 0 ]] && Installed+=("${Available[ThisPackage]}")
+  done
+  echo "Installed:" ${Installed[*]} "| Length:" ${#Installed[@]}
+  echo "-----------------------------------------------"
+}
+
+function GenerateMenuList {
+  _temp_aval=()
+  _temp_pack=()
+  for ToDelete in ${Installed[@]}
+  do
+    for index in "${!Available[@]}"; do
+      if [[ "${Available[$index]}" = "${ToDelete}" ]]; then
+        unset 'Available[index]'
+        unset 'Packages[index]'
+      fi
+    done
+  done
+  for i in "${!Available[@]}"; do
+    _temp_aval+=("${Available[$i]}")
+    _temp_pack+=("${Packages[$i]}")
+  done
+  Available=("${_temp_aval[@]}")
+  Packages=("${_temp_pack[@]}")
+  unset '_temp_aval'
+  unset '_temp_pack'
+}
 
 function ReadBootCFG {
   #Grub
@@ -82,7 +127,19 @@ esac
 #Menu
 while [ "$INPUT_OPTION" != "end" ]
 do
-  clear
+  Available=()
+  Packages=()
+  Installed=()
+  SetDefaultLists
+  SearchForDesktops
+  GenerateMenuList
+  echo "MENU-------------------------------------------"
+  echo "Available:" ${Available[*]} "| Length:" ${#Available[@]}
+  echo "Packages:" ${Packages[*]} "| Packages:" ${#Packages[@]}
+  echo "-----------------------------------------------"
+  read -sn1
+  exit
+
   #Boot stuff-------------------------------------------------------------------
   #echo "Available versions:" ${#Version_Stash[*]}
   #echo ""
@@ -103,7 +160,7 @@ do
   #CASE list (AVAILABLE-INSTALLED)
   #sed -n "${VM_Linuz_default[1]}p" $BootFile
   #sed -n "${IMG_Stash[1]}p" $BootFile
-  sed -n "${VM_Linuz_default[1]}p" $BootFile | sed 's/.*\///' | sed 's/\s.*$//'
+  #sed -n "${VM_Linuz_default[1]}p" $BootFile | sed 's/.*\///' | sed 's/\s.*$//'
 
   #-----------------------------------------------------------------------------
   echo "Available kernel options:"
