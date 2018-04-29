@@ -4,12 +4,13 @@ clear
 #Init "Multimedia engine" (Audio + Window system)
 #sh Functions.sh InstallPackages "pulseaudio" "pulseaudio-alsa" "xorg" "xorg-xinit"
 
-function SetDefaults {
+function SetDefaultLists {
   #Available options
   Available=("Plasma" "Gnome" "Budgie" "Lumina (AUR)")
   echo "DEFAULT----------------------------------------"
   echo "Available:" ${Available[*]} "| Length:" ${#Available[@]}
   Packages=("plasma-desktop" "gnome" "budgie-desktop" "lumina-desktop")
+  AutostartScripts=("startkde" "gnome-session" "budgie-desktop" "start-lumina-desktop")
   if ! [[ ${#Available[@]} = ${#Packages[@]} ]]; then
     echo "Error"
     exit
@@ -19,23 +20,28 @@ function SetDefaults {
 function GenerateMenuList {
   _temp_aval=()
   _temp_pack=()
+  _temp_exec=()
   for ToDelete in ${Installed[@]}
   do
     for index in "${!Available[@]}"; do
       if [[ "${Available[$index]}" = "${ToDelete}" ]]; then
         unset 'Available[index]'
         unset 'Packages[index]'
+        unset 'AutostartScripts[index]'
       fi
     done
   done
   for i in "${!Available[@]}"; do
     _temp_aval+=("${Available[$i]}")
     _temp_pack+=("${Packages[$i]}")
+    _temp_exec+=("${AutostartScripts[$i]}")
   done
   Available=("${_temp_aval[@]}")
   Packages=("${_temp_pack[@]}")
+  AutostartScripts=("${_temp_exec[@]}")
   unset '_temp_aval'
   unset '_temp_pack'
+  unset '_temp_exec'
 }
 
 function SearchForDesktops {
@@ -48,21 +54,29 @@ function SearchForDesktops {
   echo "-----------------------------------------------"
 }
 
+function SetAsDefault {
+  FindMe=$1
+  for index in "${!Available[@]}"; do
+    if [[ "${Available[$index]}" = "$FindMe" ]]; then
+      echo "exec ${AutostartScripts[$nemtom]}" > ~/.xinitrc
+    fi
+  done
+}
+
 #Menu
 while [ "$INPUT_OPTION" != "end" ]
 do
   Available=()
   Packages=()
+  AutostartScripts=()
   Installed=()
-  SetDefaults
+  SetDefaultLists
   SearchForDesktops
-  #TEST
-  Installed+=("${Available[2]}")
   GenerateMenuList
-  echo "AFTER------------------------------------------"
-  echo "Available:" ${Available[*]} "| Length:" ${#Available[@]}
-  echo "Packages:" ${Packages[*]} "| Packages:" ${#Packages[@]}
-  echo "-----------------------------------------------"
+  #echo "AFTER------------------------------------------"
+  #echo "Available:" ${Available[*]} "| Length:" ${#Available[@]}
+  #echo "Packages:" ${Packages[*]} "| Packages:" ${#Packages[@]}
+  #echo "-----------------------------------------------"
   #0 or 1 desktop
   if [[ ${#Installed[@]} = 0 ]] || [[ ${#Installed[@]} = 1 ]]; then
     if [[ ${#Installed[@]} = 0 ]]; then
@@ -74,15 +88,21 @@ do
     for ThisEntry in "${!Available[@]}"; do
       echo "$(($ThisEntry + 1)). Install ${Available[ThisEntry]} desktop environment."
     done
-    #Menu options
     read -sn1 INPUT_OPTION
-    case $INPUT_OPTION in
-      '1') ! [[ "${Available[0]}" = *"(AUR)"* ]] && echo "Normal" || echo "AUR";; #sh Functions.sh InstallPackages ${Packages[0]} || sh Functions.sh InstallAURPackages ${Packages[0]}
-      '2') ! [[ "${Available[1]}" = *"(AUR)"* ]] && echo "Normal" || echo "AUR";; #sh Functions.sh InstallPackages ${Packages[1]} || sh Functions.sh InstallAURPackages ${Packages[1]}
-      '3') ! [[ "${Available[2]}" = *"(AUR)"* ]] && echo "Normal" || echo "AUR";; #sh Functions.sh InstallPackages ${Packages[2]} || sh Functions.sh InstallAURPackages ${Packages[2]}
-      '4') ! [[ "${Available[3]}" = *"(AUR)"* ]] && echo "Normal" || echo "AUR";; #sh Functions.sh InstallPackages ${Packages[3]} || sh Functions.sh InstallAURPackages ${Packages[3]}
-      $'\e') break;;
-    esac
+    if [[ $INPUT_OPTION = $'\e' ]]; then
+      break
+    elif ! [[ $INPUT_OPTION =~ ^[0-9]+$ ]]; then
+      echo "Not number!"
+    elif [[ $INPUT_OPTION -gt $((${#Available[@]})) ]]; then
+      echo "Invalid number!"
+    else
+      if ! [[ "${Available[$(($INPUT_OPTION - 1))]}" = *"(AUR)"* ]]; then
+        sh Functions.sh InstallPackages ${Packages[$(($INPUT_OPTION - 1))]]}
+      else
+        sh Functions.sh InstallAURPackages ${Packages[$(($INPUT_OPTION - 1))]]}
+      fi
+      echo "exec ${AutostartScripts[$(($INPUT_OPTION - 1))]}" > ~/.xinitrc
+    fi
   #More than 1 desktops
   else
     echo "Multiple desktops are installed on this system. (Press \"ESC\" to quit.)"
@@ -93,20 +113,30 @@ do
     done
     #Menu options
     read -sn1 INPUT_OPTION
-    case $INPUT_OPTION in
-      '1') echo "Choose default desktop:";;
-      '2') ! [[ "${Available[0]}" = *"(AUR)"* ]] && echo "Normal" || echo "AUR";; #sh Functions.sh InstallPackages ${Packages[0]} || sh Functions.sh InstallAURPackages ${Packages[0]}
-      '3') ! [[ "${Available[1]}" = *"(AUR)"* ]] && echo "Normal" || echo "AUR";; #sh Functions.sh InstallPackages ${Packages[1]} || sh Functions.sh InstallAURPackages ${Packages[1]}
-      '4') ! [[ "${Available[2]}" = *"(AUR)"* ]] && echo "Normal" || echo "AUR";; #sh Functions.sh InstallPackages ${Packages[2]} || sh Functions.sh InstallAURPackages ${Packages[2]}
-      '5') ! [[ "${Available[3]}" = *"(AUR)"* ]] && echo "Normal" || echo "AUR";; #sh Functions.sh InstallPackages ${Packages[3]} || sh Functions.sh InstallAURPackages ${Packages[3]}
-      $'\e') break;;
-    esac
+    if [[ $INPUT_OPTION = $'\e' ]]; then
+      break
+    elif ! [[ $INPUT_OPTION =~ ^[0-9]+$ ]]; then
+      echo "Not number!"
+    elif [[ $INPUT_OPTION -gt $((${#Available[@]} + 1)) ]]; then
+      echo "Invalid number!"
+    elif [[ $INPUT_OPTION = 1 ]]; then
+      echo "Choose default desktop:"
+      #INSTALLED DESKTOP LIST
+      for ThisEntry in "${!Installed[@]}"; do
+        echo "$(($ThisEntry + 1)). Set ${Installed[ThisEntry]} as default."
+      done
+      SetDefaultLists
+      read -sn1 INPUT_OPTION
+      SetAsDefault ${Installed[$(($INPUT_OPTION - 1))]}
+    else
+      if ! [[ "${Available[$(($INPUT_OPTION - 2))]}" = *"(AUR)"* ]]; then
+        sh Functions.sh InstallPackages ${Packages[$(($INPUT_OPTION - 2))]]}
+      else
+        sh Functions.sh InstallAURPackages ${Packages[$(($INPUT_OPTION - 2))]]}
+      fi
+      echo "exec ${AutostartScripts[$(($INPUT_OPTION - 2))]}" > ~/.xinitrc
+    fi
   fi
 read -sn1
 clear
 done
-
-
-#Desktop
-#pacman -S --noconfirm plasma-desktop
-#echo "exec startkde" > ~/.xinitrc
