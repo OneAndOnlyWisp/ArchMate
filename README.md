@@ -1,17 +1,21 @@
 # ArchMate
+## Description
 Arch linux from terminal to working dektop system automation tool.
 Under development for now. Use at your own risk.
 
-Features:
-- Change kernel from default to lts or reverse
-- Install CPU drivers (Microcode, CPU Graphics)
-- Install GPU drivers (Nvidia, Radeon, VirtualBox)
+#### Features:
+- Change/set default kernel from different possibilities
+- Install CPU stuff e.g. Microcode, Graphics, Vulkan (AMD untested!)
+- Install GPU drivers (Radeon untested!)
 - User management
 - Desktop install
 - Run custom end script (optional)
 
-Will be implemented:
+#### Will be implemented:
 - Read from config file (automatize the process)
+
+## How to use
+Download and run the script rigth after first root login on a fresh install. (Preferably after pacstrap-base install.)
 
 ## Prerequisites
 
@@ -19,10 +23,6 @@ Will be implemented:
 - Logged in as 'root'
 
 ## How to get it
-### With git
+#### With git
 - Install and/or sync git: `pacman -Sy git`
 - Get the script: `git clone git://github.com/OneAndOnlyWisp/ArchMate`
-
-### ~~Without git~~
-- ~~Get the script: ` wget https://raw.githubusercontent.com/OneAndOnlyWisp/ArchMate/master/Main.sh `~~
-- ~~Shorter: ` wget https://git.io/vxK80 -O Main.sh`~~
