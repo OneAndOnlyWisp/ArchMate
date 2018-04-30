@@ -150,7 +150,7 @@ do
   SetDefaultLists
   SearchForInstalled
   #TEST---------------------------------------
-  #Installed+=("Longterm")
+  Installed+=("Longterm")
   #-------------------------------------------
   GenerateMenuList
   echo "MENU-------------------------------------------"
@@ -171,33 +171,39 @@ do
     elif [[ $INPUT_OPTION -gt $((${#Available[@]})) ]]; then #Invalid number error
       echo "Invalid number!"
     else #Install packages
-      if ! [[ "${Available[$(($INPUT_OPTION - 1))]}" = *"(AUR)"* ]]; then
-        echo "Normal"
-        #sh Functions.sh InstallPackages ${Packages[$(($INPUT_OPTION - 1))]]}
-      else
-        echo "AUR"
-        #sh Functions.sh InstallAURPackages ${Packages[$(($INPUT_OPTION - 1))]]}
+      if ! [[ "${Available[$(($INPUT_OPTION - 1))]}" = *"(AUR)"* ]]; then #Pacman
+        for ThisPackage in $(echo ${Packages[$(($INPUT_OPTION - 1))]} | tr ";" "\n")
+        do
+          #echo $ThisPackage
+          sh Functions.sh InstallPackages $ThisPackage
+        done
+      else #Aurman
+        for ThisPackage in $(echo ${Packages[$(($INPUT_OPTION - 1))]} | tr ";" "\n")
+        do
+          #echo $ThisPackage
+          sh Functions.sh InstallAURPackages $ThisPackage
+        done
       fi
-      #grub-mkconfig -o /boot/grub/grub.cfg
+      grub-mkconfig -o /boot/grub/grub.cfg
     fi
   else #More than one kernel
     echo "Currently using \"$ACTIVE_KERNEL\" kernel. (Press \"ESC\" to quit.)"
     echo "Booting with \"$DEFAULT_KERNEL\" kernel by default."
     echo "Available options:"
     echo "1. Set default kernel."
-    for ThisEntry in "${!Available[@]}"; do
+    for ThisEntry in "${!Available[@]}"; do #List menuentries
       echo "$(($ThisEntry + 2)). Install ${Available[ThisEntry]} kernel."
     done
-    #Menu options
     read -sn1 INPUT_OPTION
-    if [[ $INPUT_OPTION = $'\e' ]]; then
+    if [[ $INPUT_OPTION = $'\e' ]]; then #Exit
       break
-    elif ! [[ $INPUT_OPTION =~ ^[0-9]+$ ]]; then
+    elif ! [[ $INPUT_OPTION =~ ^[0-9]+$ ]]; then #Not number error
       echo "Not number!"
-    elif [[ $INPUT_OPTION -gt $((${#Available[@]} + 1)) ]]; then
+    elif [[ $INPUT_OPTION -gt $((${#Available[@]} + 1)) ]]; then #Invalid number error
       echo "Invalid number!"
-    elif [[ $INPUT_OPTION = 1 ]]; then
-      echo "Choose default desktop:"
+    elif [[ $INPUT_OPTION = 1 ]]; then #Select default
+      echo "Choose default kernel:"
+      #UNDER DEVELOPMENT
       #INSTALLED DESKTOP LIST
       for ThisEntry in "${!Installed[@]}"; do
         echo "$(($ThisEntry + 1)). Set ${Installed[ThisEntry]} as default."
@@ -205,15 +211,17 @@ do
       SetDefaultLists
       read -sn1 INPUT_OPTION
       SetAsDefault ${Installed[$(($INPUT_OPTION - 1))]}
-    else
-      if ! [[ "${Available[$(($INPUT_OPTION - 2))]}" = *"(AUR)"* ]]; then
+    else #Install packages
+      if ! [[ "${Available[$(($INPUT_OPTION - 2))]}" = *"(AUR)"* ]]; then #Pacman
         echo "Normal"
-        #sh Functions.sh InstallPackages ${Packages[$(($INPUT_OPTION - 2))]]}
-      else
+        #sh Functions.sh InstallPackages ${Packages[$(($INPUT_OPTION - 2))]}
+      else #Aurman
         echo "AUR"
-        #sh Functions.sh InstallAURPackages ${Packages[$(($INPUT_OPTION - 2))]]}
+        #sh Functions.sh InstallAURPackages ${Packages[$(($INPUT_OPTION - 2))]}
       fi
       #grub-mkconfig -o /boot/grub/grub.cfg
     fi
   fi
+read -sn1
+clear
 done

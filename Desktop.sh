@@ -96,9 +96,9 @@ do
       echo "Invalid number!"
     else #Install packages
       if ! [[ "${Available[$(($INPUT_OPTION - 1))]}" = *"(AUR)"* ]]; then
-        sh Functions.sh InstallPackages ${Packages[$(($INPUT_OPTION - 1))]]}
+        sh Functions.sh InstallPackages ${Packages[$(($INPUT_OPTION - 1))]}
       else
-        sh Functions.sh InstallAURPackages ${Packages[$(($INPUT_OPTION - 1))]]}
+        sh Functions.sh InstallAURPackages ${Packages[$(($INPUT_OPTION - 1))]}
       fi
       echo "exec ${AutostartScripts[$(($INPUT_OPTION - 1))]}" > ~/.xinitrc
     fi
@@ -127,9 +127,9 @@ do
       SetAsDefault ${Installed[$(($INPUT_OPTION - 1))]} #Do the work
     else #Install packages
       if ! [[ "${Available[$(($INPUT_OPTION - 2))]}" = *"(AUR)"* ]]; then
-        sh Functions.sh InstallPackages ${Packages[$(($INPUT_OPTION - 2))]]}
+        sh Functions.sh InstallPackages ${Packages[$(($INPUT_OPTION - 2))]}
       else
-        sh Functions.sh InstallAURPackages ${Packages[$(($INPUT_OPTION - 2))]]}
+        sh Functions.sh InstallAURPackages ${Packages[$(($INPUT_OPTION - 2))]}
       fi
       echo "exec ${AutostartScripts[$(($INPUT_OPTION - 2))]}" > ~/.xinitrc
     fi
