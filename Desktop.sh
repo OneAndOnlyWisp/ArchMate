@@ -54,10 +54,9 @@ function GenerateMenuList {
 }
 
 function SetAsDefault {
-  FindMe=$1
   for index in "${!Available[@]}"; do
-    if [[ "${Available[$index]}" = "$FindMe" ]]; then
-      echo "exec ${AutostartScripts[$nemtom]}" > ~/.xinitrc
+    if [[ "${Available[$index]}" = "$1" ]]; then
+      echo "exec ${AutostartScripts[$index]}" > ~/.xinitrc
     fi
   done
 }
@@ -72,6 +71,9 @@ do
   Installed=()
   SetDefaultLists
   SearchForInstalled
+  #TEST---------------------------------------
+  Installed+=("Budgie")
+  #-------------------------------------------
   GenerateMenuList
   #echo "MENU-------------------------------------------"
   #echo "Available:" ${Available[*]} "| Length:" ${#Available[@]}
@@ -95,9 +97,9 @@ do
     elif [[ $INPUT_OPTION -gt $((${#Available[@]})) ]]; then #Invalid number error
       echo "Invalid number!"
     else #Install packages
-      if ! [[ "${Available[$(($INPUT_OPTION - 1))]}" = *"(AUR)"* ]]; then
+      if ! [[ "${Available[$(($INPUT_OPTION - 1))]}" = *"(AUR)"* ]]; then #Pacman
         sh Functions.sh InstallPackages ${Packages[$(($INPUT_OPTION - 1))]}
-      else
+      else #Aurman
         sh Functions.sh InstallAURPackages ${Packages[$(($INPUT_OPTION - 1))]}
       fi
       echo "exec ${AutostartScripts[$(($INPUT_OPTION - 1))]}" > ~/.xinitrc
@@ -124,14 +126,18 @@ do
       done
       SetDefaultLists
       read -sn1 INPUT_OPTION
-      SetAsDefault ${Installed[$(($INPUT_OPTION - 1))]} #Do the work
-    else #Install packages
-      if ! [[ "${Available[$(($INPUT_OPTION - 2))]}" = *"(AUR)"* ]]; then
-        sh Functions.sh InstallPackages ${Packages[$(($INPUT_OPTION - 2))]}
-      else
-        sh Functions.sh InstallAURPackages ${Packages[$(($INPUT_OPTION - 2))]}
+      if ! [[ $INPUT_OPTION -gt ${#Installed[@]} ]]; then
+        SetAsDefault ${Installed[$(($INPUT_OPTION - 1))]}
       fi
-      echo "exec ${AutostartScripts[$(($INPUT_OPTION - 2))]}" > ~/.xinitrc
+    else #Install packages
+      if ! [[ "${Available[$(($INPUT_OPTION - 2))]}" = *"(AUR)"* ]]; then #Pacman
+        echo "Pacman"
+        #sh Functions.sh InstallPackages ${Packages[$(($INPUT_OPTION - 2))]}
+      else #Aurman
+        echo "Aurman"
+        #sh Functions.sh InstallAURPackages ${Packages[$(($INPUT_OPTION - 2))]}
+      fi
+      echo "exec ${AutostartScripts[$(($INPUT_OPTION - 2))]}" # > ~/.xinitrc
     fi
   fi
 done

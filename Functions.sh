@@ -60,6 +60,10 @@ function InstallPackages {
 #Install AUR packages if not installed already
 # $@PackageNames
 function InstallAURPackages {
+    #If Aurman is not installed
+    if ! [[ $(_isInstalled "aurman") == 0 ]]; then
+        InstallAurman;
+    fi;
     # The packages that are not installed will be added to this array.
     toInstall=();
 
@@ -111,8 +115,7 @@ function Init {
 				;;
 	  esac
 	fi
-  #Microcode for Intel CPUs
-  if [[ $(lscpu | sed -n 's/^Model name:[[:space:]]*//p') = *"Intel"* ]]; then
+  if [[ $(lscpu | sed -n 's/^Model name:[[:space:]]*//p') = *"Intel"* ]]; then #Microcode for Intel CPUs
     if ! [[ $(_isInstalled "intel-ucode") == 0 ]]; then
       pacman -S --noconfirm --quiet "intel-ucode"
       grub-mkconfig -o /boot/grub/grub.cfg
