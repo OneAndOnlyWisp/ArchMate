@@ -92,18 +92,17 @@ function SearchForInstalled {
 function GenerateMenuList {
   _temp_aval=()
   _temp_pack=()
-  for ToDelete in ${Installed[@]}
-  do
-    for index in "${!Available[@]}"; do
-      if [[ "${Available[$index]}" = "${ToDelete}" ]]; then
-        unset 'Available[index]'
-        unset 'Packages[index]'
+  for xindex in "${!Installed[@]}"; do
+    for yindex in "${!Available[@]}"; do
+      if [[ "${Available[$yindex]}" = "${Installed[$xindex]}" ]]; then
+        unset 'Available[yindex]'
+        unset 'Packages[yindex]'
       fi
     done
   done
-  for i in "${!Available[@]}"; do
-    _temp_aval+=("${Available[$i]}")
-    _temp_pack+=("${Packages[$i]}")
+  for index in "${!Available[@]}"; do
+    _temp_aval+=("${Available[$index]}")
+    _temp_pack+=("${Packages[$index]}")
   done
   Available=("${_temp_aval[@]}")
   Packages=("${_temp_pack[@]}")
@@ -112,6 +111,9 @@ function GenerateMenuList {
 }
 
 function SetAsDefault {
+  #Example
+  #sed -ie ""$StartingLine"s/#//g" /etc/pacman.conf
+
   #Set default kernel to load                                         UUID_Stash Set here ˇ
   sh Functions.sh ReplaceLineByNumber ${VM_Linuz_default[1]} "$(sed -n -e "${UUID_Stash[$1]}p" $BootFile | sed 's/\//\\\//g' | cut -c 2-)" $BootFile
   #Set default kernel to load                                         IMG_Stash Set here ˇ
@@ -144,7 +146,7 @@ do
   SetDefaultLists
   SearchForInstalled
   #TEST---------------------------------------
-  Installed+=("Longterm")
+  #Installed+=("Longterm")
   #-------------------------------------------
   GenerateMenuList
   echo "MENU-------------------------------------------"
@@ -182,7 +184,6 @@ do
     fi
   else #More than one kernel
     echo "Currently using \"$ACTIVE_KERNEL\" kernel. (Press \"ESC\" to quit.)"
-
     echo "Booting with \"$DEFAULT_KERNEL\" kernel by default."
     echo "Available options:"
     echo "1. Set default kernel."

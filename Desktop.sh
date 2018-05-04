@@ -30,20 +30,19 @@ function GenerateMenuList {
   _temp_aval=()
   _temp_pack=()
   _temp_exec=()
-  for ToDelete in ${Installed[@]}
-  do
-    for index in "${!Available[@]}"; do
-      if [[ "${Available[$index]}" = "${ToDelete}" ]]; then
-        unset 'Available[index]'
-        unset 'Packages[index]'
-        unset 'AutostartScripts[index]'
+  for xindex in "${!Installed[@]}"; do
+    for yindex in "${!Available[@]}"; do
+      if [[ "${Available[$yindex]}" = "${Installed[$xindex]}" ]]; then
+        unset 'Available[yindex]'
+        unset 'Packages[yindex]'
+        unset 'AutostartScripts[yindex]'
       fi
     done
   done
-  for i in "${!Available[@]}"; do
-    _temp_aval+=("${Available[$i]}")
-    _temp_pack+=("${Packages[$i]}")
-    _temp_exec+=("${AutostartScripts[$i]}")
+  for index in "${!Available[@]}"; do
+    _temp_aval+=("${Available[$index]}")
+    _temp_pack+=("${Packages[$index]}")
+    _temp_exec+=("${AutostartScripts[$index]}")
   done
   Available=("${_temp_aval[@]}")
   Packages=("${_temp_pack[@]}")
@@ -72,7 +71,7 @@ do
   SetDefaultLists
   SearchForInstalled
   #TEST---------------------------------------
-  Installed+=("Budgie")
+  #Installed+=("Budgie")
   #-------------------------------------------
   GenerateMenuList
   #echo "MENU-------------------------------------------"
@@ -131,13 +130,11 @@ do
       fi
     else #Install packages
       if ! [[ "${Available[$(($INPUT_OPTION - 2))]}" = *"(AUR)"* ]]; then #Pacman
-        echo "Pacman"
-        #sh Functions.sh InstallPackages ${Packages[$(($INPUT_OPTION - 2))]}
+        sh Functions.sh InstallPackages ${Packages[$(($INPUT_OPTION - 2))]}
       else #Aurman
-        echo "Aurman"
-        #sh Functions.sh InstallAURPackages ${Packages[$(($INPUT_OPTION - 2))]}
+        sh Functions.sh InstallAURPackages ${Packages[$(($INPUT_OPTION - 2))]}
       fi
-      echo "exec ${AutostartScripts[$(($INPUT_OPTION - 2))]}" # > ~/.xinitrc
+      echo "exec ${AutostartScripts[$(($INPUT_OPTION - 2))]}" > ~/.xinitrc
     fi
   fi
 done

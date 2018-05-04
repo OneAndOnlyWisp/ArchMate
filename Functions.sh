@@ -7,14 +7,6 @@ function FindAndReplaceAll {
   sed -ni "s/""$1""/""$2""/g" $3
 }
 
-#Replace a specific line
-# $1=LineToReplace(number) $2=ReplaceWith(text) $3=Input
-function ReplaceLineByNumber {
-  sed -ni "$1s/.*/$2/p" $3
-	#Add this to avoid issues with '/' in the line
-	# | sed 's/\//\\\//g'
-}
-
 #Check if a package is installed
 # $1=PackageName
 function _isInstalled {
@@ -96,7 +88,7 @@ function InstallAURPackages {
 function Init {
 	#Check and add .bashrc for root
 	! [ -e ~root/.bashrc ] && cp /etc/skel/.bash* ~root
-	#Read or create ini file
+	#Ini file
 	if ! [ -e ArchMate.ini ]; then #Create
 	  echo "TurnMeOff=false" > ArchMate.ini
 	else #Read
