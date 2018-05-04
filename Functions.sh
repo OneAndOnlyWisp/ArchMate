@@ -11,7 +11,7 @@ function FindAndReplaceAll {
 # $1=PackageName
 function _isInstalled {
     package="$1";
-    check="$(pacman -Qs --color always "${package}" | grep "local" | grep "${package} ")";
+    check="$(sudo pacman -Qs --color always "${package}" | grep "local" | grep "${package} ")";
     if [ -n "${check}" ] ; then
         echo 0; #'0' means 'true' in Bash
         return; #true

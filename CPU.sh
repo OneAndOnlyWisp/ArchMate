@@ -45,11 +45,20 @@ function SearchForInstalled {
   echo "-----------------------------------------------"
 }
 
+function VulkanSupportCheck {
+  [[ $(sh Functions.sh _isInstalled "pup-git") = 1 ]] && sh Functions.sh InstallAURPackages "pup-git"
+  CodeName=$(sh Functions.sh IntelCodename)
+
+  
+}
+
 function MenuFIX {
   if [[ $CPU = *"Intel"* ]]; then
     if [[ "${Available[$1]}" = *"AMD"* ]]; then
       unset 'Available[$1]'
       unset 'Packages[$1]'
+    elif [[ "${Available[$1]}" = *"Vulkan"* ]]; then
+      VulkanSupportCheck
     fi
   else
     if [[ "${Available[$1]}" = *"Intel"* ]]; then
@@ -68,7 +77,7 @@ function GenerateMenuList {
         unset 'Available[yindex]'
         unset 'Packages[yindex]'
       fi
-      #MenuFIX $yindex
+      MenuFIX $yindex
     done
   done
   for index in "${!Available[@]}"; do
@@ -108,7 +117,7 @@ do
   exit
 
 
-  
+
   case $CPU_MANUFACTURER in
     "Intel")
       echo "2. Install Intel Graphics."
