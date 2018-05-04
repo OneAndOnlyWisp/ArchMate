@@ -47,9 +47,16 @@ function SearchForInstalled {
 
 function VulkanSupportCheck {
   [[ $(sh Functions.sh _isInstalled "pup-git") = 1 ]] && sh Functions.sh InstallAURPackages "pup-git"
-  CodeName=$(sh Functions.sh IntelCodename)
-
-  
+  if [[ $CodeName = "" ]]; then
+    CodeName=$(sh Functions.sh IntelCodename)
+  fi
+  NotCompatible=("P5" "P" "NetBurst" "Pentium M" "Prescott" "Intel Core" "Penryn" "Nehalem" "Bonnell" "Westmere" "Saltwell" "Sandy Bridge" "Ivy Bridge")
+  for index in "${!NotCompatible[@]}"; do
+    if [[ "$CodeName" = "${NotCompatible[$index]}" ]]; then
+      unset 'Available[$1]'
+      unset 'Packages[$1]'
+    fi
+  done
 }
 
 function MenuFIX {
@@ -58,7 +65,7 @@ function MenuFIX {
       unset 'Available[$1]'
       unset 'Packages[$1]'
     elif [[ "${Available[$1]}" = *"Vulkan"* ]]; then
-      VulkanSupportCheck
+      VulkanSupportCheck $1
     fi
   else
     if [[ "${Available[$1]}" = *"Intel"* ]]; then
@@ -106,38 +113,38 @@ do
   #echo "Installed:" ${Installed[*]} "| Length:" ${#Installed[@]}
   #-------------------------------------------
   GenerateMenuList
-  echo "MENU-------------------------------------------"
-  echo "Available:" ${Available[*]} "| Length:" ${#Available[@]}
-  echo "Packages:" ${Packages[*]} "| Length:" ${#Packages[@]}
-  echo "-----------------------------------------------"
-  echo ""
-  echo "This system has an \"$CPU\" processor. (Press \"ESC\" to go back.)"
-  echo "Available CPU options:"
+  #echo "MENU-------------------------------------------"
+  #echo "Available:" ${Available[*]} "| Length:" ${#Available[@]}
+  #echo "Packages:" ${Packages[*]} "| Length:" ${#Packages[@]}
+  #echo "-----------------------------------------------"
+  #echo ""
+  #echo "This system has an \"$CPU\" processor. (Press \"ESC\" to go back.)"
+  if [[ ${#Available[@]} = 0 ]]; then
+    echo "No available options."
+    read -sn1 INPUT_OPTION
+    if [[ $INPUT_OPTION = $'\e' ]]; then #Exit
+      break
+    fi
+  else
+    echo "Available CPU options:"
+    for ThisEntry in "${!Available[@]}"; do #List menuentries
+      echo "$(($ThisEntry + 1)). Install ${Available[ThisEntry]} driver."
+    done
+    read -sn1 INPUT_OPTION
+    if [[ $INPUT_OPTION = $'\e' ]]; then #Exit
+      break
+    elif ! [[ $INPUT_OPTION =~ ^[0-9]+$ ]]; then #Not number error
+      echo "Not number!"
+    elif [[ $INPUT_OPTION -gt $((${#Available[@]})) ]]; then #Invalid number error
+      echo "Invalid number!"
+    else #Install packages
+      for ThisPackage in $(echo ${Packages[$(($INPUT_OPTION - 1))]} | tr ";" "\n")
+      do
+        #echo $ThisPackage
+        sh Functions.sh InstallPackages $ThisPackage
+      done
+    fi
+  fi
   read -sn1
-  exit
-
-
-
-  case $CPU_MANUFACTURER in
-    "Intel")
-      echo "2. Install Intel Graphics."
-      echo "3. Install Vulkan Support. (Ivy Bridge and newer)"
-      read -sn1 INPUT_OPTION
-      case $INPUT_OPTION in
-        '2') echo "Trying to install Intel Graphics driver..."; pacman -S --noconfirm --noprogressbar --quiet ;;
-        '3') echo "Trying to install Vulkan driver..."; pacman -S --noconfirm --noprogressbar --quiet vulkan-intel;;
-        $'\e') break;;
-      esac
-      ;;
-    "AMD")
-      echo "1. Install AMDGPU Graphics."
-      echo "2. Install Vulkan Support."
-      read -sn1 INPUT_OPTION
-      case $INPUT_OPTION in
-        '1') echo "Trying to install AMDGPU driver..."; pacman -S --noconfirm --noprogressbar --quiet mesa lib32-mesa xf86-video-amdgpu;;
-        '2') echo "Trying to install Vulkan driver..."; pacman -S --noconfirm --noprogressbar --quiet vulkan-radeon;;
-        $'\e') break;;
-      esac
-      ;;
-  esac
+  clear
 done
