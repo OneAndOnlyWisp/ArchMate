@@ -1,5 +1,5 @@
 #!/bin/bash
-clear
+#clear
 Source_Path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/"
 
 #Gather required system information
@@ -79,6 +79,11 @@ function MenuFIX {
 function GenerateMenuList {
   _temp_aval=()
   _temp_pack=()
+  if [[ "${!Installed[@]}" = "" ]]; then
+    for yindex in "${!Available[@]}"; do
+      MenuFIX $yindex
+    done
+  fi
   for xindex in "${!Installed[@]}"; do
     for yindex in "${!Available[@]}"; do
       if [[ "${Available[$yindex]}" = "${Installed[$xindex]}" ]]; then
@@ -108,7 +113,7 @@ do
   Packages=()
   Installed=()
   SetDefaultLists
-  SearchForInstalled
+  #SearchForInstalled
   #TEST---------------------------------------
   #Installed+=("Intel Vulkan")
   #echo "INSTALLED FIX----------------------------------"
@@ -121,7 +126,7 @@ do
   #echo "-----------------------------------------------"
   #echo ""
   echo "This system has an \"$CPU\" processor. (Press \"ESC\" to go back.)"
-  if [[ ${#Available[@]} = 0 ]]; then #Everything available installed
+  if [[ ${#Available[@]} = 0 ]]; then #Everything available
     echo "No available options."
     read -sn1 INPUT_OPTION
     if [[ $INPUT_OPTION = $'\e' ]]; then #Exit
@@ -148,5 +153,5 @@ do
     fi
     read -sn1
   fi
-  clear
+  #clear
 done
