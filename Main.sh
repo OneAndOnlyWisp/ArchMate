@@ -32,7 +32,7 @@ do
   read -sn1 INPUT_OPTION
 
   case $INPUT_OPTION in
-    '1') sh $KERNEL $ME; clear;;
+    '1') sh $KERNEL $Source_Path; clear;;
     '2') sh $CPU; clear;;
     '3') sh $GPU; clear;;
     '4') sh $USER; clear;;
