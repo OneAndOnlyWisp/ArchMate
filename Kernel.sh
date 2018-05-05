@@ -1,5 +1,6 @@
 #!/bin/bash
 clear
+Source_Path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/"
 
 #Grub config file
 BootFile="/boot/grub/grub.cfg"
@@ -176,13 +177,13 @@ do
         for ThisPackage in $(echo ${Packages[$(($INPUT_OPTION - 1))]} | tr ";" "\n")
         do
           #echo $ThisPackage
-          sh ""$1"Functions.sh" InstallPackages $ThisPackage
+          sh ""$Source_Path"Functions.sh" InstallPackages $ThisPackage
         done
       else #Aurman
         for ThisPackage in $(echo ${Packages[$(($INPUT_OPTION - 1))]} | tr ";" "\n")
         do
           #echo $ThisPackage
-          sh ""$1"Functions.sh" InstallAURPackages $ThisPackage
+          sh ""$Source_Path"Functions.sh" InstallAURPackages $ThisPackage
         done
       fi
       grub-mkconfig -o /boot/grub/grub.cfg
@@ -222,13 +223,13 @@ do
         for ThisPackage in $(echo ${Packages[$(($INPUT_OPTION - 2))]} | tr ";" "\n")
         do
           #echo $ThisPackage
-          sh ""$1"Functions.sh" InstallPackages $ThisPackage
+          sh ""$Source_Path"Functions.sh" InstallPackages $ThisPackage
         done
       else #Aurman
         for ThisPackage in $(echo ${Packages[$(($INPUT_OPTION - 2))]} | tr ";" "\n")
         do
           #echo $ThisPackage
-          sh ""$1"Functions.sh" InstallAURPackages $ThisPackage
+          sh ""$Source_Path"Functions.sh" InstallAURPackages $ThisPackage
         done
       fi
       grub-mkconfig -o /boot/grub/grub.cfg
@@ -242,11 +243,8 @@ ReadBootCFG
 SetDefaultLists
 if ! [[ "$ACTIVE_KERNEL" = "$DEFAULT_KERNEL" ]]; then
   if ! grep -q "ArchMate" ~root/.bashrc; then
-    sh ""$1"Functions.sh" AutoStartSwitch
-    echo ""$1"ArchMate.ini"
-    echo "TurnMeOff=true" > ""$1"ArchMate.ini"
-    echo "Press any button to reboot..."
-    read -sn1
-    #reboot
+    sh ""$Source_Path"Functions.sh" AutoStartSwitch
+    echo "TurnMeOff=true" > ""$Source_Path"ArchMate.ini"
+    reboot
   fi
 fi

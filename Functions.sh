@@ -1,5 +1,4 @@
 #!/bin/sh
-
 Source_Path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/"
 
 #Helper functions---------------------------------------------------------------

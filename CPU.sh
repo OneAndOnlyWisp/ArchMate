@@ -1,5 +1,6 @@
 #!/bin/bash
 clear
+Source_Path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/"
 
 #Gather required system information
 CPU=$(lscpu | sed -n 's/^Model name:[[:space:]]*//p')
@@ -31,7 +32,7 @@ function SearchForInstalled {
     Counter=0
     for ThisPackage in $(echo ${Packages[ThisPackageList]} | tr ";" "\n")
     do
-      if [[ $(sh Functions.sh _isInstalled "$ThisPackage") = 0 ]]; then
+      if [[ $(sh ""$Source_Path"Functions.sh" _isInstalled "$ThisPackage") = 0 ]]; then
         let Counter=Counter+1
       fi
     done
@@ -46,9 +47,9 @@ function SearchForInstalled {
 }
 
 function VulkanSupportCheck {
-  [[ $(sh Functions.sh _isInstalled "pup-git") = 1 ]] && sh Functions.sh InstallAURPackages "pup-git"
+  [[ $(sh ""$Source_Path"Functions.sh" _isInstalled "pup-git") = 1 ]] && sh ""$Source_Path"Functions.sh" InstallAURPackages "pup-git"
   if [[ $CodeName = "" ]]; then
-    CodeName=$(sh Functions.sh IntelCodename)
+    CodeName=$(sh ""$Source_Path"Functions.sh" IntelCodename)
   fi
   NotCompatible=("P5" "P" "NetBurst" "Pentium M" "Prescott" "Intel Core" "Penryn" "Nehalem" "Bonnell" "Westmere" "Saltwell" "Sandy Bridge" "Ivy Bridge")
   for index in "${!NotCompatible[@]}"; do
@@ -142,7 +143,7 @@ do
       for ThisPackage in $(echo ${Packages[$(($INPUT_OPTION - 1))]} | tr ";" "\n")
       do
         #echo $ThisPackage
-        sh Functions.sh InstallPackages $ThisPackage
+        sh ""$Source_Path"Functions.sh" InstallPackages $ThisPackage
       done
     fi
     read -sn1
