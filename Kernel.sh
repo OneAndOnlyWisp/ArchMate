@@ -67,7 +67,7 @@ function SetDefaultLists {
   #Active kernel
   ACTIVE_KERNEL=$(uname -r | rev | cut -d "-" -f 1 | rev)
   if [[ "$ACTIVE_KERNEL" = "ARCH" ]]; then
-    $ACTIVE_KERNEL = "Stable"
+    $ACTIVE_KERNEL="Stable"
   else
     for index in "${!Packages[@]}"; do
       if [[ "${Packages[$index]}" = *"$ACTIVE_KERNEL"* ]]; then
