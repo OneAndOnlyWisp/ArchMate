@@ -244,6 +244,8 @@ if ! [[ "$ACTIVE_KERNEL" = "$DEFAULT_KERNEL" ]]; then
   if ! grep -q "ArchMate" ~root/.bashrc; then
     sh "$1/Functions.sh" AutoStartSwitch
     echo "TurnMeOff=true" > ""$Source_Path"ArchMate.ini"
+    echo "Press any button to reboot..."
+    read -sn1
     reboot
   fi
 fi
