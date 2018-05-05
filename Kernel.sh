@@ -1,9 +1,10 @@
 #!/bin/bash
 clear
 
+#Grub config file
+BootFile="/boot/grub/grub.cfg"
+
 function ReadBootCFG {
-  #Grub
-  BootFile="/boot/grub/grub.cfg"
   while read line
   do
     let LineCount=LineCount+1
@@ -64,7 +65,7 @@ function SetDefaultLists {
   Packages=("linux linux-headers" "linux-lts linux-lts-headers" "linux-zen linux-zen-headers" "linux-ck linux-ck-headers")
   if ! [[ ${#Available[@]} = ${#Packages[@]} ]]; then
     echo "Error"
-    exit
+    break
   fi
   for index in "${!Packages[@]}"; do #Default kernel to boot
     if [[ "${Packages[$index]}" = "$(sed -n "${UUID_Stash[ThisEntry]}p" $BootFile | sed 's/.*\/vmlinuz-//' | sed 's/\s.*$//') "* ]]; then
@@ -111,13 +112,12 @@ function GenerateMenuList {
 }
 
 function SetAsDefault {
-  #Example
-  #sed -ie ""$StartingLine"s/#//g" /etc/pacman.conf
-
-  #Set default kernel to load                                         UUID_Stash Set here ˇ
-  sh Functions.sh ReplaceLineByNumber ${VM_Linuz_default[1]} "$(sed -n -e "${UUID_Stash[$1]}p" $BootFile | sed 's/\//\\\//g' | cut -c 2-)" $BootFile
-  #Set default kernel to load                                         IMG_Stash Set here ˇ
-  sh Functions.sh ReplaceLineByNumber ${VM_Linuz_default[2]} "$(sed -n -e "${IMG_Stash[$1]}p" $BootFile | sed 's/\//\\\//g' | cut -c 2-)" $BootFile
+  #Set default kernel to load (UUID_Stash)
+  ReplaceWith=$(sed -n -e "${UUID_Stash[$1]}p" $BootFile | sed 's/\//\\\//g' | cut -c 2-)
+  sed -ie "${VM_Linuz_default[1]}s/.*/$ReplaceWith/g" $BootFile
+  #Set default kernel to load (IMG_Stash)
+  ReplaceWith=$(sed -n -e "${IMG_Stash[$1]}p" $BootFile | sed 's/\//\\\//g' | cut -c 2-)
+  sed -ie "${VM_Linuz_default[2]}s/.*/$ReplaceWith/g" $BootFile
 }
 
 #Menu
@@ -230,3 +230,25 @@ do
 read -sn1
 clear
 done
+
+
+#ReadBootCFG
+
+#Boot stuff-------------------------------------------------------------------
+#echo "Available versions:" ${#Version_Stash[*]}
+#echo ""
+#echo "Default linux:" ${VM_Linuz_default[0]}
+#echo "UUID line number:" ${VM_Linuz_default[1]}
+#echo "IMG line number:" ${VM_Linuz_default[2]}
+#echo ""
+#echo "Version stash:" ${Version_Stash[*]}
+#echo "UUID stash:" ${UUID_Stash[*]}
+#echo "IMG stash:" ${IMG_Stash[*]}
+#echo ""
+#TEST
+#sed -n "${VM_Linuz_default[1]}p" $BootFile
+#sed -n "${IMG_Stash[1]}p" $BootFile
+#sed -n "${VM_Linuz_default[1]}p" $BootFile | sed 's/.*\///' | sed 's/\s.*$//'
+#-----------------------------------------------------------------------------
+
+#SetDefaultLists

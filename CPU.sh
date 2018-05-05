@@ -16,8 +16,8 @@ function EnableMultilibRepository {
 function SetDefaultLists {
   #Available options
   Available=("Intel Graphics" "Intel Vulkan" "AMD Graphics" "AMD Vulkan")
-  echo "DEFAULT----------------------------------------"
-  echo "Available:" ${Available[*]} "| Length:" ${#Available[@]}
+  #echo "DEFAULT----------------------------------------"
+  #echo "Available:" ${Available[*]} "| Length:" ${#Available[@]}
   Packages=("mesa lib32-mesa" "vulkan-intel" "mesa lib32-mesa xf86-video-amdgpu" "vulkan-radeon")
   if ! [[ ${#Available[@]} = ${#Packages[@]} ]]; then
     echo "Error"
@@ -41,8 +41,8 @@ function SearchForInstalled {
     fi
     #echo "Packages: ${Packages[ThisPackageList]} | Desktop: ${Available[ThisPackageList]}"
   done
-  echo "Installed:" ${Installed[*]} "| Length:" ${#Installed[@]}
-  echo "-----------------------------------------------"
+  #echo "Installed:" ${Installed[*]} "| Length:" ${#Installed[@]}
+  #echo "-----------------------------------------------"
 }
 
 function VulkanSupportCheck {
@@ -83,8 +83,9 @@ function GenerateMenuList {
       if [[ "${Available[$yindex]}" = "${Installed[$xindex]}" ]]; then
         unset 'Available[yindex]'
         unset 'Packages[yindex]'
+      else
+        MenuFIX $yindex
       fi
-      MenuFIX $yindex
     done
   done
   for index in "${!Available[@]}"; do
@@ -97,7 +98,7 @@ function GenerateMenuList {
   unset '_temp_pack'
 }
 
-#Init 32bit support
+#32bit support
 EnableMultilibRepository
 #Menu
 while [ "$INPUT_OPTION" != "end" ]
@@ -118,15 +119,15 @@ do
   #echo "Packages:" ${Packages[*]} "| Length:" ${#Packages[@]}
   #echo "-----------------------------------------------"
   #echo ""
-  #echo "This system has an \"$CPU\" processor. (Press \"ESC\" to go back.)"
-  if [[ ${#Available[@]} = 0 ]]; then
+  echo "This system has an \"$CPU\" processor. (Press \"ESC\" to go back.)"
+  if [[ ${#Available[@]} = 0 ]]; then #Everything available installed
     echo "No available options."
     read -sn1 INPUT_OPTION
     if [[ $INPUT_OPTION = $'\e' ]]; then #Exit
       break
     fi
-  else
-    echo "Available CPU options:"
+  else #Draw menu
+    echo "Available options:"
     for ThisEntry in "${!Available[@]}"; do #List menuentries
       echo "$(($ThisEntry + 1)). Install ${Available[ThisEntry]} driver."
     done
@@ -144,7 +145,7 @@ do
         sh Functions.sh InstallPackages $ThisPackage
       done
     fi
+    read -sn1
   fi
-  read -sn1
   clear
 done

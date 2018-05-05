@@ -16,17 +16,3 @@ fi
 
 echo "Done!"
 read -sn1
-
-P5
-P6
-NetBurst
-Pentium M
-Prescott
-Intel Core
-Penryn
-Nehalem
-Bonnell
-Westmere
-Saltwell
-Sandy Bridge
-Ivy Bridge
