@@ -5,6 +5,8 @@ clear
 BootFile="/boot/grub/grub.cfg"
 
 function ReadBootCFG {
+  MenuEntryCount=0
+  LineCount=0
   while read line
   do
     let LineCount=LineCount+1
@@ -13,13 +15,9 @@ function ReadBootCFG {
       IsMenu="true"
       let MenuEntryCount=MenuEntryCount+1
       if [[ $MenuEntryCount = 1 ]]; then
-        VM_Linuz_default[0]=$(echo $line | sed "s/.*menuentry '\(.*\)'.*/\1/" | sed "s/'.*//")
+        VM_Linuz_default+=("$(echo $line | sed "s/.*menuentry '\(.*\)'.*/\1/" | sed "s/'.*//")")
       else
-        if [[ ${#Version_Stash[*]} = 0 ]]; then
-          Version_Stash[0]=$(echo $line | sed "s/.*menuentry '\(.*\)'.*/\1/" | sed "s/'.*//")
-        else
-          Version_Stash[${#Version_Stash[*]}]=$(echo $line | sed "s/.*menuentry '\(.*\)'.*/\1/" | sed "s/'.*//")
-        fi
+        Version_Stash+=("$(echo $line | sed "s/.*menuentry '\(.*\)'.*/\1/" | sed "s/'.*//")")
       fi
     fi
     #Find lines to replace
@@ -27,25 +25,17 @@ function ReadBootCFG {
       case $line in
         *"linux	/"* )
           if [[ $MenuEntryCount = 1 ]]; then
-            VM_Linuz_default[1]=$LineCount
+            VM_Linuz_default+=("$LineCount")
           else
-            if [[ ${#UUID_Stash[*]} = 0 ]]; then
-              UUID_Stash[0]=$LineCount
-            else
-              UUID_Stash[${#UUID_Stash[*]}]=$LineCount
-            fi
+            UUID_Stash+=("$LineCount")
           fi
           ;;
         *"initrd"* )
           Initframs=$line
           if [[ $MenuEntryCount = 1 ]]; then
-            VM_Linuz_default[2]=$LineCount
+            VM_Linuz_default+=("$LineCount")
           else
-            if [[ ${#IMG_Stash[*]} = 0 ]]; then
-              IMG_Stash[0]=$LineCount
-            else
-              IMG_Stash[${#IMG_Stash[*]}]=$LineCount
-            fi
+            IMG_Stash+=("$LineCount")
           fi
           ;;
       esac
@@ -60,34 +50,46 @@ function ReadBootCFG {
 function SetDefaultLists {
   #Available options
   Available=("Stable" "Longterm" "Zen" "CK (AUR)")
-  echo "DEFAULT----------------------------------------"
-  echo "Available:" ${Available[*]} "| Length:" ${#Available[@]}
+  #echo "DEFAULT----------------------------------------"
+  #echo "Available:" ${Available[*]} "| Length:" ${#Available[@]}
   Packages=("linux linux-headers" "linux-lts linux-lts-headers" "linux-zen linux-zen-headers" "linux-ck linux-ck-headers")
   if ! [[ ${#Available[@]} = ${#Packages[@]} ]]; then
     echo "Error"
     break
   fi
+  #Default kernel
+  DEFAULT_KERNEL="$(sed -n "${VM_Linuz_default[1]}p" $BootFile | sed 's/.*\/vmlinuz-//' | sed 's/\s.*$//') "
   for index in "${!Packages[@]}"; do #Default kernel to boot
-    if [[ "${Packages[$index]}" = "$(sed -n "${UUID_Stash[ThisEntry]}p" $BootFile | sed 's/.*\/vmlinuz-//' | sed 's/\s.*$//') "* ]]; then
+    if [[ "${Packages[$index]}" = "$DEFAULT_KERNEL"* ]]; then
       DEFAULT_KERNEL=${Available[$index]}
     fi
   done
   #Active kernel
-  ACTIVE_KERNEL=$(uname -r)
-  echo $ACTIVE_KERNEL
+  ACTIVE_KERNEL=$(uname -r | rev | cut -d "-" -f 1 | rev)
+  if [[ "$ACTIVE_KERNEL" = "ARCH" ]]; then
+    $ACTIVE_KERNEL = "Stable"
+  else
+    for index in "${!Packages[@]}"; do
+      if [[ "${Packages[$index]}" = *"$ACTIVE_KERNEL"* ]]; then
+        ACTIVE_KERNEL=${Available[$index]}
+      fi
+    done
+  fi
 }
 
 function SearchForInstalled {
   #echo "-----------------------------------------------"
-  for ThisPackageList in ${!Packages[*]}; do
-    #echo "Packages: ${Packages[ThisPackageList]} | Desktop: ${Available[ThisPackageList]}"
-    #Only search for installed kernels
-    if [[ $(sh Functions.sh _isInstalled "$(echo ${Packages[ThisPackageList]} | sed -e 's/\s.*$//')") = 0 ]]; then
-      Installed+=("${Available[ThisPackage]}")
-    fi
+  for xindex in ${!Packages[*]}; do
+    for yindex in ${!UUID_Stash[*]}; do
+      SearchFor=$(sed -n "${UUID_Stash[$yindex]}p" $BootFile | sed 's/.*\/vmlinuz-//' | sed 's/\s.*$//')
+      ThisKernel=$(echo ${Packages[$xindex]} | sed -e 's/\s.*$//')
+      if [[ "$ThisKernel" = "$SearchFor" ]]; then
+        Installed+=("${Available[$xindex]}")
+      fi
+    done
   done
-  echo "Installed:" ${Installed[*]} "| Length:" ${#Installed[@]}
-  echo "-----------------------------------------------"
+  #echo "Installed:" ${Installed[*]} "| Length:" ${#Installed[@]}
+  #echo "-----------------------------------------------"
 }
 
 function GenerateMenuList {
@@ -123,6 +125,9 @@ function SetAsDefault {
 #Menu
 while [ "$INPUT_OPTION" != "end" ]
 do
+  Version_Stash=()
+  UUID_Stash=()
+  IMG_Stash=()
   ReadBootCFG
   #Boot stuff-------------------------------------------------------------------
   #echo "Available versions:" ${#Version_Stash[*]}
@@ -149,10 +154,10 @@ do
   #Installed+=("Longterm")
   #-------------------------------------------
   GenerateMenuList
-  echo "MENU-------------------------------------------"
-  echo "Available:" ${Available[*]} "| Length:" ${#Available[@]}
-  echo "Packages:" ${Packages[*]} "| Length:" ${#Packages[@]}
-  echo "-----------------------------------------------"
+  #echo "MENU-------------------------------------------"
+  #echo "Available:" ${Available[*]} "| Length:" ${#Available[@]}
+  #echo "Packages:" ${Packages[*]} "| Length:" ${#Packages[@]}
+  #echo "-----------------------------------------------"
   if [[ ${#Installed[@]} = 1 ]]; then #One kernel
     echo "Currently using \"$ACTIVE_KERNEL\" kernel. (Press \"ESC\" to quit.)"
     echo "Available options:"
@@ -200,16 +205,18 @@ do
     elif [[ $INPUT_OPTION = 1 ]]; then #Select default
       SetDefaultLists
       echo "Choose default kernel:"
-      for ThisEntry in "${!Version_Stash[@]}"; do #Linux images(kernel) list
-        FindMe=$(sed -n "${UUID_Stash[ThisEntry]}p" $BootFile | sed 's/.*\/vmlinuz-//' | sed 's/\s.*$//')
-        for index in "${!Packages[@]}"; do
-          if [[ "${Packages[$index]}" = "$FindMe "* ]]; then
-            echo "$(($ThisEntry + 1)). Set ${Available[$index]} as default."
+      for xindex in "${!Version_Stash[@]}"; do #Linux images(kernel) list
+        FindMe=$(sed -n "${UUID_Stash[xindex]}p" $BootFile | sed 's/.*\/vmlinuz-//' | sed 's/\s.*$//')
+        for yindex in "${!Packages[@]}"; do
+          if [[ "${Packages[$yindex]}" = "$FindMe "* ]]; then
+            echo "$(($xindex + 1)). Set ${Available[$yindex]} as default."
           fi
         done
       done
       read -sn1 INPUT_OPTION
-      SetAsDefault $(($INPUT_OPTION - 1))
+      if ! [[ $INPUT_OPTION -gt $((${#Version_Stash[@]} + 1)) ]]; then
+        SetAsDefault $(($INPUT_OPTION - 1))
+      fi
     else #Install packages
       if ! [[ "${Available[$(($INPUT_OPTION - 2))]}" = *"(AUR)"* ]]; then #Pacman
         for ThisPackage in $(echo ${Packages[$(($INPUT_OPTION - 2))]} | tr ";" "\n")
@@ -227,28 +234,15 @@ do
       grub-mkconfig -o /boot/grub/grub.cfg
     fi
   fi
-read -sn1
 clear
 done
 
-
-#ReadBootCFG
-
-#Boot stuff-------------------------------------------------------------------
-#echo "Available versions:" ${#Version_Stash[*]}
-#echo ""
-#echo "Default linux:" ${VM_Linuz_default[0]}
-#echo "UUID line number:" ${VM_Linuz_default[1]}
-#echo "IMG line number:" ${VM_Linuz_default[2]}
-#echo ""
-#echo "Version stash:" ${Version_Stash[*]}
-#echo "UUID stash:" ${UUID_Stash[*]}
-#echo "IMG stash:" ${IMG_Stash[*]}
-#echo ""
-#TEST
-#sed -n "${VM_Linuz_default[1]}p" $BootFile
-#sed -n "${IMG_Stash[1]}p" $BootFile
-#sed -n "${VM_Linuz_default[1]}p" $BootFile | sed 's/.*\///' | sed 's/\s.*$//'
-#-----------------------------------------------------------------------------
-
-#SetDefaultLists
+#Autostart if ( ACTIVE_KERNEL != DEFAULT_KERNEL )
+ReadBootCFG
+SetDefaultLists
+if ! [[ "$ACTIVE_KERNEL" = "$DEFAULT_KERNEL" ]]; then
+  if ! grep -q "ArchMate" ~root/.bashrc; then
+    sh Functions.sh AutoStartSwitch
+    reboot
+  fi
+fi
