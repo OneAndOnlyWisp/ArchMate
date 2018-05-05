@@ -176,13 +176,13 @@ do
         for ThisPackage in $(echo ${Packages[$(($INPUT_OPTION - 1))]} | tr ";" "\n")
         do
           #echo $ThisPackage
-          sh Functions.sh InstallPackages $ThisPackage
+          sh ""$1"Functions.sh" InstallPackages $ThisPackage
         done
       else #Aurman
         for ThisPackage in $(echo ${Packages[$(($INPUT_OPTION - 1))]} | tr ";" "\n")
         do
           #echo $ThisPackage
-          sh Functions.sh InstallAURPackages $ThisPackage
+          sh ""$1"Functions.sh" InstallAURPackages $ThisPackage
         done
       fi
       grub-mkconfig -o /boot/grub/grub.cfg
@@ -222,13 +222,13 @@ do
         for ThisPackage in $(echo ${Packages[$(($INPUT_OPTION - 2))]} | tr ";" "\n")
         do
           #echo $ThisPackage
-          sh Functions.sh InstallPackages $ThisPackage
+          sh ""$1"Functions.sh" InstallPackages $ThisPackage
         done
       else #Aurman
         for ThisPackage in $(echo ${Packages[$(($INPUT_OPTION - 2))]} | tr ";" "\n")
         do
           #echo $ThisPackage
-          sh Functions.sh InstallAURPackages $ThisPackage
+          sh ""$1"Functions.sh" InstallAURPackages $ThisPackage
         done
       fi
       grub-mkconfig -o /boot/grub/grub.cfg
