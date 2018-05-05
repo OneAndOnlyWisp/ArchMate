@@ -92,22 +92,15 @@ function Init {
 	! [ -e ~root/.bashrc ] && cp /etc/skel/.bash* ~root
 	#Ini file
 	if ! [ -e ""$Source_Path"ArchMate.ini" ]; then #Create
-	  echo "TurnMeOff=false" > ArchMate.ini
+	  echo "TurnMeOff=false" > ""$Source_Path"ArchMate.ini"
 	else #Read
 		TurnMeOff=$(sed 's:.*TurnMeOff=::' ""$Source_Path"ArchMate.ini")
-	  case "$TurnMeOff" in
-	    "true" )
-				if grep -q "ArchMate" ~root/.bashrc; then
-					AutoStartSwitch
-				fi
-				;;
-			"false" )
-				#Nothing for now
-	      ;;
-			* )
-				echo "TurnMeOff=false" > ""$Source_Path"ArchMate.ini"
-				;;
-	  esac
+    if [[ "$TurnMeOff" = "true" ]]; then
+      if grep -q "ArchMate" ~root/.bashrc; then
+        AutoStartSwitch
+      fi
+    fi
+    echo "TurnMeOff=false" > ""$Source_Path"ArchMate.ini"
 	fi
   if [[ $(lscpu | sed -n 's/^Model name:[[:space:]]*//p') = *"Intel"* ]]; then #Microcode for Intel CPUs
     if ! [[ $(_isInstalled "intel-ucode") == 0 ]]; then
