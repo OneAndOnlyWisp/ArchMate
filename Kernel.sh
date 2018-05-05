@@ -242,7 +242,7 @@ ReadBootCFG
 SetDefaultLists
 if ! [[ "$ACTIVE_KERNEL" = "$DEFAULT_KERNEL" ]]; then
   if ! grep -q "ArchMate" ~root/.bashrc; then
-    sh Functions.sh AutoStartSwitch
+    sh Functions.sh AutoStartSwitch $1
     reboot
   fi
 fi
