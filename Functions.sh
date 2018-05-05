@@ -1,5 +1,7 @@
 #!/bin/sh
 
+Source_Path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/"
+
 #Helper functions---------------------------------------------------------------
 #Find and replace all match
 # $1=ReplaceThis $2=ReplaceWith $3=Input
@@ -89,10 +91,10 @@ function Init {
 	#Check and add .bashrc for root
 	! [ -e ~root/.bashrc ] && cp /etc/skel/.bash* ~root
 	#Ini file
-	if ! [ -e ""$1"ArchMate.ini" ]; then #Create
+	if ! [ -e ""$Source_Path"ArchMate.ini" ]; then #Create
 	  echo "TurnMeOff=false" > ArchMate.ini
 	else #Read
-		TurnMeOff=$(sed 's:.*TurnMeOff=::' ""$1"ArchMate.ini")
+		TurnMeOff=$(sed 's:.*TurnMeOff=::' ""$Source_Path"ArchMate.ini")
 	  case "$TurnMeOff" in
 	    "true" )
 				if grep -q "ArchMate" ~root/.bashrc; then
@@ -103,7 +105,7 @@ function Init {
 				#Nothing for now
 	      ;;
 			* )
-				echo "TurnMeOff=false" > ""$1"ArchMate.ini"
+				echo "TurnMeOff=false" > ""$Source_Path"ArchMate.ini"
 				;;
 	  esac
 	fi
@@ -122,7 +124,7 @@ function AutoStartSwitch {
 		sed -i -e :a -e '/^\n*$/{$d;N};/\n$/ba' ~root/.bashrc
 		echo "Autostart Off."
 	else
-		echo $'\n'"ArchMate=\"$1\""$'\n'"sh \$ArchMate" >> ~root/.bashrc
+		echo $'\n'"ArchMate=\"$Source_Path\""$'\n'"sh \$ArchMate" >> ~root/.bashrc
 		echo "Autostart On."
 	fi
 }
