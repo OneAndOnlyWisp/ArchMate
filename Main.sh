@@ -12,7 +12,7 @@ DESKTOP=$Source_Path"Desktop.sh"
 CUSTOM=$Source_Path"Custom.sh"
 
 #Init
-sh Functions.sh Init
+sh "$Source_Path/Functions.sh" Init
 
 #Main loop
 INPUT_OPTION=default
