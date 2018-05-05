@@ -89,10 +89,10 @@ function Init {
 	#Check and add .bashrc for root
 	! [ -e ~root/.bashrc ] && cp /etc/skel/.bash* ~root
 	#Ini file
-	if ! [ -e ArchMate.ini ]; then #Create
+	if ! [ -e ""$1"ArchMate.ini" ]; then #Create
 	  echo "TurnMeOff=false" > ArchMate.ini
 	else #Read
-		TurnMeOff=$(sed 's:.*TurnMeOff=::' ArchMate.ini)
+		TurnMeOff=$(sed 's:.*TurnMeOff=::' ""$1"ArchMate.ini")
 	  case "$TurnMeOff" in
 	    "true" )
 				if grep -q "ArchMate" ~root/.bashrc; then
@@ -103,7 +103,7 @@ function Init {
 				#Nothing for now
 	      ;;
 			* )
-				echo "TurnMeOff=false" > ArchMate.ini
+				echo "TurnMeOff=false" > ""$1"ArchMate.ini"
 				;;
 	  esac
 	fi
