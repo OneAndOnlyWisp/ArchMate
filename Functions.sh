@@ -124,7 +124,7 @@ function AutoStartSwitch {
 		sed -i -e :a -e '/^\n*$/{$d;N};/\n$/ba' ~root/.bashrc
 		echo "Autostart Off."
 	else
-		echo $'\n'"ArchMate=\"$Source_Path\""$'\n'"sh \$ArchMate" >> ~root/.bashrc
+		echo $'\n'"ArchMate=\""$Source_Path"Main.sh\""$'\n'"sh \$ArchMate" >> ~root/.bashrc
 		echo "Autostart On."
 	fi
 }
