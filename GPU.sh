@@ -1,15 +1,58 @@
 #!/bin/sh
-clear
+Source_Path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/"
 
 #Gather required system information
 GPU=$(lspci | grep -o 'VGA compatible controller: .*' | sed 's/.*: //') #Most likely need a rework later on!!!
+#Grub config file
+BootFile="/boot/grub/grub.cfg"
+
+function ReadBootCFG {
+  MenuEntryCount=0
+  LineCount=0
+  while read line
+  do
+    let LineCount=LineCount+1
+    #Search for menuentries
+    if [[ $line = "menuentry 'Arch"* ]] && ! [[ $line = *"fallback initramfs"* ]]; then
+      IsMenu="true"
+      let MenuEntryCount=MenuEntryCount+1
+      if [[ $MenuEntryCount = 1 ]]; then
+        VM_Linuz_default+=("$(echo $line | sed "s/.*menuentry '\(.*\)'.*/\1/" | sed "s/'.*//")")
+      else
+        Version_Stash+=("$(echo $line | sed "s/.*menuentry '\(.*\)'.*/\1/" | sed "s/'.*//")")
+      fi
+    fi
+    #Find lines to replace
+    if [[ $IsMenu = "true" ]]; then
+      case $line in
+        *"linux	/"* )
+          if [[ $MenuEntryCount = 1 ]]; then
+            VM_Linuz_default+=("$LineCount")
+          else
+            UUID_Stash+=("$LineCount")
+          fi
+          ;;
+        *"initrd"* )
+          Initframs=$line
+          if [[ $MenuEntryCount = 1 ]]; then
+            VM_Linuz_default+=("$LineCount")
+          else
+            IMG_Stash+=("$LineCount")
+          fi
+          ;;
+      esac
+      #Close menu
+      if [[ $line = *"}"* ]]; then
+        IsMenu="false"
+      fi
+    fi
+  done < $BootFile
+}
 
 function SetDefaultLists {
   #Available options
   Available=("NVIDIA" "AMD" "VirtualBox")
-  #echo "DEFAULT----------------------------------------"
-  #echo "Available:" ${Available[*]} "| Length:" ${#Available[@]}
-  Packages=("nvidia" "xxxxx" "virtualbox-guest-utils")
+  Packages=("nvidia" "xf86-video-ati" "virtualbox-guest-utils")
   if ! [[ ${#Available[@]} = ${#Packages[@]} ]]; then
     echo "Error"
     exit
@@ -17,15 +60,11 @@ function SetDefaultLists {
 }
 
 function SearchForInstalled {
-  #echo "-----------------------------------------------"
   for ThisPackageList in ${!Packages[*]}; do
-    #echo "Packages: ${Packages[ThisPackageList]} | Desktop: ${Available[ThisPackageList]}"
-    if [[ $(sh Functions.sh _isInstalled "${Packages[ThisPackageList]}") = 0 ]]; then
+    if [[ $(sh ""$Source_Path"Functions.sh" _isInstalled "${Packages[ThisPackageList]}") = 0 ]]; then
       Installed+=("${Available[ThisPackageList]}")
     fi
   done
-  #echo "Installed:" ${Installed[*]} "| Length:" ${#Installed[@]}
-  #echo "-----------------------------------------------"
 }
 
 function MenuFIX {
@@ -68,22 +107,25 @@ function GenerateMenuList {
 #Menu
 while [ "$INPUT_OPTION" != "end" ]
 do
+  #Boot stuff---------------------------------
+  Version_Stash=()
+  UUID_Stash=()
+  IMG_Stash=()
+  ReadBootCFG
+  #-------------------------------------------
+  #MENU---------------------------------------
   Available=()
   Packages=()
   Installed=()
   SetDefaultLists
   SearchForInstalled
-  #TEST---------------------------------------
-  #Installed+=("Longterm")
-  #-------------------------------------------
   GenerateMenuList
-  #echo "MENU-------------------------------------------"
-  #echo "Available:" ${Available[*]} "| Length:" ${#Available[@]}
-  #echo "Packages:" ${Packages[*]} "| Length:" ${#Packages[@]}
-  #echo "-----------------------------------------------"
+  #-------------------------------------------
+  clear
+  #UI
   echo "Graphical adapters found:                 (Press \"ESC\" to go back.)"
   echo "- $GPU"
-  if [[ ${#Available[@]} = 0 ]]; then #Everything available installed
+  if [[ ${#Available[@]} = 0 ]]; then #Everything available is installed
     echo "No available options."
     read -sn1 INPUT_OPTION
     if [[ $INPUT_OPTION = $'\e' ]]; then #Exit
@@ -102,23 +144,16 @@ do
     elif [[ $INPUT_OPTION -gt $((${#Available[@]})) ]]; then #Invalid number error
       echo "Invalid number!"
     else #Install packages
-      echo ${Available[$(($INPUT_OPTION - 1))]} | tr ";" "\n"
-      #NEED check kernel for proper driver package
-      if ! [[ "${Available[$(($INPUT_OPTION - 1))]}" = *"(AUR)"* ]]; then #Pacman
-        for ThisPackage in $(echo ${Packages[$(($INPUT_OPTION - 1))]} | tr ";" "\n")
-        do
-          echo $ThisPackage
-          #sh Functions.sh InstallPackages $ThisPackage
+      for ThisPackage in $(echo ${Packages[$(($INPUT_OPTION - 1))]} | tr ";" "\n")
+      do
+        for index in ${!UUID_Stash[*]}; do #Installed kernels
+          ThisKernel=$(sed -n "${UUID_Stash[$index]}p" $BootFile | sed 's/.*\/vmlinuz-//' | sed 's/\s.*$//')
+          KernelSuffix=$(echo $ThisKernel | sed 's/.*linux//')
+          echo ""$ThisPackage""$KernelSuffix""
+          sh ""$Source_Path"Functions.sh" InstallPackages ""$ThisPackage""$KernelSuffix""
         done
-      else #Aurman
-        for ThisPackage in $(echo ${Packages[$(($INPUT_OPTION - 1))]} | tr ";" "\n")
-        do
-          echo $ThisPackage "(AUR)"
-          #sh Functions.sh InstallAURPackages $ThisPackage
-        done
-      fi
+      done
     fi
-    read -sn1
-    clear
+    read -sn1    
   fi
 done

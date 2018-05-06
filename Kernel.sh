@@ -1,5 +1,4 @@
 #!/bin/bash
-clear
 Source_Path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/"
 
 #Grub config file
@@ -135,6 +134,7 @@ do
   SearchForInstalled
   GenerateMenuList
   #-------------------------------------------
+  clear
   #UI
   if [[ ${#Installed[@]} = 1 ]]; then #One kernel
     echo "Currently using \"$ACTIVE_KERNEL\" kernel. (Press \"ESC\" to quit.)"
@@ -196,7 +196,6 @@ do
       grub-mkconfig -o /boot/grub/grub.cfg
     fi
   fi
-clear
 done
 
 #Autostart if ( ACTIVE_KERNEL != DEFAULT_KERNEL )

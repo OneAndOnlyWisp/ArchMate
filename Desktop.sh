@@ -62,22 +62,18 @@ function SetAsDefault {
 
 #Menu
 while [ "$INPUT_OPTION" != "end" ]
-do
-  clear
+do  
+  #MENU---------------------------------------
   Available=()
   Packages=()
   AutostartScripts=()
   Installed=()
   SetDefaultLists
   SearchForInstalled
-  #TEST---------------------------------------
-  #Installed+=("Budgie")
-  #-------------------------------------------
   GenerateMenuList
-  #echo "MENU-------------------------------------------"
-  #echo "Available:" ${Available[*]} "| Length:" ${#Available[@]}
-  #echo "Packages:" ${Packages[*]} "| Packages:" ${#Packages[@]}
-  #echo "-----------------------------------------------"
+  #-------------------------------------------
+  clear
+  #UI
   if [[ ${#Installed[@]} = 0 ]] || [[ ${#Installed[@]} = 1 ]]; then #0 or 1 desktop
     if [[ ${#Installed[@]} = 0 ]]; then #0 desktop text
       echo "No desktops installed on this system. (Press \"ESC\" to quit.)"

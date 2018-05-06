@@ -1,40 +1,39 @@
 #!/bin/sh
-
+Source_Path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/"
 #later on read this value from input
 isAuto="false"
-needSUDO="false"
-if [[ $isAuto = "true" ]] && [[ $needSUDO = "true" ]]; then
-  sh Functions.sh InstallPackages "sudo"
-  FindAndReplaceAll "# %wheel ALL=(ALL) ALL" "%wheel ALL=(ALL) ALL" /etc/sudoers | sudo EDITOR='tee' visudo
-fi
+
+function CheckForSUDO {
+  if [[ $(sh ""$Source_Path"Functions.sh" _isInstalled "sudo") = 0 ]]; then
+    if ! [[ $(cat /etc/sudoers | grep -o '# %wheel ALL=(ALL) ALL.*') = "" ]]; then
+      #Allow admin rigths for wheel group
+      sh ""$Source_Path"Functions.sh" FindAndReplaceAll "# %wheel ALL=(ALL) ALL" "%wheel ALL=(ALL) ALL" /etc/sudoers | sudo EDITOR='tee' visudo
+    fi
+  fi
+}
 
 function CreateUser {
-  if [[ $needSUDO = "true" ]]; then
-    sh Functions.sh InstallPackages "sudo"
-    #Allow admin rigths for wheel group
-    FindAndReplaceAll "# %wheel ALL=(ALL) ALL" "%wheel ALL=(ALL) ALL" /etc/sudoers | sudo EDITOR='tee' visudo
-    needSUDO="false"
-  fi
-  if [[ $isAuto = "false" ]]; then
-    if [[ $1 = "admin" ]]; then
+  if [[ $isAuto = "false" ]]; then #Manual mode
+    if [[ $1 = "admin" ]]; then #Admin
       echo "Are you sure about that? yes|no"
       read Security_Q
       if [[ $Security_Q = "yes" ]]; then
+        CheckForSUDO
         printf 'Type selected username: '
         read -r Username
         useradd -m -g users -G wheel -s /bin/bash $Username
         passwd $Username
       fi
-    else
+    else #Regular
       useradd -m -g users -s /bin/bash $Username
       passwd $Username
     fi
-
-  else
-    if [[ $1 = "admin" ]]; then
+  else #Automatic mode
+    if [[ $1 = "admin" ]]; then #Admin
+      CheckForSUDO
       useradd -m -g users -G wheel -s /bin/bash $2
       echo "$2:$3" | chpasswd
-    else
+    else #Regular
       useradd -m -g users -s /bin/bash $2
       echo "$2:$3" | chpasswd
     fi
@@ -68,7 +67,6 @@ do
     echo "Available User options:"
     echo "1. Add Admin user"
     echo "2. Add normal user"
-
     read -sn1 INPUT_OPTION
     case $INPUT_OPTION in
       '1') CreateUser "admin";;

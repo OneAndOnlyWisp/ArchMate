@@ -1,5 +1,4 @@
 #!/bin/bash
-clear
 Source_Path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/"
 
 #Gather required system information
@@ -112,6 +111,7 @@ do
   SearchForInstalled
   GenerateMenuList
   #-------------------------------------------
+  clear
   #UI
   echo "This system has an \"$CPU\" processor. (Press \"ESC\" to go back.)"
   if [[ ${#Available[@]} = 0 ]]; then #Everything available
@@ -140,5 +140,4 @@ do
       done
     fi
   fi
-  clear
 done

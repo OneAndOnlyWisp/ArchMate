@@ -1,13 +1,7 @@
 #!/bin/sh
 clear
+Source_Path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/"
 
-sh Functions.sh InstallAURPackages pup-git
-if ! [[ $(pacman -Qs aurman) = "" ]]; then
-  sudo pacman -Rs --noconfirm aurman
-fi
-if ! [[ $(pacman -Qs pup-git) = "" ]]; then
-  sudo pacman -Rs --noconfirm pup-git
-fi
 
 #Custom apps
 #pacman -S --noconfirm konsole dolphin chromium atom transmission-qt sddm
@@ -18,4 +12,4 @@ echo "Done!"
 read -sn1
 
 
-sh ArchMate/Functions.sh InstallPackages intel-ucode
+sh ArchMate/Functions.sh InstallPackages xf86-video-ati-lts

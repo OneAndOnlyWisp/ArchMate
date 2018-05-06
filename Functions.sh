@@ -60,18 +60,27 @@ function InstallPackages {
           return
       fi
       # Otherwise, install all the packages that have been added to the "${NotFound[@]}" array.
-      printf "Packages not found:\n%s\n" "${NotFound[@]}";
+      printf "Packages not found:\n%s\n" "${NotFound[@]}"
       printf "Trying to install from AUR repository."
       for index in "${!NotFound[@]}"; do
         cd $HOME
+        echo ""
+        #echo "$(ls -A "${NotFound[$index]}" | wc -l)"
+
         #Git clone the package
         if ! [[ -d ${NotFound[$index]} ]]; then
           git clone "https://aur.archlinux.org/${NotFound[$index]}.git"
-          cd ${NotFound[$index]}
+          if [[ "$(ls -A "${NotFound[$index]}" | wc -l)" < 2 ]]; then
+            echo "Package not found on AUR repository: ${NotFound[$index]}"
+            rm -rf "${NotFound[$index]}"
+            continue
+          else
+            cd ${NotFound[$index]}
+          fi
         else
           cd ${NotFound[$index]}
           git pull
-        fi
+        fi        
         #Install package
         makepkg -si --noconfirm
       done
