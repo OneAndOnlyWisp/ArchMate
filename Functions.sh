@@ -183,5 +183,25 @@ function InstallAurman {
   makepkg -si --noconfirm
 }
 
+#HTML fetch tool
+function InstallPUP {
+  #AUR packages default dependancy
+  if ! [[ $(_isInstalled "base-devel") == 0 ]]; then
+    pacman -Sy --needed --noconfirm base-devel
+  fi
+  #Git clone the package
+  cd $HOME
+  if ! [[ -d pup-git ]]; then
+    git clone https://aur.archlinux.org/pup-git.git
+    cd pup-git
+  else
+    cd pup-git
+    git fetch https://aur.archlinux.org/pup-git.git
+    git checkout master
+  fi
+  #Install package
+  makepkg -si --noconfirm
+}
+
 
 "$@"
