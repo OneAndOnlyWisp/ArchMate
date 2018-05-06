@@ -61,7 +61,6 @@ function MenuFIX {
       unset 'Available[$1]'
       unset 'Packages[$1]'
     elif [[ "${Available[$1]}" = *"Vulkan"* ]]; then
-      echo "${Available[$1]}"
       VulkanSupportCheck $1
     fi
   else
