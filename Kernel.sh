@@ -126,39 +126,21 @@ function SetAsDefault {
 #Menu
 while [ "$INPUT_OPTION" != "end" ]
 do
+  #Boot stuff---------------------------------
   Version_Stash=()
   UUID_Stash=()
   IMG_Stash=()
   ReadBootCFG
-  #Boot stuff-------------------------------------------------------------------
-  #echo "Available versions:" ${#Version_Stash[*]}
-  #echo ""
-  #echo "Default linux:" ${VM_Linuz_default[0]}
-  #echo "UUID line number:" ${VM_Linuz_default[1]}
-  #echo "IMG line number:" ${VM_Linuz_default[2]}
-  #echo ""
-  #echo "Version stash:" ${Version_Stash[*]}
-  #echo "UUID stash:" ${UUID_Stash[*]}
-  #echo "IMG stash:" ${IMG_Stash[*]}
-  #echo ""
-  #TEST
-  #sed -n "${VM_Linuz_default[1]}p" $BootFile
-  #sed -n "${IMG_Stash[1]}p" $BootFile
-  #sed -n "${VM_Linuz_default[1]}p" $BootFile | sed 's/.*\///' | sed 's/\s.*$//'
-  #-----------------------------------------------------------------------------
+  #-------------------------------------------
+  #MENU---------------------------------------
   Available=()
   Packages=()
   Installed=()
   SetDefaultLists
   SearchForInstalled
-  #TEST---------------------------------------
-  #Installed+=("Longterm")
-  #-------------------------------------------
   GenerateMenuList
-  #echo "MENU-------------------------------------------"
-  #echo "Available:" ${Available[*]} "| Length:" ${#Available[@]}
-  #echo "Packages:" ${Packages[*]} "| Length:" ${#Packages[@]}
-  #echo "-----------------------------------------------"
+  #-------------------------------------------
+  #UI
   if [[ ${#Installed[@]} = 1 ]]; then #One kernel
     echo "Currently using \"$ACTIVE_KERNEL\" kernel. (Press \"ESC\" to quit.)"
     echo "Available options:"
@@ -173,19 +155,11 @@ do
     elif [[ $INPUT_OPTION -gt $((${#Available[@]})) ]]; then #Invalid number error
       echo "Invalid number!"
     else #Install packages
-      if ! [[ "${Available[$(($INPUT_OPTION - 1))]}" = *"(AUR)"* ]]; then #Pacman
-        for ThisPackage in $(echo ${Packages[$(($INPUT_OPTION - 1))]} | tr ";" "\n")
-        do
-          #echo $ThisPackage
-          sh ""$Source_Path"Functions.sh" InstallPackages $ThisPackage
-        done
-      else #Aurman
-        for ThisPackage in $(echo ${Packages[$(($INPUT_OPTION - 1))]} | tr ";" "\n")
-        do
-          #echo $ThisPackage
-          sh ""$Source_Path"Functions.sh" InstallAURPackages $ThisPackage
-        done
-      fi
+      for ThisPackage in $(echo ${Packages[$(($INPUT_OPTION - 1))]} | tr ";" "\n")
+      do
+        #echo $ThisPackage
+        sh ""$Source_Path"Functions.sh" InstallPackages $ThisPackage
+      done
       grub-mkconfig -o /boot/grub/grub.cfg
     fi
   else #More than one kernel
@@ -219,19 +193,11 @@ do
         SetAsDefault $(($INPUT_OPTION - 1))
       fi
     else #Install packages
-      if ! [[ "${Available[$(($INPUT_OPTION - 2))]}" = *"(AUR)"* ]]; then #Pacman
-        for ThisPackage in $(echo ${Packages[$(($INPUT_OPTION - 2))]} | tr ";" "\n")
-        do
-          #echo $ThisPackage
-          sh ""$Source_Path"Functions.sh" InstallPackages $ThisPackage
-        done
-      else #Aurman
-        for ThisPackage in $(echo ${Packages[$(($INPUT_OPTION - 2))]} | tr ";" "\n")
-        do
-          #echo $ThisPackage
-          sh ""$Source_Path"Functions.sh" InstallAURPackages $ThisPackage
-        done
-      fi
+      for ThisPackage in $(echo ${Packages[$(($INPUT_OPTION - 2))]} | tr ";" "\n")
+      do
+        #echo $ThisPackage
+        sh ""$Source_Path"Functions.sh" InstallPackages $ThisPackage
+      done
       grub-mkconfig -o /boot/grub/grub.cfg
     fi
   fi

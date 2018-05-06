@@ -47,7 +47,7 @@ function SearchForInstalled {
 }
 
 function VulkanSupportCheck {
-  [[ $(sh ""$Source_Path"Functions.sh" _isInstalled "pup-git") = 1 ]] && sh ""$Source_Path"Functions.sh" InstallAURPackages "pup-git"
+  [[ $(sh ""$Source_Path"Functions.sh" _isInstalled "pup-git") = 1 ]] && sh ""$Source_Path"Functions.sh" InstallPUP
   if [[ $CodeName = "" ]]; then
     CodeName=$(sh ""$Source_Path"Functions.sh" IntelCodename)
   fi
@@ -109,22 +109,15 @@ EnableMultilibRepository
 #Menu
 while [ "$INPUT_OPTION" != "end" ]
 do
+  #MENU---------------------------------------
   Available=()
   Packages=()
   Installed=()
   SetDefaultLists
-  #SearchForInstalled
-  #TEST---------------------------------------
-  #Installed+=("Intel Vulkan")
-  #echo "INSTALLED FIX----------------------------------"
-  #echo "Installed:" ${Installed[*]} "| Length:" ${#Installed[@]}
-  #-------------------------------------------
+  SearchForInstalled
   GenerateMenuList
-  #echo "MENU-------------------------------------------"
-  #echo "Available:" ${Available[*]} "| Length:" ${#Available[@]}
-  #echo "Packages:" ${Packages[*]} "| Length:" ${#Packages[@]}
-  #echo "-----------------------------------------------"
-  #echo ""
+  #-------------------------------------------
+  #UI
   echo "This system has an \"$CPU\" processor. (Press \"ESC\" to go back.)"
   if [[ ${#Available[@]} = 0 ]]; then #Everything available
     echo "No available options."

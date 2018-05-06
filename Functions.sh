@@ -26,63 +26,56 @@ function _isInstalled {
 function InstallPackages {
     # The packages that are not installed will be added to this array.
     toInstall=();
-
+    # The packages that could not be installed will be added to this array.
+    NotFound=();
+    # Loop through packages
     for pkg; do
         # If the package IS installed, skip it.
         if [[ $(_isInstalled "${pkg}") == 0 ]]; then
-            echo "${pkg} is already installed.";
-            continue;
-        fi;
-
+            echo "${pkg} is already installed."
+            continue
+        fi
         #Otherwise, add it to the list of packages to install.
-        toInstall+=("${pkg}");
-    done;
-
+        toInstall+=("${pkg}")
+    done
     # If no packages were added to the "${toInstall[@]}" array,
     #     don't do anything and stop this function.
     if [[ "${toInstall[@]}" == "" ]] ; then
-        echo "All packages are already installed.";
-        return;
-    fi;
-
+        echo "All packages are already installed."
+        return
+    fi
     # Otherwise, install all the packages that have been added to the "${toInstall[@]}" array.
     printf "Packages not installed:\n%s\n" "${toInstall[@]}";
-    pacman -S --noconfirm --quiet "${toInstall[@]}";
-}
-
-#Install AUR packages if not installed already
-# $@PackageNames
-function InstallAURPackages {
-    #If Aurman is not installed
-    if ! [[ $(_isInstalled "aurman") == 0 ]]; then
-        InstallAurman;
-    fi;
-    # The packages that are not installed will be added to this array.
-    toInstall=();
-
-    for pkg; do
-        # If the package IS installed, skip it.
-        if [[ $(_isInstalled "${pkg}") == 0 ]]; then
-            echo "${pkg} is already installed.";
-            continue;
-        fi;
-
-        #Otherwise, add it to the list of packages to install.
-        toInstall+=("${pkg}");
-    done;
-
-    # If no packages were added to the "${toInstall[@]}" array,
-    #     don't do anything and stop this function.
-    if [[ "${toInstall[@]}" == "" ]] ; then
-        echo "All packages are already installed.";
-        return;
-    fi;
-
-    # Otherwise, install all the packages that have been added to the "${toInstall[@]}" array.
-    printf "Packages not installed:\n%s\n" "${toInstall[@]}";
-    if [[ $(_isInstalled aurman) == 0 ]]; then
-        aurman -S --noconfirm "${toInstall[@]}";
-    fi;
+    for index in "${!toInstall[@]}"; do
+      pacman -S --noconfirm --quiet "${toInstall[$index]}"
+      if [[ $(_isInstalled "${toInstall[$index]}") == 0 ]]; then
+          echo "${toInstall[$index]} is already installed."
+      else
+        NotFound+=("${toInstall[$index]}")
+      fi
+      # If no packages were added to the "${NotFound[@]}" array,
+      #     don't do anything and stop this function.
+      if [[ "${NotFound[@]}" == "" ]] ; then
+          echo "All packages are already installed."
+          return
+      fi
+      # Otherwise, install all the packages that have been added to the "${NotFound[@]}" array.
+      printf "Packages not found:\n%s\n" "${NotFound[@]}";
+      printf "Trying to install from AUR repository."
+      for index in "${!NotFound[@]}"; do
+        cd $HOME
+        #Git clone the package
+        if ! [[ -d ${NotFound[$index]} ]]; then
+          git clone "https://aur.archlinux.org/${NotFound[$index]}.git"
+          cd ${NotFound[$index]}
+        else
+          cd ${NotFound[$index]}
+          git pull
+        fi
+        #Install package
+        makepkg -si --noconfirm
+      done
+    done
 }
 #-------------------------------------------------------------------------------
 
@@ -113,6 +106,9 @@ function Init {
     if [[ $(cat /usr/bin/makepkg | grep -o 'asroot') ]]; then
       echo "makepkg patch succes!"
     fi
+  fi
+  if ! [[ $(_isInstalled "base-devel") == 0 ]]; then #AUR packages dependancy
+    pacman -Sy --needed --noconfirm base-devel
   fi
 }
 
@@ -161,44 +157,6 @@ function IntelCodename {
 	codename=$(curl --silent "$url" | pup '.CodeNameText .value text{}' | xargs | sed 's/Products formerly //')
 
 	echo "$codename"
-}
-
-#AUR package manager
-function InstallAurman {
-  #AUR packages default dependancy
-  if ! [[ $(_isInstalled "base-devel") == 0 ]]; then
-    pacman -Sy --needed --noconfirm base-devel
-  fi
-  #Git clone the package
-  cd $HOME
-  if ! [[ -d aurman ]]; then
-    git clone https://aur.archlinux.org/aurman.git
-    cd aurman
-  else
-    cd aurman
-    git pull
-  fi
-  #Install package
-  makepkg -si --noconfirm
-}
-
-#HTML fetch tool
-function InstallPUP {
-  #AUR packages default dependancy
-  if ! [[ $(_isInstalled "base-devel") == 0 ]]; then
-    pacman -Sy --needed --noconfirm base-devel
-  fi
-  #Git clone the package
-  cd $HOME
-  if ! [[ -d pup-git ]]; then
-    git clone https://aur.archlinux.org/pup-git.git
-    cd pup-git
-  else
-    cd pup-git
-    git pull
-  fi
-  #Install package
-  makepkg -si --noconfirm
 }
 
 
