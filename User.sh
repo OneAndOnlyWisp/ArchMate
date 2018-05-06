@@ -66,11 +66,11 @@ do
     echo "Only \"$(sed -n '/\/bin\/bash/p' /etc/passwd | cut -d: -f1)\" user exists. (Press \"ESC\" to go back.)"
     echo "Available User options:"
     echo "1. Add Admin user"
-    echo "2. Add normal user"
+    echo "2. Add regular user"
     read -sn1 INPUT_OPTION
     case $INPUT_OPTION in
       '1') CreateUser "admin";;
-      '2') CreateUser "normal";;
+      '2') CreateUser "regular";;
       $'\e') break;;
     esac
   else
@@ -78,14 +78,14 @@ do
     echo "Available User options:"
     echo "1. List users"
     echo "2. Add Admin user"
-    echo "3. Add normal user"
+    echo "3. Add regular user"
     echo "4. Remove user"
 
     read -sn1 INPUT_OPTION
     case $INPUT_OPTION in
       '1') clear; sed -n '/\/bin\/bash/p' /etc/passwd | cut -d: -f1; read -sn1;;
       '2') CreateUser "admin";;
-      '3') CreateUser "normal";;
+      '3') CreateUser "regular";;
       '4') DeleteUser "";;
       $'\e') break;;
     esac
