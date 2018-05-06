@@ -89,8 +89,7 @@ function GenerateMenuList {
         unset 'Available[yindex]'
         unset 'Packages[yindex]'
       else
-        echo "MenuFIX"
-        #MenuFIX $yindex
+        MenuFIX $yindex
       fi
     done
   done
@@ -154,6 +153,6 @@ do
         done
       done
     fi
-    read -sn1    
+    read -sn1
   fi
 done
