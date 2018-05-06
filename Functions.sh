@@ -108,8 +108,8 @@ function Init {
     fi
   fi
   if ! [[ $(cat /usr/bin/makepkg | grep -o 'asroot') ]]; then #Allow makepkg to run as root
-    cp /usr/bin/makepkg /home/wisp/ArchMate/Assets/SysBU/makepkgBU
-    cp /home/wisp/ArchMate/Assets/makepkg /usr/bin/makepkg
+    cp /usr/bin/makepkg ""$Source_Path"Assets/SysBU/makepkgBU"
+    cp ""$Source_Path"Assets/makepkg" /usr/bin/makepkg
     if [[ $(cat /usr/bin/makepkg | grep -o 'asroot') ]]; then
       echo "makepkg patch succes!"
     fi
