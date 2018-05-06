@@ -51,8 +51,6 @@ function ReadBootCFG {
 function SetDefaultLists {
   #Available options
   Available=("Stable" "Longterm" "Zen" "CK (AUR)")
-  #echo "DEFAULT----------------------------------------"
-  #echo "Available:" ${Available[*]} "| Length:" ${#Available[@]}
   Packages=("linux linux-headers" "linux-lts linux-lts-headers" "linux-zen linux-zen-headers" "linux-ck linux-ck-headers")
   if ! [[ ${#Available[@]} = ${#Packages[@]} ]]; then
     echo "Error"
@@ -79,7 +77,6 @@ function SetDefaultLists {
 }
 
 function SearchForInstalled {
-  #echo "-----------------------------------------------"
   for xindex in ${!Packages[*]}; do
     for yindex in ${!UUID_Stash[*]}; do
       SearchFor=$(sed -n "${UUID_Stash[$yindex]}p" $BootFile | sed 's/.*\/vmlinuz-//' | sed 's/\s.*$//')
@@ -89,8 +86,6 @@ function SearchForInstalled {
       fi
     done
   done
-  #echo "Installed:" ${Installed[*]} "| Length:" ${#Installed[@]}
-  #echo "-----------------------------------------------"
 }
 
 function GenerateMenuList {

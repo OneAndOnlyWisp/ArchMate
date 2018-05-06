@@ -1,5 +1,5 @@
 #!/bin/bash
-#clear
+clear
 Source_Path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/"
 
 #Gather required system information
@@ -17,8 +17,6 @@ function EnableMultilibRepository {
 function SetDefaultLists {
   #Available options
   Available=("Intel Graphics" "Intel Vulkan" "AMD Graphics" "AMD Vulkan")
-  #echo "DEFAULT----------------------------------------"
-  #echo "Available:" ${Available[*]} "| Length:" ${#Available[@]}
   Packages=("mesa lib32-mesa" "vulkan-intel" "mesa lib32-mesa xf86-video-amdgpu" "vulkan-radeon")
   if ! [[ ${#Available[@]} = ${#Packages[@]} ]]; then
     echo "Error"
@@ -27,23 +25,23 @@ function SetDefaultLists {
 }
 
 function SearchForInstalled {
-  #echo "-----------------------------------------------"
-  for ThisPackageList in ${!Packages[*]}; do
+  for xindex in ${!Packages[*]}; do
     Counter=0
-    for ThisPackage in $(echo ${Packages[ThisPackageList]} | tr ";" "\n")
+    echo ${Packages[xindex]}
+    for ThisPackage in $(echo ${Packages[xindex]} | tr ";" "\n")
     do
+
       if [[ $(sh ""$Source_Path"Functions.sh" _isInstalled "$ThisPackage") = 0 ]]; then
         let Counter=Counter+1
       fi
     done
-    PackageCount=$(($(echo ${Packages[ThisPackageList]} | sed 's/[^ ]//g' | tr -d "\n" | wc -c) + 1))
+    PackageCount=$(($(echo ${Packages[xindex]} | sed 's/[^ ]//g' | tr -d "\n" | wc -c) + 1))
     if [[ $PackageCount = $Counter ]]; then
-      Installed+=("${Available[ThisPackage]}")
+      Installed+=("${Available[xindex]}")
     fi
-    #echo "Packages: ${Packages[ThisPackageList]} | Desktop: ${Available[ThisPackageList]}"
   done
-  #echo "Installed:" ${Installed[*]} "| Length:" ${#Installed[@]}
-  #echo "-----------------------------------------------"
+  echo "Installed:" ${Installed[*]} "| Length:" ${#Installed[@]}
+  echo "-----------------------------------------------"
 }
 
 function VulkanSupportCheck {
@@ -66,6 +64,7 @@ function MenuFIX {
       unset 'Available[$1]'
       unset 'Packages[$1]'
     elif [[ "${Available[$1]}" = *"Vulkan"* ]]; then
+      echo "${Available[$1]}"
       VulkanSupportCheck $1
     fi
   else
@@ -144,7 +143,6 @@ do
         sh ""$Source_Path"Functions.sh" InstallPackages $ThisPackage
       done
     fi
-    read -sn1
   fi
-  #clear
+  clear
 done
