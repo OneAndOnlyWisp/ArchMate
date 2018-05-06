@@ -27,7 +27,6 @@ function SetDefaultLists {
 function SearchForInstalled {
   for xindex in ${!Packages[*]}; do
     Counter=0
-    echo ${Packages[xindex]}
     for ThisPackage in $(echo ${Packages[xindex]} | tr ";" "\n")
     do
 
@@ -40,8 +39,6 @@ function SearchForInstalled {
       Installed+=("${Available[xindex]}")
     fi
   done
-  echo "Installed:" ${Installed[*]} "| Length:" ${#Installed[@]}
-  echo "-----------------------------------------------"
 }
 
 function VulkanSupportCheck {
