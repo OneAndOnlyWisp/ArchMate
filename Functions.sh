@@ -176,8 +176,7 @@ function InstallAurman {
     cd aurman
   else
     cd aurman
-    git fetch https://aur.archlinux.org/aurman.git
-    git checkout master
+    git pull
   fi
   #Install package
   makepkg -si --noconfirm
@@ -196,8 +195,7 @@ function InstallPUP {
     cd pup-git
   else
     cd pup-git
-    git fetch https://aur.archlinux.org/pup-git.git
-    git checkout master
+    git pull
   fi
   #Install package
   makepkg -si --noconfirm
