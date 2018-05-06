@@ -107,7 +107,7 @@ function Init {
       echo "makepkg patch succes!"
     fi
   fi
-  if ! [[ $(_isInstalled "base-devel") == 0 ]]; then #AUR packages dependancy
+  if ! [[ $(sudo pacman -Qs base-devel) ]]; then #AUR packages dependancy
     pacman -Sy --needed --noconfirm base-devel
   fi
 }

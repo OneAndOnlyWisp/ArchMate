@@ -16,3 +16,6 @@ fi
 
 echo "Done!"
 read -sn1
+
+
+sh ArchMate/Functions.sh InstallPackages intel-ucode
