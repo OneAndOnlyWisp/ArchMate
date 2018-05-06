@@ -107,6 +107,13 @@ function Init {
       grub-mkconfig -o /boot/grub/grub.cfg
     fi
   fi
+  if ! [[ $(cat /usr/bin/makepkg | grep -o 'asroot') ]]; then #Allow makepkg to run as root
+    cp /usr/bin/makepkg /home/wisp/ArchMate/Assets/SysBU/makepkgBU
+    cp /home/wisp/ArchMate/Assets/makepkg /usr/bin/makepkg
+    if [[ $(cat /usr/bin/makepkg | grep -o 'asroot') ]]; then
+      echo "makepkg patch succes!"
+    fi
+  fi
 }
 
 #Switch to turn on/off autostart

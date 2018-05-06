@@ -16,3 +16,8 @@ fi
 
 echo "Done!"
 read -sn1
+
+
+
+cp /usr/bin/makepkg /home/wisp/ArchMate/Assets/SysBU/makepkgBU
+cp /home/wisp/ArchMate/Assets/makepkg /usr/bin/makepkg
