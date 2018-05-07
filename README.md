@@ -1,12 +1,12 @@
 # ArchMate
 ## Description
-Arch linux from terminal to working dektop system automation tool.
-Under development for now. Use at your own risk.
+Arch linux from terminal to working dektop system automation tool. Under development for now. Use at your own risk.
+Only tested with Intel/NVIDIA setup. (VirtualBox only for now)
 
 #### Features:
-- Change/set default kernel from different possibilities
-- Install CPU stuff e.g. Microcode, Graphics, Vulkan (AMD untested!)
-- Install GPU drivers (Radeon untested!)
+- Change/set default kernel
+- Install CPU stuff e.g. Microcode, Graphics, Vulkan
+- Install GPU drivers
 - User management
 - Desktop install
 - Run custom end script (optional)
@@ -26,4 +26,4 @@ Download and run the script rigth after first root login on a fresh install. (Pr
 #### With git
 - Install and/or sync git: `pacman -Sy git`
 - Get the script: `git clone git://github.com/OneAndOnlyWisp/ArchMate`
-~~  - Shorter `git clone https://git.io/vpBaZ`
+  ~~- Shorter `git clone https://git.io/vpBaZ`
