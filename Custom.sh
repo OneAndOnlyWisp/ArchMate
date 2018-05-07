@@ -7,6 +7,9 @@ pacman -S --noconfirm konsole dolphin chromium atom transmission-qt sddm
 #Apply services
 systemctl enable sddm.service
 
+#Revert changes to makepkg
+cp ""$Source_Path"Assets/SysBU/makepkgBU" /usr/bin/makepkg
+
 #Restart
 reboot
 
