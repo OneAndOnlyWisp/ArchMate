@@ -11,6 +11,13 @@ USER=$Source_Path"User.sh"
 DESKTOP=$Source_Path"Desktop.sh"
 CUSTOM=$Source_Path"Custom.sh"
 
+if [[ -e ""$Source_Path"autostart.conf" ]]; then
+  if [[ $(cat ""$Source_Path"autostart.conf" | grep -o 'KeepStableKernel=') = "false" ]]; then
+    pacman -Rs linux linux-headers
+  fi
+  rm ""$Source_Path"autostart.conf"
+fi
+
 #Init
 sh ""$Source_Path"Functions.sh" Init
 

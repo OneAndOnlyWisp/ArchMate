@@ -202,6 +202,18 @@ done
 ReadBootCFG
 SetDefaultLists
 if ! [[ "$ACTIVE_KERNEL" = "$DEFAULT_KERNEL" ]]; then
+  if ! [[ "$ACTIVE_KERNEL" = "Stable" ]]; then
+    while [ "$Security_Q" != "end" ]
+    do
+      echo "Do you want to keep the default \"Stable\" kernel?"
+      read Security_Q
+      case $Security_Q in
+        "no" ) echo "KeepStableKernel=false" > ""$Source_Path"autostart.conf"; break;;
+        "yes") break;;
+        * ) echo "Invalid answer!";;
+      esac
+    done
+  fi
   if ! grep -q "ArchMate" ~root/.bashrc; then
     sh ""$Source_Path"Functions.sh" AutoStartSwitch
     echo "TurnMeOff=true" > ""$Source_Path"ArchMate.ini"

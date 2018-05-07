@@ -6,8 +6,6 @@ sh Functions.sh InstallPackages "pulseaudio" "pulseaudio-alsa" "xorg" "xorg-xini
 function SetDefaultLists {
   #Available options
   Available=("Plasma" "Gnome" "Budgie" "Lumina (AUR)")
-  #echo "DEFAULT----------------------------------------"
-  #echo "Available:" ${Available[*]} "| Length:" ${#Available[@]}
   Packages=("plasma-desktop" "gnome" "budgie-desktop" "lumina-desktop")
   AutostartScripts=("startkde" "gnome-session" "budgie-desktop" "start-lumina-desktop")
   if ! [[ ${#Available[@]} = ${#Packages[@]} ]]; then
@@ -17,13 +15,9 @@ function SetDefaultLists {
 }
 
 function SearchForInstalled {
-  #echo "-----------------------------------------------"
   for ThisPackage in ${!Packages[*]}; do
-    #echo "Package: ${Packages[ThisPackage]} | Desktop: ${Available[ThisPackage]}"
     [[ $(sh Functions.sh _isInstalled "${Packages[ThisPackage]}") = 0 ]] && Installed+=("${Available[ThisPackage]}")
   done
-  #echo "Installed:" ${Installed[*]} "| Length:" ${#Installed[@]}
-  #echo "-----------------------------------------------"
 }
 
 function GenerateMenuList {
@@ -62,7 +56,7 @@ function SetAsDefault {
 
 #Menu
 while [ "$INPUT_OPTION" != "end" ]
-do  
+do
   #MENU---------------------------------------
   Available=()
   Packages=()
