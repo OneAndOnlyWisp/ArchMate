@@ -1,6 +1,7 @@
 # ArchMate
 ## Description
-Arch linux from terminal to working dektop system automation tool. Under development for now. Use at your own risk.
+This script can help you have a working desktop environment in 5 mins. It is really user-friendly, automatic hardware detection doesnt let you install wrong drivers. Later on will be capeable of reading config files, which makes the whole process automatic.
+Under development for now. Use at your own risk.
 Only tested with Intel/NVIDIA setup. (VirtualBox environment for now)
 
 #### Features:
