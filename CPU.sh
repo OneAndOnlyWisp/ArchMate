@@ -74,8 +74,8 @@ function GenerateMenuList {
   _temp_aval=()
   _temp_pack=()
   if [[ "${!Installed[@]}" = "" ]]; then
-    for yindex in "${!Available[@]}"; do
-      MenuFIX $yindex
+    for index in "${!Available[@]}"; do
+      MenuFIX $index
     done
   fi
   for xindex in "${!Installed[@]}"; do

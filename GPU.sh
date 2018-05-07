@@ -83,6 +83,11 @@ function MenuFIX {
 function GenerateMenuList {
   _temp_aval=()
   _temp_pack=()
+  if [[ "${!Installed[@]}" = "" ]]; then
+    for index in "${!Available[@]}"; do
+      MenuFIX $index
+    done
+  fi
   for xindex in "${!Installed[@]}"; do
     for yindex in "${!Available[@]}"; do
       if [[ "${Available[$yindex]}" = "${Installed[$xindex]}" ]]; then
@@ -101,6 +106,9 @@ function GenerateMenuList {
   Packages=("${_temp_pack[@]}")
   unset '_temp_aval'
   unset '_temp_pack'
+  echo "MENU-------------------------------------------"
+  echo "Available:" ${Available[*]} "| Length:" ${#Available[@]}
+  echo "-----------------------------------------------"
 }
 
 #Menu
