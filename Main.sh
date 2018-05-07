@@ -1,5 +1,4 @@
 #!/bin/sh
-clear
 
 #Locals
 Source_Path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/"
@@ -25,6 +24,7 @@ sh ""$Source_Path"Functions.sh" Init
 INPUT_OPTION=default
 while [ "$INPUT_OPTION" != "end" ]
 do
+  clear
   #Menu
   echo "Please type the number of selected task! (Press \"ESC\" to quit.)"
   echo "1. Kernel"

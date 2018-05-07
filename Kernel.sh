@@ -47,10 +47,21 @@ function ReadBootCFG {
   done < $BootFile
 }
 
+function EnableCKrepository {
+  StartingLine=$(sed -n '/#\[repo-ck\]/=' /etc/pacman.conf)
+  if [[ $StartingLine = "" ]]; then
+    echo "" >> /etc/pacman.conf
+    echo "[repo-ck]" >> /etc/pacman.conf
+    echo "Server = http://repo-ck.com/\$arch" >> /etc/pacman.conf
+    pacman-key -r 5EE46C4C && pacman-key --lsign-key 5EE46C4C
+    pacman -Syy --noconfirm --quiet
+  fi
+}
+
 function SetDefaultLists {
   #Available options
-  Available=("Stable" "Longterm" "Zen" "CK (AUR)")
-  Packages=("linux linux-headers" "linux-lts linux-lts-headers" "linux-zen linux-zen-headers" "linux-ck linux-ck-headers")
+  Available=("Stable" "Hardened" "Longterm" "Zen" "CK (AUR)")
+  Packages=("linux linux-headers" "linux-hardened" "linux-lts linux-lts-headers" "linux-zen linux-zen-headers" "linux-ck linux-ck-headers")
   if ! [[ ${#Available[@]} = ${#Packages[@]} ]]; then
     echo "Error"
     break
@@ -150,9 +161,11 @@ do
     elif [[ $INPUT_OPTION -gt $((${#Available[@]})) ]]; then #Invalid number error
       echo "Invalid number!"
     else #Install packages
+      if [[ ${Available[$(($INPUT_OPTION - 1))]} = *"CK"* ]]; then
+        EnableCKrepository
+      fi
       for ThisPackage in $(echo ${Packages[$(($INPUT_OPTION - 1))]} | tr ";" "\n")
       do
-        #echo $ThisPackage
         sh ""$Source_Path"Functions.sh" InstallPackages $ThisPackage
       done
       grub-mkconfig -o /boot/grub/grub.cfg
@@ -183,9 +196,11 @@ do
           fi
         done
       done
-      read -sn1 INPUT_OPTION
-      if ! [[ $INPUT_OPTION -gt $((${#Version_Stash[@]} + 1)) ]]; then
-        SetAsDefault $(($INPUT_OPTION - 1))
+      read -sn1 MiniMenu
+      if [[ $MiniMenu = $'\e' ]]; then
+        continue
+      elif ! [[ $MiniMenu -gt $((${#Version_Stash[@]} + 1)) ]]; then
+        SetAsDefault $(($MiniMenu - 1))
       fi
     else #Install packages
       for ThisPackage in $(echo ${Packages[$(($INPUT_OPTION - 2))]} | tr ";" "\n")

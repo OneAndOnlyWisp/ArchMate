@@ -80,7 +80,7 @@ function InstallPackages {
         else
           cd ${NotFound[$index]}
           git pull
-        fi        
+        fi
         #Install package
         makepkg -si --noconfirm
       done
