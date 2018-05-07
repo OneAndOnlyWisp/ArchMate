@@ -213,7 +213,7 @@ do
   fi
 done
 
-#Autostart if ( ACTIVE_KERNEL != DEFAULT_KERNEL )
+#Autostart
 ReadBootCFG
 SetDefaultLists
 if ! [[ "$ACTIVE_KERNEL" = "$DEFAULT_KERNEL" ]]; then
