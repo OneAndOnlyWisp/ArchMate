@@ -1,7 +1,7 @@
 # ArchMate
 ## Description
 Arch linux from terminal to working dektop system automation tool. Under development for now. Use at your own risk.
-Only tested with Intel/NVIDIA setup. (VirtualBox only for now)
+Only tested with Intel/NVIDIA setup. (VirtualBox environment for now)
 
 #### Features:
 - Change/set default kernel
@@ -26,4 +26,4 @@ Download and run the script rigth after first root login on a fresh install. (Pr
 #### With git
 - Install and/or sync git: `pacman -Sy git`
 - Get the script: `git clone git://github.com/OneAndOnlyWisp/ArchMate`
-  ~~- Shorter `git clone https://git.io/vpBaZ`
+~~- Shorter `git clone https://git.io/vpBaZ`~~
