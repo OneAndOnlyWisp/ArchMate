@@ -17,7 +17,7 @@ Only tested with Intel/NVIDIA setup. (VirtualBox environment for now)
 - Read from config file (automatize the process)
 
 ## How to use
-Download and run the script rigth after first root login on a fresh install. (Preferably after pacstrap-base install.)
+Download and run the script rigth after first root login on a fresh install. (Preferably after pacstrap-base.)
 
 ## Prerequisites
 
