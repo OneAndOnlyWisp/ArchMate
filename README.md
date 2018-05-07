@@ -26,4 +26,4 @@ Download and run the script rigth after first root login on a fresh install. (Pr
 #### With git
 - Install and/or sync git: `pacman -Sy git`
 - Get the script: `git clone git://github.com/OneAndOnlyWisp/ArchMate`
-~~- Shorter `git clone https://git.io/vpBaZ`~~
+  - ~~Shorter `git clone https://git.io/vpBaZ`~~
