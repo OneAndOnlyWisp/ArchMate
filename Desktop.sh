@@ -1,7 +1,8 @@
 #!/bin/sh
+Source_Path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/"
 
 #Init "Multimedia engine" (Audio + Window system)
-sh Functions.sh InstallPackages "pulseaudio" "pulseaudio-alsa" "xorg" "xorg-xinit"
+sh ""$Source_Path"Functions.sh" InstallPackages "pulseaudio" "pulseaudio-alsa" "xorg" "xorg-xinit"
 
 function SetDefaultLists {
   #Available options
@@ -15,8 +16,9 @@ function SetDefaultLists {
 }
 
 function SearchForInstalled {
-  for ThisPackage in ${!Packages[*]}; do
-    [[ $(sh Functions.sh _isInstalled "${Packages[ThisPackage]}") = 0 ]] && Installed+=("${Available[ThisPackage]}")
+  for index in ${!Packages[*]}; do
+    echo ${Packages[index]}
+    [[ $(sh ""$Source_Path"Functions.sh" _isInstalled "${Packages[index]}") = 0 ]] && Installed+=("${Available[index]}")
   done
 }
 
@@ -66,7 +68,7 @@ do
   SearchForInstalled
   GenerateMenuList
   #-------------------------------------------
-  clear
+  #clear
   #UI
   if [[ ${#Installed[@]} = 0 ]] || [[ ${#Installed[@]} = 1 ]]; then #0 or 1 desktop
     if [[ ${#Installed[@]} = 0 ]]; then #0 desktop text
@@ -86,11 +88,7 @@ do
     elif [[ $INPUT_OPTION -gt $((${#Available[@]})) ]]; then #Invalid number error
       echo "Invalid number!"
     else #Install packages
-      if ! [[ "${Available[$(($INPUT_OPTION - 1))]}" = *"(AUR)"* ]]; then #Pacman
-        sh Functions.sh InstallPackages ${Packages[$(($INPUT_OPTION - 1))]}
-      else #Aurman
-        sh Functions.sh InstallAURPackages ${Packages[$(($INPUT_OPTION - 1))]}
-      fi
+      sh ""$Source_Path"Functions.sh" InstallPackages ${Packages[$(($INPUT_OPTION - 1))]}
       echo "exec ${AutostartScripts[$(($INPUT_OPTION - 1))]}" > ~/.xinitrc
     fi
   else #More than 1 desktops
@@ -119,11 +117,7 @@ do
         SetAsDefault ${Installed[$(($INPUT_OPTION - 1))]}
       fi
     else #Install packages
-      if ! [[ "${Available[$(($INPUT_OPTION - 2))]}" = *"(AUR)"* ]]; then #Pacman
-        sh Functions.sh InstallPackages ${Packages[$(($INPUT_OPTION - 2))]}
-      else #Aurman
-        sh Functions.sh InstallAURPackages ${Packages[$(($INPUT_OPTION - 2))]}
-      fi
+      sh ""$Source_Path"Functions.sh" InstallPackages ${Packages[$(($INPUT_OPTION - 2))]}      
       echo "exec ${AutostartScripts[$(($INPUT_OPTION - 2))]}" > ~/.xinitrc
     fi
   fi
