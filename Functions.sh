@@ -2,12 +2,6 @@
 Source_Path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/"
 
 #Helper functions---------------------------------------------------------------
-#Find and replace all match
-# $1=ReplaceThis $2=ReplaceWith $3=Input
-function FindAndReplaceAll {
-  sed -ni "s/""$1""/""$2""/g" $3
-}
-
 #Check if a package is installed
 # $1=PackageName
 function _isInstalled {

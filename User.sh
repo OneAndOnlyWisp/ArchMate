@@ -3,12 +3,12 @@ Source_Path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/"
 #later on read this value from input
 isAuto="false"
 
-function CheckForSUDO {
-  if [[ $(sh ""$Source_Path"Functions.sh" _isInstalled "sudo") = 0 ]]; then
-    if ! [[ $(cat /etc/sudoers | grep -o '# %wheel ALL=(ALL) ALL.*') = "" ]]; then
-      #Allow admin rigths for wheel group
-      sh ""$Source_Path"Functions.sh" FindAndReplaceAll "# %wheel ALL=(ALL) ALL" "%wheel ALL=(ALL) ALL" /etc/sudoers | sudo EDITOR='tee' visudo
-    fi
+function CheckWheelAdmin {
+  #Allow admin rigths for wheel group
+  ReplaceThisLine=$(sed -n '/# %wheel ALL=(ALL) ALL/=' /etc/sudoers)
+  if ! [[ "$ReplaceThisLine" = "" ]]; then
+    ReplaceWith="%wheel ALL=(ALL) ALL"
+    cat /etc/sudoers | sed -e ""$ReplaceThisLine"s/.*/$ReplaceWith/g" | EDITOR='tee' visudo
   fi
 }
 
@@ -18,7 +18,7 @@ function CreateUser {
       echo "Are you sure about that? yes|no"
       read Security_Q
       if [[ $Security_Q = "yes" ]]; then
-        CheckForSUDO
+        CheckWheelAdmin
         printf 'Type selected username: '
         read -r Username
         useradd -m -g users -G wheel -s /bin/bash $Username
@@ -30,7 +30,7 @@ function CreateUser {
     fi
   else #Automatic mode
     if [[ $1 = "admin" ]]; then #Admin
-      CheckForSUDO
+      CheckWheelAdmin
       useradd -m -g users -G wheel -s /bin/bash $2
       echo "$2:$3" | chpasswd
     else #Regular
