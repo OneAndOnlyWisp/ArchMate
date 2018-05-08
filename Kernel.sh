@@ -203,6 +203,9 @@ do
         SetAsDefault $(($MiniMenu - 1))
       fi
     else #Install packages
+      if [[ ${Available[$(($INPUT_OPTION - 1))]} = *"CK"* ]]; then
+        EnableCKrepository
+      fi
       for ThisPackage in $(echo ${Packages[$(($INPUT_OPTION - 2))]} | tr ";" "\n")
       do
         #echo $ThisPackage
@@ -217,7 +220,7 @@ done
 ReadBootCFG
 SetDefaultLists
 if ! [[ "$ACTIVE_KERNEL" = "$DEFAULT_KERNEL" ]]; then
-  if ! [[ "$ACTIVE_KERNEL" = "Stable" ]]; then
+  if ! [[ "$DEFAULT_KERNEL" = "Stable" ]]; then
     while [ "$Security_Q" != "end" ]
     do
       echo "Do you want to keep the default \"Stable\" kernel?"
