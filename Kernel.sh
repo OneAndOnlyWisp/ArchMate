@@ -203,12 +203,11 @@ do
         SetAsDefault $(($MiniMenu - 1))
       fi
     else #Install packages
-      if [[ ${Available[$(($INPUT_OPTION - 1))]} = *"CK"* ]]; then
+      if [[ ${Available[$(($INPUT_OPTION - 2))]} = *"CK"* ]]; then
         EnableCKrepository
       fi
       for ThisPackage in $(echo ${Packages[$(($INPUT_OPTION - 2))]} | tr ";" "\n")
       do
-        #echo $ThisPackage
         sh ""$Source_Path"Functions.sh" InstallPackages $ThisPackage
       done
       grub-mkconfig -o /boot/grub/grub.cfg
