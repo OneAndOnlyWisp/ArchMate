@@ -48,8 +48,8 @@ function ReadBootCFG {
 }
 
 function EnableCKrepository {
-  StartingLine=$(sed -n '/#\[repo-ck\]/=' /etc/pacman.conf)
-  if [[ $StartingLine = "" ]]; then
+  StartingLine=$(sed -n '/\[repo-ck\]/=' /etc/pacman.conf)
+  if [[ "$StartingLine" = "" ]]; then
     echo "" >> /etc/pacman.conf
     echo "[repo-ck]" >> /etc/pacman.conf
     echo "Server = http://repo-ck.com/\$arch" >> /etc/pacman.conf
