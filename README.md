@@ -14,7 +14,7 @@ Only tested with Intel/NVIDIA setup. (VirtualBox environment for now)
 - Run custom end script (optional)
 
 #### Will be implemented:
-- Read from config file (automatize the process)
+- Read from config file
 
 ## How to use
 Download and run the script rigth after first root login on a fresh install. (Preferably after pacstrap-base.)
