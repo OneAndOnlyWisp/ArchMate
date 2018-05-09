@@ -41,11 +41,10 @@ function SearchForInstalled {
 }
 
 function VulkanSupportCheck {
-  [[ $(sh ""$Source_Path"Functions.sh" _isInstalled "pup-git") = 1 ]] && sh ""$Source_Path"Functions.sh" InstallPackages pup-git
   if [[ $CodeName = "" ]]; then
-    CodeName=$(sh ""$Source_Path"Functions.sh" IntelCodename)
+    CodeName=$(sh ""$Source_Path"Functions.sh" GetCodename)
   fi
-  NotCompatible=("P5" "P6" "NetBurst" "Pentium M" "Prescott" "Intel Core" "Penryn" "Nehalem" "Bonnell" "Westmere" "Saltwell" "Sandy Bridge" "Ivy Bridge")
+  NotCompatible=("pentm" "pentium-m" "pentium4" "prescott" "nocona" "ivybridge" "sandybridge" "nehalem" "core2" "silvermont" "bonnell")
   for index in "${!NotCompatible[@]}"; do
     if [[ "$CodeName" = "${NotCompatible[$index]}" ]]; then
       unset 'Available[$1]'

@@ -4,6 +4,7 @@ Source_Path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/"
 #Grub config file
 BootFile="/boot/grub/grub.cfg"
 
+
 function ReadBootCFG {
   MenuEntryCount=0
   LineCount=0
@@ -58,10 +59,44 @@ function EnableCKrepository {
   fi
 }
 
+function CPUSuffix {
+  CodeName=$(sh ""$Source_Path"Functions.sh" GetCodename)
+  case $CodeName in
+    "bonnell") CodeName="atom";;
+    "pentium4") CodeName="p4";;
+    "prescott") CodeName="p4";;
+    "nocona") CodeName="p4";;
+    "pentium-m") CodeName="pentm";;
+    "athlon") CodeName="kx";;
+    "athlon-4") CodeName="kx";;
+    "athlon-tbird") CodeName="kx";;
+    "athlon-mp") CodeName="kx";;
+    "athlon-xp") CodeName="kx";;
+    "k8-sse3") CodeName="kx";;
+    "amdfam10") CodeName="k10";;
+    "btver1") CodeName="bobcat";;
+    "bdver1") CodeName="bulldozer";;
+    "bdver2") CodeName="piledriver";;
+    "znver1") CodeName="zen";;
+  esac
+  Legit=("atom" "silvermont" "core2" "nehalem" "sandybridge" "ivybridge" "haswell" "broadwell" "skylake" "p4" "pentm" "kx" "k10" "bobcat" "bulldozer" "piledriver" "zen")
+  isLegit="false"
+  for index in "${!Legit[@]}"; do
+    if [[ "${Legit[index]}" = $CodeName ]]; then
+      isLegit="true"
+    fi
+  done
+  if [[ $isLegit = "true" ]]; then
+    echo $CodeName
+  else
+    echo "generic"
+  fi
+}
+
 function SetDefaultLists {
   #Available options
   Available=("Stable" "Hardened" "Longterm" "Zen" "CK (AUR)")
-  Packages=("linux linux-headers" "linux-hardened" "linux-lts linux-lts-headers" "linux-zen linux-zen-headers" "linux-ck linux-ck-headers")
+  Packages=("linux linux-headers" "linux-hardened" "linux-lts linux-lts-headers" "linux-zen linux-zen-headers" "linux-ck-$(CPUSuffix) linux-ck-headers")
   if ! [[ ${#Available[@]} = ${#Packages[@]} ]]; then
     echo "Error"
     break
@@ -127,6 +162,50 @@ function SetAsDefault {
   ReplaceWith=$(sed -n -e "${IMG_Stash[$1]}p" $BootFile | sed 's/\//\\\//g' | cut -c 2-)
   sed -ie "${VM_Linuz_default[2]}s/.*/$ReplaceWith/g" $BootFile
 }
+
+function RestartSync {
+  Version_Stash=(); UUID_Stash=(); IMG_Stash=()
+  ReadBootCFG
+  Available=(); Packages=();
+  SetDefaultLists
+
+  TEMP_KERNEL="$DEFAULT_KERNEL"
+  #grub-mkconfig -o /boot/grub/grub.cfg
+
+  Version_Stash=()
+  UUID_Stash=()
+  IMG_Stash=()
+  ReadBootCFG
+  Available=()
+  Packages=()
+  Installed=()
+  SetDefaultLists
+
+
+  echo $TEMP_KERNEL
+
+  #Find package
+  for index in "${!Available[@]}"; do
+    echo ${Available[$index]}
+    if [[ "${Available[$index]}" = "$TEMP_KERNEL" ]]; then
+      #SetAsDefault $index
+      TEMP_KERNEL="${Packages[$index]}"
+      break
+    fi
+  done
+  echo $TEMP_KERNEL
+  exit
+
+  for xindex in "${!Version_Stash[@]}"; do #Linux images(kernel) list
+    FindMe=$(sed -n "${UUID_Stash[xindex]}p" $BootFile | sed 's/.*\/vmlinuz-//' | sed 's/\s.*$//')
+    for yindex in "${!Packages[@]}"; do
+      echo "valami"
+    done
+  done
+
+}
+
+"$@"
 
 #Menu
 while [ "$INPUT_OPTION" != "end" ]

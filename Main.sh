@@ -10,6 +10,7 @@ USER=$Source_Path"User.sh"
 DESKTOP=$Source_Path"Desktop.sh"
 CUSTOM=$Source_Path"Custom.sh"
 
+#Remove default "Stable" kernel
 if [[ -e ""$Source_Path"autostart.conf" ]]; then
   if [[ $(cat ""$Source_Path"autostart.conf" | grep -o 'KeepStableKernel=') = "false" ]]; then
     pacman -Rs linux linux-headers
