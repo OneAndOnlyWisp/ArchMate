@@ -3,7 +3,7 @@ clear
 Source_Path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/"
 
 
-sh ""$Source_Path"Kernel.sh" RestartSync
+
 read -sn1
 exit
 

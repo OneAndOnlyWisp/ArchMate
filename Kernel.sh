@@ -4,7 +4,6 @@ Source_Path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/"
 #Grub config file
 BootFile="/boot/grub/grub.cfg"
 
-
 function ReadBootCFG {
   MenuEntryCount=0
   LineCount=0
@@ -164,62 +163,49 @@ function SetAsDefault {
 }
 
 function RestartSync {
-  Version_Stash=(); UUID_Stash=(); IMG_Stash=()
+  #Read current boot information
+  Version_Stash=(); UUID_Stash=(); IMG_Stash=();
   ReadBootCFG
   Available=(); Packages=();
   SetDefaultLists
-
-  TEMP_KERNEL="$DEFAULT_KERNEL"
-  #grub-mkconfig -o /boot/grub/grub.cfg
-
-  Version_Stash=()
-  UUID_Stash=()
-  IMG_Stash=()
-  ReadBootCFG
-  Available=()
-  Packages=()
-  Installed=()
-  SetDefaultLists
-
-
-  echo $TEMP_KERNEL
-
-  #Find package
-  for index in "${!Available[@]}"; do
-    echo ${Available[$index]}
-    if [[ "${Available[$index]}" = "$TEMP_KERNEL" ]]; then
-      #SetAsDefault $index
-      TEMP_KERNEL="${Packages[$index]}"
-      break
-    fi
-  done
-  echo $TEMP_KERNEL
-  exit
-
-  for xindex in "${!Version_Stash[@]}"; do #Linux images(kernel) list
-    FindMe=$(sed -n "${UUID_Stash[xindex]}p" $BootFile | sed 's/.*\/vmlinuz-//' | sed 's/\s.*$//')
-    for yindex in "${!Packages[@]}"; do
-      echo "valami"
+  KEEP_KERNEL="$DEFAULT_KERNEL"
+  #Reconfigure grub
+  grub-mkconfig -o /boot/grub/grub.cfg
+  if ! [[ "$KEEP_KERNEL" = "$DEFAULT_KERNEL" ]]; then
+    #Read boot information after reconfigure
+    Version_Stash=(); UUID_Stash=(); IMG_Stash=();
+    ReadBootCFG
+    Available=(); Packages=();
+    SetDefaultLists
+    #Find the package name of kernel to keep
+    for index in "${!Available[@]}"; do
+      echo ${Available[$index]}
+      if [[ "${Available[$index]}" = "$KEEP_KERNEL" ]]; then
+        KEEP_KERNEL=$(echo ${Packages[$index]} | sed 's/\s.*$//')
+        break
+      fi
     done
-  done
-
+    #Find entry in bootlader for the kernel to keep
+    for index in "${!Version_Stash[@]}"; do #Linux images(kernel) list
+      LinuxVersion=$(sed -n "${UUID_Stash[index]}p" $BootFile | sed 's/.*\/vmlinuz-//' | sed 's/\s.*$//')
+      if [[ "$KEEP_KERNEL" = "$LinuxVersion" ]]; then
+        echo "OK"
+        #SetAsDefault $index
+      fi
+    done
+  fi
+  exit
 }
-
-"$@"
 
 #Menu
 while [ "$INPUT_OPTION" != "end" ]
 do
   #Boot stuff---------------------------------
-  Version_Stash=()
-  UUID_Stash=()
-  IMG_Stash=()
+  Version_Stash=(); UUID_Stash=(); IMG_Stash=();
   ReadBootCFG
   #-------------------------------------------
   #MENU---------------------------------------
-  Available=()
-  Packages=()
-  Installed=()
+  Available=(); Packages=(); Installed=();
   SetDefaultLists
   SearchForInstalled
   GenerateMenuList
@@ -316,3 +302,6 @@ if ! [[ "$ACTIVE_KERNEL" = "$DEFAULT_KERNEL" ]]; then
     reboot
   fi
 fi
+
+
+"$@"

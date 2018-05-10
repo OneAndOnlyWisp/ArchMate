@@ -2,7 +2,6 @@
 
 #Locals
 Source_Path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/"
-ME="$Source_Path$0"
 KERNEL=$Source_Path"Kernel.sh"
 CPU=$Source_Path"CPU.sh"
 GPU=$Source_Path"GPU.sh"
@@ -16,6 +15,7 @@ if [[ -e ""$Source_Path"autostart.conf" ]]; then
     pacman -Rs linux linux-headers
   fi
   rm ""$Source_Path"autostart.conf"
+  sh ""$Source_Path"Kernel.sh" RestartSync
 fi
 
 #Init
