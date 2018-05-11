@@ -115,10 +115,14 @@ function AutoStartCheck {
 }
 
 function MicrocodeCheck {
-  if [[ $(lscpu | sed -n 's/^Model name:[[:space:]]*//p') = *"Intel"* ]]; then
-    if ! [[ $(_isInstalled "intel-ucode") == 0 ]]; then
-      pacman -S --noconfirm --quiet "intel-ucode"
-      grub-mkconfig -o /boot/grub/grub.cfg
+  #If not on a VirtualBox machine
+  if ! [[ $(lspci | grep -o 'VGA compatible controller: .*' | sed 's/.*: //') = *"VirtualBox"* ]]; then
+    #If CPU is Intel
+    if [[ $(lscpu | sed -n 's/^Model name:[[:space:]]*//p') = *"Intel"* ]]; then
+      if ! [[ $(_isInstalled "intel-ucode") == 0 ]]; then
+        pacman -S --noconfirm --quiet "intel-ucode"
+        grub-mkconfig -o /boot/grub/grub.cfg
+      fi
     fi
   fi
 }
