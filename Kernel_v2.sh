@@ -5,7 +5,7 @@ BootFile="/boot/grub/grub.cfg"
 Version_Stash=(); UUID_Stash=(); IMG_Stash=();
 Available=(); Packages=(); Installed=();
 #-------------------------------------------------------------------------------
-#Useable from outside-----------------------------------------------------------
+#Helper functions area----------------------------------------------------------
 function GetDefaultKernel {
   temp="$(sed -n "${VM_Linuz_default[1]}p" $BootFile | sed 's/.*\/vmlinuz-//' | sed 's/\s.*$//') "
   for index in "${!Packages[@]}"; do #Default kernel to boot
@@ -31,39 +31,13 @@ function GetActiveKernel {
   exit
 }
 
-#MOVE THIS TO NEW "GRAPHICS"
-function CPUSuffix {
-  CodeName=$(sh ""$Source_Path"Functions.sh" GetCodename)
-  case $CodeName in
-    "bonnell") CodeName="atom";;
-    "pentium4") CodeName="p4";;
-    "prescott") CodeName="p4";;
-    "nocona") CodeName="p4";;
-    "pentium-m") CodeName="pentm";;
-    "athlon") CodeName="kx";;
-    "athlon-4") CodeName="kx";;
-    "athlon-tbird") CodeName="kx";;
-    "athlon-mp") CodeName="kx";;
-    "athlon-xp") CodeName="kx";;
-    "k8-sse3") CodeName="kx";;
-    "amdfam10") CodeName="k10";;
-    "btver1") CodeName="bobcat";;
-    "bdver1") CodeName="bulldozer";;
-    "bdver2") CodeName="piledriver";;
-    "znver1") CodeName="zen";;
-  esac
-  Legit=("atom" "silvermont" "core2" "nehalem" "sandybridge" "ivybridge" "haswell" "broadwell" "skylake" "p4" "pentm" "kx" "k10" "bobcat" "bulldozer" "piledriver" "zen")
-  isLegit="false"
-  for index in "${!Legit[@]}"; do
-    if [[ "${Legit[index]}" = $CodeName ]]; then
-      isLegit="true"
-    fi
-  done
-  if [[ $isLegit = "true" ]]; then
-    echo $CodeName
-  else
-    echo "generic"
-  fi
+function SetAsDefault {
+  #Set default kernel to load (UUID_Stash)
+  ReplaceWith=$(sed -n -e "${UUID_Stash[$1]}p" $BootFile | sed 's/\//\\\//g' | cut -c 2-)
+  sed -ie "${VM_Linuz_default[1]}s/.*/$ReplaceWith/g" $BootFile
+  #Set default kernel to load (IMG_Stash)
+  ReplaceWith=$(sed -n -e "${IMG_Stash[$1]}p" $BootFile | sed 's/\//\\\//g' | cut -c 2-)
+  sed -ie "${VM_Linuz_default[2]}s/.*/$ReplaceWith/g" $BootFile
 }
 #-------------------------------------------------------------------------------
 #Menu item generation elements--------------------------------------------------
@@ -114,7 +88,7 @@ function ReadBootCFG {
 function SetDefaultLists {
   Available=(); Packages=();
   Available=("Stable" "Hardened" "Longterm" "Zen" "CK (AUR)")
-  Packages=("linux linux-headers" "linux-hardened" "linux-lts linux-lts-headers" "linux-zen linux-zen-headers" "linux-ck-$(CPUSuffix) linux-ck-headers")
+  Packages=("linux linux-headers" "linux-hardened" "linux-lts linux-lts-headers" "linux-zen linux-zen-headers" "linux-ck-$(CK_CPU_Suffix) linux-ck-headers")
   if ! [[ ${#Available[@]} = ${#Packages[@]} ]]; then
     echo "Error"
     break
@@ -171,6 +145,40 @@ function EnableCKrepository {
     pacman -Syy --noconfirm --quiet
   fi
 }
+
+function CK_CPU_Suffix {
+  CodeName=$(sh ""$Source_Path"Functions.sh" GetCodename)
+  case $CodeName in
+    "bonnell") CodeName="atom";;
+    "pentium4") CodeName="p4";;
+    "prescott") CodeName="p4";;
+    "nocona") CodeName="p4";;
+    "pentium-m") CodeName="pentm";;
+    "athlon") CodeName="kx";;
+    "athlon-4") CodeName="kx";;
+    "athlon-tbird") CodeName="kx";;
+    "athlon-mp") CodeName="kx";;
+    "athlon-xp") CodeName="kx";;
+    "k8-sse3") CodeName="kx";;
+    "amdfam10") CodeName="k10";;
+    "btver1") CodeName="bobcat";;
+    "bdver1") CodeName="bulldozer";;
+    "bdver2") CodeName="piledriver";;
+    "znver1") CodeName="zen";;
+  esac
+  Legit=("atom" "silvermont" "core2" "nehalem" "sandybridge" "ivybridge" "haswell" "broadwell" "skylake" "p4" "pentm" "kx" "k10" "bobcat" "bulldozer" "piledriver" "zen")
+  isLegit="false"
+  for index in "${!Legit[@]}"; do
+    if [[ "${Legit[index]}" = $CodeName ]]; then
+      isLegit="true"
+    fi
+  done
+  if [[ $isLegit = "true" ]]; then
+    echo $CodeName
+  else
+    echo "generic"
+  fi
+}
 #-------------------------------------------------------------------------------
 #Set default kernel elements----------------------------------------------------
 function ListKernelsFromBoot {
@@ -192,12 +200,7 @@ function SetDefaultKernel {
   if ! [[ $SELECTED_OPTION = $'\e' ]]; then
     if [[ $SELECTED_OPTION -le $((${#Version_Stash[@]} + 1)) ]]; then
       SELECTED_OPTION=$(($SELECTED_OPTION - 1))
-      #Set default kernel to load (UUID_Stash)
-      ReplaceWith=$(sed -n -e "${UUID_Stash[$SELECTED_OPTION]}p" $BootFile | sed 's/\//\\\//g' | cut -c 2-)
-      sed -ie "${VM_Linuz_default[1]}s/.*/$ReplaceWith/g" $BootFile
-      #Set default kernel to load (IMG_Stash)
-      ReplaceWith=$(sed -n -e "${IMG_Stash[$SELECTED_OPTION]}p" $BootFile | sed 's/\//\\\//g' | cut -c 2-)
-      sed -ie "${VM_Linuz_default[2]}s/.*/$ReplaceWith/g" $BootFile
+      SetAsDefault $SELECTED_OPTION
     fi
   fi
 }
@@ -234,9 +237,8 @@ function OneKernel {
   read -sn1 KEY_PRESS
   if ! [[ $KEY_PRESS = $'\e' ]]; then
     if [[ $KEY_PRESS =~ ^[0-9]+$ ]]; then
-      if [[ $KEY_PRESS -gt $((${#Available[@]})) ]]; then
-        echo "valami"
-        #InstallKernel $(($ChoosenItem - 1))
+      if [[ $KEY_PRESS -le ${#Available[@]} ]]; then
+        InstallKernel $(($KEY_PRESS - 1))
       fi
     fi
   else
@@ -252,15 +254,12 @@ function MultipleKernel {
   read -sn1 KEY_PRESS
   if ! [[ $KEY_PRESS = $'\e' ]]; then
     if [[ $KEY_PRESS =~ ^[0-9]+$ ]]; then
-      echo "NUMBER"
       if [[ $KEY_PRESS -le $((${#Available[@]} + 1)) ]]; then
-        echo "LESS THAN OR EQUAL TO ${#Available[@]}"
         KEY_PRESS=$(($KEY_PRESS - 1))
         if [[ $KEY_PRESS = 0 ]]; then
           SetDefaultKernel
         else
-          echo "InstallKernel"
-          #InstallKernel $(($KEY_PRESS - 1))
+          InstallKernel $(($KEY_PRESS - 1))
         fi
       fi
     fi
@@ -278,23 +277,46 @@ function DrawMenu {
   fi
 }
 #-------------------------------------------------------------------------------
+#Useable from outside-----------------------------------------------------------
+function RestartSync {
+  function GetPackageName {
+    for index in "${!Available[@]}"; do
+      if [[ "${Available[$index]}" = "$1" ]]; then
+        echo ${Packages[$index]} | sed 's/\s.*$//'
+        return
+      fi
+    done
+  }
+  function FindAndApply {
+    for index in "${!Version_Stash[@]}"; do #Linux images(kernel) list
+      LinuxVersion=$(sed -n "${UUID_Stash[index]}p" $BootFile | sed 's/.*\/vmlinuz-//' | sed 's/\s.*$//')
+      if [[ "$1" = "$LinuxVersion" ]]; then
+        SetAsDefault $index
+        return
+      fi
+    done
+  }
+  SetDefaultLists
+  KEEP_KERNEL="$DEFAULT_KERNEL"
+  grub-mkconfig -o /boot/grub/grub.cfg
+  SetDefaultLists
+  if [[ "$KEEP_KERNEL" = "$DEFAULT_KERNEL" ]]; then
+    FindAndApply $(GetPackageName $KEEP_KERNEL)
+  fi
+  exit
+}
+"$@"
+#-------------------------------------------------------------------------------
 #User interface-----------------------------------------------------------------
 while [ "$StopLoop" != "true" ]
 do
-  #clear
-  #Loop variables---------------------------------------------------------------
-  #Version_Stash=(); UUID_Stash=(); IMG_Stash=();
-  #Available=(); Packages=(); Installed=();
-  #DEFAULT_KERNEL=""; ACTIVE_KERNEL="";
-  #-----------------------------------------------------------------------------
+  clear
   GenerateMenuElements
-  echo "${Packages[*]}"
   DrawMenu
 done
 #-------------------------------------------------------------------------------
 #Post-script area---------------------------------------------------------------
 function CheckForReboot {
-  ReadBootCFG
   SetDefaultLists
   if ! [[ "$ACTIVE_KERNEL" = "$DEFAULT_KERNEL" ]]; then
     if ! [[ "$DEFAULT_KERNEL" = "Stable" ]]; then
@@ -303,7 +325,7 @@ function CheckForReboot {
         echo "Do you want to keep the default \"Stable\" kernel?"
         read Security_Q
         case $Security_Q in
-          "no" ) echo "KeepStableKernel=false" > ""$Source_Path"autostart.conf"; break;;
+          "no" ) echo "" > ""$Source_Path"removekernel"; break;;
           "yes") break;;
           * ) echo "Invalid answer!";;
         esac
@@ -311,42 +333,11 @@ function CheckForReboot {
     fi
     if ! grep -q "ArchMate" ~root/.bashrc; then
       sh ""$Source_Path"Functions.sh" AutoStartSwitch
-      echo "TurnMeOff=true" > ""$Source_Path"ArchMate.ini"
+      echo "" > ""$Source_Path"autostart"
       reboot
     fi
   fi
   exit
 }
 #CheckForReboot
-
-function RestartSync {
-  #Read current boot information
-  KEEP_KERNEL="$(GetDefaultKernel)"
-  #Reconfigure grub
-  grub-mkconfig -o /boot/grub/grub.cfg
-  ReadBootCFG
-  SetDefaultLists
-  #Find the package name of kernel to keep
-  if ! [[ "$KEEP_KERNEL" = "$DEFAULT_KERNEL" ]]; then
-    for index in "${!Available[@]}"; do
-      echo ${Available[$index]}
-      if [[ "${Available[$index]}" = "$KEEP_KERNEL" ]]; then
-        KEEP_KERNEL=$(echo ${Packages[$index]} | sed 's/\s.*$//')
-        break
-      fi
-    done
-    #Find entry in bootlader for the kernel to keep
-    for index in "${!Version_Stash[@]}"; do #Linux images(kernel) list
-      LinuxVersion=$(sed -n "${UUID_Stash[index]}p" $BootFile | sed 's/.*\/vmlinuz-//' | sed 's/\s.*$//')
-      if [[ "$KEEP_KERNEL" = "$LinuxVersion" ]]; then
-        echo "OK"
-        #SetAsDefault $index
-      fi
-    done
-  fi
-  exit
-}
 #-------------------------------------------------------------------------------
-
-
-"$@"

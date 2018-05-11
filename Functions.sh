@@ -80,42 +80,11 @@ function InstallPackages {
       done
     done
 }
-#-------------------------------------------------------------------------------
 
-#Init
-function Init {
-	#Check and add .bashrc for root
-	! [ -e ~root/.bashrc ] && cp /etc/skel/.bash* ~root
-	#Read Ini file
-	if [ -e ""$Source_Path"ArchMate.ini" ]; then
-		TurnMeOff=$(sed 's:.*TurnMeOff=::' ""$Source_Path"ArchMate.ini")
-    if [[ "$TurnMeOff" = "true" ]]; then
-      if grep -q "ArchMate" ~root/.bashrc; then
-        AutoStartSwitch
-      fi
-    fi
-    echo "TurnMeOff=false" > ""$Source_Path"ArchMate.ini"
-	fi
-  #Microcode for Intel CPUs
-  if [[ $(lscpu | sed -n 's/^Model name:[[:space:]]*//p') = *"Intel"* ]]; then
-    if ! [[ $(_isInstalled "intel-ucode") == 0 ]]; then
-      pacman -S --noconfirm --quiet "intel-ucode"
-      grub-mkconfig -o /boot/grub/grub.cfg
-    fi
-  fi
-  #Need for sudo and makepkg
-  if ! [[ $(sudo pacman -Qs base-devel) ]]; then
-    pacman -Sy --needed --noconfirm base-devel
-  fi
-  #Allow makepkg to run as root
-  if ! [[ $(cat /usr/bin/makepkg | grep -o 'asroot') ]]; then
-    cp /usr/bin/makepkg ""$Source_Path"Assets/SysBU/makepkgBU"
-    cp ""$Source_Path"Assets/makepkg" /usr/bin/makepkg
-    if [[ $(cat /usr/bin/makepkg | grep -o 'asroot') ]]; then
-      echo "makepkg patch succes!"
-    fi
-  fi
-
+#Returns CPU microarchitecture codename
+function GetCodename {
+  Codename=$(gcc -c -Q -march=native --help=target | grep march | grep -oE '[^ ]+$')
+  echo $Codename
 }
 
 #Switch to turn on/off autostart
@@ -129,11 +98,65 @@ function AutoStartSwitch {
 		echo "Autostart On."
 	fi
 }
-
-#Returns CPU microarchitecture codename
-function GetCodename {
-  Codename=$(gcc -c -Q -march=native --help=target | grep march | grep -oE '[^ ]+$')
-  echo $Codename
+#-------------------------------------------------------------------------------
+#Init functions-----------------------------------------------------------------
+function AutostartDependancy {
+  #Check and add .bashrc for root
+	! [ -e ~root/.bashrc ] && cp /etc/skel/.bash* ~root
 }
+
+function AutoStartCheck {
+  #Read Ini file
+	if [ -e ""$Source_Path"autostart" ]; then
+    if grep -q "ArchMate" ~root/.bashrc; then
+      AutoStartSwitch
+    fi
+	fi
+}
+
+function MicrocodeCheck {
+  if [[ $(lscpu | sed -n 's/^Model name:[[:space:]]*//p') = *"Intel"* ]]; then
+    if ! [[ $(_isInstalled "intel-ucode") == 0 ]]; then
+      pacman -S --noconfirm --quiet "intel-ucode"
+      grub-mkconfig -o /boot/grub/grub.cfg
+    fi
+  fi
+}
+
+function BaseDevelCheck {
+  if ! [[ $(sudo pacman -Qs base-devel) ]]; then
+    pacman -Sy --needed --noconfirm base-devel
+  fi
+}
+
+function KernelRemoveCheck {
+  #Remove default "Stable" kernel
+  if [[ -e ""$Source_Path"removestablekernel" ]]; then
+    pacman -Rs linux linux-headers
+    rm ""$Source_Path"removekernel"
+    sh ""$Source_Path"Kernel_v2.sh" RestartSync
+  fi
+}
+
+#Allow makepkg to run as root
+function MakePKG_Patch {
+  if ! [[ $(cat /usr/bin/makepkg | grep -o 'asroot') ]]; then
+    cp /usr/bin/makepkg ""$Source_Path"Assets/SysBU/makepkgBU"
+    cp ""$Source_Path"Assets/makepkg" /usr/bin/makepkg
+    if [[ $(cat /usr/bin/makepkg | grep -o 'asroot') ]]; then
+      echo "makepkg patch succes!"
+    fi
+  fi
+}
+
+function Init {
+	AutostartDependancy
+  AutoStartCheck
+  MicrocodeCheck
+  BaseDevelCheck
+  KernelRemoveCheck
+  MakePKG_Patch
+}
+#-------------------------------------------------------------------------------
 
 "$@"

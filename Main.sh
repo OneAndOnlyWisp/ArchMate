@@ -2,21 +2,12 @@
 
 #Locals
 Source_Path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/"
-KERNEL=$Source_Path"Kernel.sh"
+KERNEL=$Source_Path"Kernel_v2.sh"
 CPU=$Source_Path"CPU.sh"
 GPU=$Source_Path"GPU.sh"
 USER=$Source_Path"User.sh"
 DESKTOP=$Source_Path"Desktop.sh"
 CUSTOM=$Source_Path"Custom.sh"
-
-#Remove default "Stable" kernel
-if [[ -e ""$Source_Path"autostart.conf" ]]; then
-  if [[ $(cat ""$Source_Path"autostart.conf" | grep -o 'KeepStableKernel=') = "false" ]]; then
-    pacman -Rs linux linux-headers
-  fi
-  rm ""$Source_Path"autostart.conf"
-  sh ""$Source_Path"Kernel.sh" RestartSync
-fi
 
 #Init
 sh ""$Source_Path"Functions.sh" Init
