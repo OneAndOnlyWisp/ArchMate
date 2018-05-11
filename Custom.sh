@@ -2,7 +2,9 @@
 clear
 Source_Path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/"
 
-
+echo "Before calling Kernel_v2.sh"
+sh ""$Source_Path"Kernel_v2.sh"
+echo "After calling Kernel_v2.sh"
 
 read -sn1
 exit

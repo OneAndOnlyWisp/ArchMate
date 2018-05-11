@@ -4,7 +4,6 @@ Source_Path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/"
 BootFile="/boot/grub/grub.cfg"
 Version_Stash=(); UUID_Stash=(); IMG_Stash=();
 Available=(); Packages=(); Installed=();
-DEFAULT_KERNEL=""; ACTIVE_KERNEL="";
 #-------------------------------------------------------------------------------
 #Useable from outside-----------------------------------------------------------
 function GetDefaultKernel {
@@ -23,7 +22,7 @@ function GetActiveKernel {
     echo "Stable"
   else
     for index in "${!Packages[@]}"; do
-      if [[ "${Packages[$index]}" = *"$ACTIVE_KERNEL"* ]]; then
+      if [[ "${Packages[$index]}" = *"$temp"* ]]; then
         echo ${Available[$index]}
         break
       fi
@@ -113,20 +112,20 @@ function ReadBootCFG {
 }
 
 function SetDefaultLists {
-  Available=(); Packages=(); Installed=();
+  Available=(); Packages=();
   Available=("Stable" "Hardened" "Longterm" "Zen" "CK (AUR)")
   Packages=("linux linux-headers" "linux-hardened" "linux-lts linux-lts-headers" "linux-zen linux-zen-headers" "linux-ck-$(CPUSuffix) linux-ck-headers")
   if ! [[ ${#Available[@]} = ${#Packages[@]} ]]; then
     echo "Error"
     break
   fi
+  ReadBootCFG
   DEFAULT_KERNEL="$(GetDefaultKernel)"
   ACTIVE_KERNEL=$(GetActiveKernel)
 }
 
 function SearchForInstalled {
   SetDefaultLists
-  ReadBootCFG
   Installed=()
   for xindex in ${!Packages[*]}; do
     for yindex in ${!UUID_Stash[*]}; do
@@ -190,16 +189,16 @@ function SetDefaultKernel {
   echo "Choose default kernel:"
   ListKernelsFromBoot
   read -sn1 SELECTED_OPTION
-  if [[ $SELECTED_OPTION = $'\e' ]]; then
-    return
-  elif ! [[ $SELECTED_OPTION -gt $((${#Version_Stash[@]} + 1)) ]]; then
-    SELECTED_OPTION=$(($SELECTED_OPTION - 1))
-    #Set default kernel to load (UUID_Stash)
-    ReplaceWith=$(sed -n -e "${UUID_Stash[$SELECTED_OPTION]}p" $BootFile | sed 's/\//\\\//g' | cut -c 2-)
-    sed -ie "${VM_Linuz_default[1]}s/.*/$ReplaceWith/g" $BootFile
-    #Set default kernel to load (IMG_Stash)
-    ReplaceWith=$(sed -n -e "${IMG_Stash[$SELECTED_OPTION]}p" $BootFile | sed 's/\//\\\//g' | cut -c 2-)
-    sed -ie "${VM_Linuz_default[2]}s/.*/$ReplaceWith/g" $BootFile
+  if ! [[ $SELECTED_OPTION = $'\e' ]]; then
+    if [[ $SELECTED_OPTION -le $((${#Version_Stash[@]} + 1)) ]]; then
+      SELECTED_OPTION=$(($SELECTED_OPTION - 1))
+      #Set default kernel to load (UUID_Stash)
+      ReplaceWith=$(sed -n -e "${UUID_Stash[$SELECTED_OPTION]}p" $BootFile | sed 's/\//\\\//g' | cut -c 2-)
+      sed -ie "${VM_Linuz_default[1]}s/.*/$ReplaceWith/g" $BootFile
+      #Set default kernel to load (IMG_Stash)
+      ReplaceWith=$(sed -n -e "${IMG_Stash[$SELECTED_OPTION]}p" $BootFile | sed 's/\//\\\//g' | cut -c 2-)
+      sed -ie "${VM_Linuz_default[2]}s/.*/$ReplaceWith/g" $BootFile
+    fi
   fi
 }
 #-------------------------------------------------------------------------------
@@ -218,21 +217,6 @@ function ListAvailableItems {
 
 }
 
-function CheckAnswer {
-  if [[ $SELECTED_OPTION = $'\e' ]]; then
-    echo "exit"
-    exit
-  elif ! [[ $SELECTED_OPTION =~ ^[0-9]+$ ]]; then
-    printf "Not number!\n"
-    echo "-1"
-  elif [[ $SELECTED_OPTION -gt $((${#Available[@]})) ]]; then
-    printf "Invalid number!\n"
-    echo "-1"
-  else
-    echo $(($SELECTED_OPTION - 1))
-  fi
-}
-
 function InstallKernel {
   if [[ ${Available[$1]} = *"CK"* ]]; then
     EnableCKrepository
@@ -248,9 +232,15 @@ function OneKernel {
   echo "Available options:"
   ListAvailableItems
   read -sn1 KEY_PRESS
-  ChoosenItem=$(CheckAnswer $KEY_PRESS)
-  if [[ $ChoosenItem -ge 0 ]]; then
-    InstallKernel $ChoosenItem
+  if ! [[ $KEY_PRESS = $'\e' ]]; then
+    if [[ $KEY_PRESS =~ ^[0-9]+$ ]]; then
+      if [[ $KEY_PRESS -gt $((${#Available[@]})) ]]; then
+        echo "valami"
+        #InstallKernel $(($ChoosenItem - 1))
+      fi
+    fi
+  else
+    kill $$
   fi
 }
 
@@ -260,14 +250,22 @@ function MultipleKernel {
   echo "1. Set default kernel."
   ListAvailableItems 2
   read -sn1 KEY_PRESS
-  ChoosenItem=$(CheckAnswer $KEY_PRESS)
-  echo $(CheckAnswer $KEY_PRESS)
-  if [[ $ChoosenItem -ge 0 ]]; then
-    if [[ $ChoosenItem = 0 ]]; then
-      SetDefaultKernel
-    else
-      InstallKernel $(($ChoosenItem - 1))
+  if ! [[ $KEY_PRESS = $'\e' ]]; then
+    if [[ $KEY_PRESS =~ ^[0-9]+$ ]]; then
+      echo "NUMBER"
+      if [[ $KEY_PRESS -le $((${#Available[@]} + 1)) ]]; then
+        echo "LESS THAN OR EQUAL TO ${#Available[@]}"
+        KEY_PRESS=$(($KEY_PRESS - 1))
+        if [[ $KEY_PRESS = 0 ]]; then
+          SetDefaultKernel
+        else
+          echo "InstallKernel"
+          #InstallKernel $(($KEY_PRESS - 1))
+        fi
+      fi
     fi
+  else
+    kill $$
   fi
 }
 
@@ -281,11 +279,16 @@ function DrawMenu {
 }
 #-------------------------------------------------------------------------------
 #User interface-----------------------------------------------------------------
-while [ "$INPUT_OPTION" != "end" ]
+while [ "$StopLoop" != "true" ]
 do
   #clear
+  #Loop variables---------------------------------------------------------------
+  #Version_Stash=(); UUID_Stash=(); IMG_Stash=();
+  #Available=(); Packages=(); Installed=();
+  #DEFAULT_KERNEL=""; ACTIVE_KERNEL="";
+  #-----------------------------------------------------------------------------
   GenerateMenuElements
-  echo "${Installed[*]}"
+  echo "${Packages[*]}"
   DrawMenu
 done
 #-------------------------------------------------------------------------------
