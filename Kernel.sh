@@ -221,7 +221,6 @@ function ListAvailableItems {
       echo "$(($index + $1)). Install ${Available[index]} kernel."
     done
   fi
-
 }
 
 function InstallKernel {
@@ -246,7 +245,7 @@ function OneKernel {
       fi
     fi
   else
-    kill $$
+    exit
   fi
 }
 
@@ -268,7 +267,7 @@ function MultipleKernel {
       fi
     fi
   else
-    kill $$
+    exit
   fi
 }
 
@@ -282,6 +281,12 @@ function DrawMenu {
 }
 #-------------------------------------------------------------------------------
 #Useable from outside-----------------------------------------------------------
+function GetUUID {
+  ReadBootCFG
+  echo "${UUID_Stash[*]}"
+  exit
+}
+
 function RestartSync {
   function GetPackageName {
     for index in "${!Available[@]}"; do
