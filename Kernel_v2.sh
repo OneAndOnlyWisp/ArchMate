@@ -141,6 +141,10 @@ function EnableCKrepository {
     echo "" >> /etc/pacman.conf
     echo "[repo-ck]" >> /etc/pacman.conf
     echo "Server = http://repo-ck.com/\$arch" >> /etc/pacman.conf
+    echo "Server = http://repo-ck.com/\$arch" >> /etc/pacman.conf
+    echo "Server = http://repo-ck.com/\$arch" >> /etc/pacman.conf
+    echo "Server = http://repo-ck.com/\$arch" >> /etc/pacman.conf
+    echo "Server = http://repo-ck.com/\$arch" >> /etc/pacman.conf
     pacman-key -r 5EE46C4C && pacman-key --lsign-key 5EE46C4C
     pacman -Syy --noconfirm --quiet
   fi
