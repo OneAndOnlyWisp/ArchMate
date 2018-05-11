@@ -337,7 +337,6 @@ function CheckForReboot {
       reboot
     fi
   fi
-  exit
 }
-#CheckForReboot
+CheckForReboot
 #-------------------------------------------------------------------------------
