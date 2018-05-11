@@ -2,7 +2,7 @@
 
 #Locals
 Source_Path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/"
-KERNEL=$Source_Path"Kernel_v2.sh"
+KERNEL=$Source_Path"Kernel.sh"
 CPU=$Source_Path"CPU.sh"
 GPU=$Source_Path"GPU.sh"
 USER=$Source_Path"User.sh"

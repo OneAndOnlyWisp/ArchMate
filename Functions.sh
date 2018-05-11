@@ -139,7 +139,7 @@ function KernelRemoveCheck {
     pacman -Rs --noconfirm linux-headers
     pacman -Rs --noconfirm linux
     rm ""$Source_Path"removekernel"
-    sh ""$Source_Path"Kernel_v2.sh" RestartSync
+    sh ""$Source_Path"Kernel.sh" RestartSync
   fi
 }
 
