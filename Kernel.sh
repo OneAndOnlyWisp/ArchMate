@@ -1,10 +1,48 @@
 #!/bin/bash
+#Local globals------------------------------------------------------------------
 Source_Path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/"
-
-#Grub config file
 BootFile="/boot/grub/grub.cfg"
+Version_Stash=(); UUID_Stash=(); IMG_Stash=();
+Available=(); Packages=(); Installed=();
+#-------------------------------------------------------------------------------
+#Helper functions area----------------------------------------------------------
+function GetDefaultKernel {
+  temp="$(sed -n "${VM_Linuz_default[1]}p" $BootFile | sed 's/.*\/vmlinuz-//' | sed 's/\s.*$//') "
+  for index in "${!Packages[@]}"; do #Default kernel to boot
+    if [[ "${Packages[$index]}" = "$temp"* ]]; then
+      echo "${Available[$index]}"
+      exit
+    fi
+  done
+}
 
+function GetActiveKernel {
+  temp=$(uname -r | rev | cut -d "-" -f 1 | rev)
+  if [[ "$temp" = "ARCH" ]]; then
+    echo "Stable"
+  else
+    for index in "${!Packages[@]}"; do
+      if [[ "${Packages[$index]}" = *"$temp"* ]]; then
+        echo ${Available[$index]}
+        break
+      fi
+    done
+  fi
+  exit
+}
+
+function SetAsDefault {
+  #Set default kernel to load (UUID_Stash)
+  ReplaceWith=$(sed -n -e "${UUID_Stash[$1]}p" $BootFile | sed 's/\//\\\//g' | cut -c 2-)
+  sed -ie "${VM_Linuz_default[1]}s/.*/$ReplaceWith/g" $BootFile
+  #Set default kernel to load (IMG_Stash)
+  ReplaceWith=$(sed -n -e "${IMG_Stash[$1]}p" $BootFile | sed 's/\//\\\//g' | cut -c 2-)
+  sed -ie "${VM_Linuz_default[2]}s/.*/$ReplaceWith/g" $BootFile
+}
+#-------------------------------------------------------------------------------
+#Menu item generation elements--------------------------------------------------
 function ReadBootCFG {
+  Version_Stash=(); UUID_Stash=(); IMG_Stash=();
   MenuEntryCount=0
   LineCount=0
   while read line
@@ -47,18 +85,72 @@ function ReadBootCFG {
   done < $BootFile
 }
 
+function SetDefaultLists {
+  Available=(); Packages=();
+  Available=("Stable" "Hardened" "Longterm" "Zen" "CK (AUR)")
+  Packages=("linux linux-headers" "linux-hardened" "linux-lts linux-lts-headers" "linux-zen linux-zen-headers" "linux-ck-$(CK_CPU_Suffix) linux-ck-headers")
+  if ! [[ ${#Available[@]} = ${#Packages[@]} ]]; then
+    echo "Error"
+    break
+  fi
+  ReadBootCFG
+  DEFAULT_KERNEL="$(GetDefaultKernel)"
+  ACTIVE_KERNEL=$(GetActiveKernel)
+}
+
+function SearchForInstalled {
+  SetDefaultLists
+  Installed=()
+  for xindex in ${!Packages[*]}; do
+    for yindex in ${!UUID_Stash[*]}; do
+      SearchFor=$(sed -n "${UUID_Stash[$yindex]}p" $BootFile | sed 's/.*\/vmlinuz-//' | sed 's/\s.*$//')
+      ThisKernel=$(echo ${Packages[$xindex]} | sed -e 's/\s.*$//')
+      if [[ "$ThisKernel" = "$SearchFor" ]]; then
+        Installed+=("${Available[$xindex]}")
+      fi
+    done
+  done
+}
+
+function GenerateMenuElements {
+  SearchForInstalled
+  _temp_aval=()
+  _temp_pack=()
+  for xindex in "${!Installed[@]}"; do
+    for yindex in "${!Available[@]}"; do
+      if [[ "${Available[$yindex]}" = "${Installed[$xindex]}" ]]; then
+        unset 'Available[yindex]'
+        unset 'Packages[yindex]'
+      fi
+    done
+  done
+  for index in "${!Available[@]}"; do
+    _temp_aval+=("${Available[$index]}")
+    _temp_pack+=("${Packages[$index]}")
+  done
+  Available=("${_temp_aval[@]}")
+  Packages=("${_temp_pack[@]}")
+  unset '_temp_aval'
+  unset '_temp_pack'
+}
+#-------------------------------------------------------------------------------
+#Kernel specific elements-------------------------------------------------------
 function EnableCKrepository {
   StartingLine=$(sed -n '/\[repo-ck\]/=' /etc/pacman.conf)
   if [[ "$StartingLine" = "" ]]; then
     echo "" >> /etc/pacman.conf
     echo "[repo-ck]" >> /etc/pacman.conf
     echo "Server = http://repo-ck.com/\$arch" >> /etc/pacman.conf
+    echo "Server = http://repo-ck.com/\$arch" >> /etc/pacman.conf
+    echo "Server = http://repo-ck.com/\$arch" >> /etc/pacman.conf
+    echo "Server = http://repo-ck.com/\$arch" >> /etc/pacman.conf
+    echo "Server = http://repo-ck.com/\$arch" >> /etc/pacman.conf
     pacman-key -r 5EE46C4C && pacman-key --lsign-key 5EE46C4C
     pacman -Syy --noconfirm --quiet
   fi
 }
 
-function CPUSuffix {
+function CK_CPU_Suffix {
   CodeName=$(sh ""$Source_Path"Functions.sh" GetCodename)
   case $CodeName in
     "bonnell") CodeName="atom";;
@@ -91,217 +183,164 @@ function CPUSuffix {
     echo "generic"
   fi
 }
-
-function SetDefaultLists {
-  #Available options
-  Available=("Stable" "Hardened" "Longterm" "Zen" "CK (AUR)")
-  Packages=("linux linux-headers" "linux-hardened" "linux-lts linux-lts-headers" "linux-zen linux-zen-headers" "linux-ck-$(CPUSuffix) linux-ck-headers")
-  if ! [[ ${#Available[@]} = ${#Packages[@]} ]]; then
-    echo "Error"
-    break
-  fi
-  #Default kernel
-  DEFAULT_KERNEL="$(sed -n "${VM_Linuz_default[1]}p" $BootFile | sed 's/.*\/vmlinuz-//' | sed 's/\s.*$//') "
-  for index in "${!Packages[@]}"; do #Default kernel to boot
-    if [[ "${Packages[$index]}" = "$DEFAULT_KERNEL"* ]]; then
-      DEFAULT_KERNEL=${Available[$index]}
-    fi
-  done
-  #Active kernel
-  ACTIVE_KERNEL=$(uname -r | rev | cut -d "-" -f 1 | rev)
-  if [[ "$ACTIVE_KERNEL" = "ARCH" ]]; then
-    ACTIVE_KERNEL="Stable"
-  else
-    for index in "${!Packages[@]}"; do
-      if [[ "${Packages[$index]}" = *"$ACTIVE_KERNEL"* ]]; then
-        ACTIVE_KERNEL=${Available[$index]}
-      fi
-    done
-  fi
-}
-
-function SearchForInstalled {
-  for xindex in ${!Packages[*]}; do
-    for yindex in ${!UUID_Stash[*]}; do
-      SearchFor=$(sed -n "${UUID_Stash[$yindex]}p" $BootFile | sed 's/.*\/vmlinuz-//' | sed 's/\s.*$//')
-      ThisKernel=$(echo ${Packages[$xindex]} | sed -e 's/\s.*$//')
-      if [[ "$ThisKernel" = "$SearchFor" ]]; then
-        Installed+=("${Available[$xindex]}")
-      fi
-    done
-  done
-}
-
-function GenerateMenuList {
-  _temp_aval=()
-  _temp_pack=()
-  for xindex in "${!Installed[@]}"; do
-    for yindex in "${!Available[@]}"; do
-      if [[ "${Available[$yindex]}" = "${Installed[$xindex]}" ]]; then
-        unset 'Available[yindex]'
-        unset 'Packages[yindex]'
-      fi
-    done
-  done
-  for index in "${!Available[@]}"; do
-    _temp_aval+=("${Available[$index]}")
-    _temp_pack+=("${Packages[$index]}")
-  done
-  Available=("${_temp_aval[@]}")
-  Packages=("${_temp_pack[@]}")
-  unset '_temp_aval'
-  unset '_temp_pack'
-}
-
-function SetAsDefault {
-  #Set default kernel to load (UUID_Stash)
-  ReplaceWith=$(sed -n -e "${UUID_Stash[$1]}p" $BootFile | sed 's/\//\\\//g' | cut -c 2-)
-  sed -ie "${VM_Linuz_default[1]}s/.*/$ReplaceWith/g" $BootFile
-  #Set default kernel to load (IMG_Stash)
-  ReplaceWith=$(sed -n -e "${IMG_Stash[$1]}p" $BootFile | sed 's/\//\\\//g' | cut -c 2-)
-  sed -ie "${VM_Linuz_default[2]}s/.*/$ReplaceWith/g" $BootFile
-}
-
-function RestartSync {
-  #Read current boot information
-  Version_Stash=(); UUID_Stash=(); IMG_Stash=();
-  ReadBootCFG
-  Available=(); Packages=();
+#-------------------------------------------------------------------------------
+#Set default kernel elements----------------------------------------------------
+function ListKernelsFromBoot {
   SetDefaultLists
-  KEEP_KERNEL="$DEFAULT_KERNEL"
-  #Reconfigure grub
-  grub-mkconfig -o /boot/grub/grub.cfg
-  if ! [[ "$KEEP_KERNEL" = "$DEFAULT_KERNEL" ]]; then
-    #Read boot information after reconfigure
-    Version_Stash=(); UUID_Stash=(); IMG_Stash=();
-    ReadBootCFG
-    Available=(); Packages=();
-    SetDefaultLists
-    #Find the package name of kernel to keep
-    for index in "${!Available[@]}"; do
-      echo ${Available[$index]}
-      if [[ "${Available[$index]}" = "$KEEP_KERNEL" ]]; then
-        KEEP_KERNEL=$(echo ${Packages[$index]} | sed 's/\s.*$//')
-        break
+  for xindex in "${!Version_Stash[@]}"; do
+    FindMe=$(sed -n "${UUID_Stash[xindex]}p" $BootFile | sed 's/.*\/vmlinuz-//' | sed 's/\s.*$//')
+    for yindex in "${!Packages[@]}"; do
+      if [[ "${Packages[$yindex]}" = "$FindMe "* ]]; then
+        echo "$(($xindex + 1)). Set ${Available[$yindex]} as default."
       fi
     done
-    #Find entry in bootlader for the kernel to keep
+  done
+}
+
+function SetDefaultKernel {
+  echo "Choose default kernel:"
+  ListKernelsFromBoot
+  read -sn1 SELECTED_OPTION
+  if ! [[ $SELECTED_OPTION = $'\e' ]]; then
+    if [[ $SELECTED_OPTION -le $((${#Version_Stash[@]} + 1)) ]]; then
+      SELECTED_OPTION=$(($SELECTED_OPTION - 1))
+      SetAsDefault $SELECTED_OPTION
+    fi
+  fi
+}
+#-------------------------------------------------------------------------------
+#Draw menu elements-------------------------------------------------------------
+function ListAvailableItems {
+  #List menuentries
+  if [[ "$1" = "" ]]; then
+    for index in "${!Available[@]}"; do
+      echo "$(($index + 1)). Install ${Available[index]} kernel."
+    done
+  else
+    for index in "${!Available[@]}"; do
+      echo "$(($index + $1)). Install ${Available[index]} kernel."
+    done
+  fi
+
+}
+
+function InstallKernel {
+  if [[ ${Available[$1]} = *"CK"* ]]; then
+    EnableCKrepository
+  fi
+  for Package in $(echo ${Packages[$1]} | tr ";" "\n")
+  do
+    sh ""$Source_Path"Functions.sh" InstallPackages $Package
+  done
+  grub-mkconfig -o /boot/grub/grub.cfg
+}
+
+function OneKernel {
+  echo "Available options:"
+  ListAvailableItems
+  read -sn1 KEY_PRESS
+  if ! [[ $KEY_PRESS = $'\e' ]]; then
+    if [[ $KEY_PRESS =~ ^[0-9]+$ ]]; then
+      if [[ $KEY_PRESS -le ${#Available[@]} ]]; then
+        InstallKernel $(($KEY_PRESS - 1))
+      fi
+    fi
+  else
+    kill $$
+  fi
+}
+
+function MultipleKernel {
+  echo "Booting with \"$DEFAULT_KERNEL\" kernel by default."
+  echo "Available options:"
+  echo "1. Set default kernel."
+  ListAvailableItems 2
+  read -sn1 KEY_PRESS
+  if ! [[ $KEY_PRESS = $'\e' ]]; then
+    if [[ $KEY_PRESS =~ ^[0-9]+$ ]]; then
+      if [[ $KEY_PRESS -le $((${#Available[@]} + 1)) ]]; then
+        KEY_PRESS=$(($KEY_PRESS - 1))
+        if [[ $KEY_PRESS = 0 ]]; then
+          SetDefaultKernel
+        else
+          InstallKernel $(($KEY_PRESS - 1))
+        fi
+      fi
+    fi
+  else
+    kill $$
+  fi
+}
+
+function DrawMenu {
+  echo "Currently using \"$ACTIVE_KERNEL\" kernel. (Press \"ESC\" to quit.)"
+  if [[ ${#Installed[@]} = 1 ]]; then
+    OneKernel
+  else
+    MultipleKernel
+  fi
+}
+#-------------------------------------------------------------------------------
+#Useable from outside-----------------------------------------------------------
+function RestartSync {
+  function GetPackageName {
+    for index in "${!Available[@]}"; do
+      if [[ "${Available[$index]}" = "$1" ]]; then
+        echo ${Packages[$index]} | sed 's/\s.*$//'
+        return
+      fi
+    done
+  }
+  function FindAndApply {
     for index in "${!Version_Stash[@]}"; do #Linux images(kernel) list
       LinuxVersion=$(sed -n "${UUID_Stash[index]}p" $BootFile | sed 's/.*\/vmlinuz-//' | sed 's/\s.*$//')
-      if [[ "$KEEP_KERNEL" = "$LinuxVersion" ]]; then
-        echo "OK"
-        #SetAsDefault $index
+      if [[ "$1" = "$LinuxVersion" ]]; then
+        SetAsDefault $index
+        return
       fi
     done
+  }
+  SetDefaultLists
+  KEEP_KERNEL="$DEFAULT_KERNEL"
+  grub-mkconfig -o /boot/grub/grub.cfg
+  SetDefaultLists
+  if [[ "$KEEP_KERNEL" = "$DEFAULT_KERNEL" ]]; then
+    FindAndApply $(GetPackageName $KEEP_KERNEL)
   fi
   exit
 }
 
-#Menu
-while [ "$INPUT_OPTION" != "end" ]
-do
-  #Boot stuff---------------------------------
-  Version_Stash=(); UUID_Stash=(); IMG_Stash=();
-  ReadBootCFG
-  #-------------------------------------------
-  #MENU---------------------------------------
-  Available=(); Packages=(); Installed=();
+function CheckForReboot {
   SetDefaultLists
-  SearchForInstalled
-  GenerateMenuList
-  #-------------------------------------------
-  clear
-  #UI
-  if [[ ${#Installed[@]} = 1 ]]; then #One kernel
-    echo "Currently using \"$ACTIVE_KERNEL\" kernel. (Press \"ESC\" to quit.)"
-    echo "Available options:"
-    for ThisEntry in "${!Available[@]}"; do #List menuentries
-      echo "$(($ThisEntry + 1)). Install ${Available[ThisEntry]} kernel."
-    done
-    read -sn1 INPUT_OPTION
-    if [[ $INPUT_OPTION = $'\e' ]]; then #Exit
-      break
-    elif ! [[ $INPUT_OPTION =~ ^[0-9]+$ ]]; then #Not number error
-      echo "Not number!"
-    elif [[ $INPUT_OPTION -gt $((${#Available[@]})) ]]; then #Invalid number error
-      echo "Invalid number!"
-    else #Install packages
-      if [[ ${Available[$(($INPUT_OPTION - 1))]} = *"CK"* ]]; then
-        EnableCKrepository
-      fi
-      for ThisPackage in $(echo ${Packages[$(($INPUT_OPTION - 1))]} | tr ";" "\n")
+  if ! [[ "$ACTIVE_KERNEL" = "$DEFAULT_KERNEL" ]]; then
+    if ! [[ "$DEFAULT_KERNEL" = "Stable" ]]; then
+      while [ "$Security_Q" != "end" ]
       do
-        sh ""$Source_Path"Functions.sh" InstallPackages $ThisPackage
+        echo "Do you want to keep the default \"Stable\" kernel?"
+        read Security_Q
+        case $Security_Q in
+          "no" ) echo "" > ""$Source_Path"removekernel"; break;;
+          "yes") break;;
+          * ) echo "Invalid answer!";;
+        esac
       done
-      grub-mkconfig -o /boot/grub/grub.cfg
     fi
-  else #More than one kernel
-    echo "Currently using \"$ACTIVE_KERNEL\" kernel. (Press \"ESC\" to quit.)"
-    echo "Booting with \"$DEFAULT_KERNEL\" kernel by default."
-    echo "Available options:"
-    echo "1. Set default kernel."
-    for ThisEntry in "${!Available[@]}"; do #List menuentries
-      echo "$(($ThisEntry + 2)). Install ${Available[ThisEntry]} kernel."
-    done
-    read -sn1 INPUT_OPTION
-    if [[ $INPUT_OPTION = $'\e' ]]; then #Exit
-      break
-    elif ! [[ $INPUT_OPTION =~ ^[0-9]+$ ]]; then #Not number error
-      echo "Not number!"
-    elif [[ $INPUT_OPTION -gt $((${#Available[@]} + 1)) ]]; then #Invalid number error
-      echo "Invalid number!"
-    elif [[ $INPUT_OPTION = 1 ]]; then #Select default
-      SetDefaultLists
-      echo "Choose default kernel:"
-      for xindex in "${!Version_Stash[@]}"; do #Linux images(kernel) list
-        FindMe=$(sed -n "${UUID_Stash[xindex]}p" $BootFile | sed 's/.*\/vmlinuz-//' | sed 's/\s.*$//')
-        for yindex in "${!Packages[@]}"; do
-          if [[ "${Packages[$yindex]}" = "$FindMe "* ]]; then
-            echo "$(($xindex + 1)). Set ${Available[$yindex]} as default."
-          fi
-        done
-      done
-      read -sn1 MiniMenu
-      if [[ $MiniMenu = $'\e' ]]; then
-        continue
-      elif ! [[ $MiniMenu -gt $((${#Version_Stash[@]} + 1)) ]]; then
-        SetAsDefault $(($MiniMenu - 1))
-      fi
-    else #Install packages
-      if [[ ${Available[$(($INPUT_OPTION - 2))]} = *"CK"* ]]; then
-        EnableCKrepository
-      fi
-      for ThisPackage in $(echo ${Packages[$(($INPUT_OPTION - 2))]} | tr ";" "\n")
-      do
-        sh ""$Source_Path"Functions.sh" InstallPackages $ThisPackage
-      done
-      grub-mkconfig -o /boot/grub/grub.cfg
+    if ! grep -q "ArchMate" ~root/.bashrc; then
+      sh ""$Source_Path"Functions.sh" AutoStartSwitch
+      echo "" > ""$Source_Path"autostart"
+      reboot
     fi
   fi
-done
-
-#Autostart
-ReadBootCFG
-SetDefaultLists
-if ! [[ "$ACTIVE_KERNEL" = "$DEFAULT_KERNEL" ]]; then
-  if ! [[ "$DEFAULT_KERNEL" = "Stable" ]]; then
-    while [ "$Security_Q" != "end" ]
-    do
-      echo "Do you want to keep the default \"Stable\" kernel?"
-      read Security_Q
-      case $Security_Q in
-        "no" ) echo "KeepStableKernel=false" > ""$Source_Path"autostart.conf"; break;;
-        "yes") break;;
-        * ) echo "Invalid answer!";;
-      esac
-    done
-  fi
-  if ! grep -q "ArchMate" ~root/.bashrc; then
-    sh ""$Source_Path"Functions.sh" AutoStartSwitch
-    echo "TurnMeOff=true" > ""$Source_Path"ArchMate.ini"
-    reboot
-  fi
-fi
-
+  exit
+}
 
 "$@"
+#-------------------------------------------------------------------------------
+#User interface-----------------------------------------------------------------
+while [ "$StopLoop" != "true" ]
+do
+  clear
+  GenerateMenuElements
+  DrawMenu
+done
+#-------------------------------------------------------------------------------
