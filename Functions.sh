@@ -132,7 +132,8 @@ function BaseDevelCheck {
 function KernelRemoveCheck {
   #Remove default "Stable" kernel
   if [[ -e ""$Source_Path"removekernel" ]]; then
-    pacman -Rs linux linux-headers
+    pacman -Rs linux-headers
+    pacman -Rs linux
     rm ""$Source_Path"removekernel"
     sh ""$Source_Path"Kernel_v2.sh" RestartSync
   fi
