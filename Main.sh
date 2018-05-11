@@ -31,7 +31,7 @@ do
   read -sn1 INPUT_OPTION
 
   case $INPUT_OPTION in
-    '1') sh $KERNEL; clear;;
+    '1') sh $KERNEL; sh $KERNEL CheckForReboot; clear;;
     '2') sh $CPU; clear;;
     '3') sh $GPU; clear;;
     '4') sh $USER; clear;;

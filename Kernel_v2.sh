@@ -305,17 +305,7 @@ function RestartSync {
   fi
   exit
 }
-"$@"
-#-------------------------------------------------------------------------------
-#User interface-----------------------------------------------------------------
-while [ "$StopLoop" != "true" ]
-do
-  clear
-  GenerateMenuElements
-  DrawMenu
-done
-#-------------------------------------------------------------------------------
-#Post-script area---------------------------------------------------------------
+
 function CheckForReboot {
   SetDefaultLists
   if ! [[ "$ACTIVE_KERNEL" = "$DEFAULT_KERNEL" ]]; then
@@ -337,6 +327,16 @@ function CheckForReboot {
       reboot
     fi
   fi
+  exit
 }
-CheckForReboot
+
+"$@"
+#-------------------------------------------------------------------------------
+#User interface-----------------------------------------------------------------
+while [ "$StopLoop" != "true" ]
+do
+  clear
+  GenerateMenuElements
+  DrawMenu
+done
 #-------------------------------------------------------------------------------
