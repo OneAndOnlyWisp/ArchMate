@@ -311,48 +311,39 @@ function RestartSync {
   KEEP_KERNEL="$DEFAULT_KERNEL"
   grub-mkconfig -o /boot/grub/grub.cfg
   SetDefaultLists
-  if [[ "$KEEP_KERNEL" = "$DEFAULT_KERNEL" ]]; then
+  if ! [[ "$KEEP_KERNEL" = "$DEFAULT_KERNEL" ]]; then
     FindAndApply $(GetPackageName $KEEP_KERNEL)
   fi
   exit
 }
 
 function CheckForReboot {
-  function FindStableKernel {
-    if ! [[ "$ACTIVE_KERNEL" = "$DEFAULT_KERNEL" ]]; then
-      for xindex in "${!Version_Stash[@]}"; do
-        ThisKernel=$(sed -n "${UUID_Stash[xindex]}p" $BootFile | sed 's/.*\/vmlinuz-//' | sed 's/\s.*$//')
-        for yindex in "${!Packages[@]}"; do
-          if [[ "${Packages[$yindex]}" = "$FindMe "* ]]; then
-            if [[ ${Available[$yindex]} = "Stable" ]]; then
-              echo "true"
-              return
-            fi
+  SetDefaultLists
+  if ! [[ "$ACTIVE_KERNEL" = "$DEFAULT_KERNEL" ]]; then
+    for xindex in "${!Version_Stash[@]}"; do
+      ThisKernel=$(sed -n "${UUID_Stash[xindex]}p" $BootFile | sed 's/.*\/vmlinuz-//' | sed 's/\s.*$//')
+      for yindex in "${!Packages[@]}"; do
+        if [[ "${Packages[$yindex]}" = "$ThisKernel "* ]]; then
+          if [[ ${Available[$yindex]} = "Stable" ]]; then
+            while [ "$Security_Q" != "end" ]; do
+              echo "Do you want to keep the default \"Stable\" kernel? yes|no"
+              read Security_Q
+              case $Security_Q in
+                "no" ) echo "" > ""$Source_Path"removekernel"; break;;
+                "yes") break;;
+                * ) echo "Invalid answer!";;
+              esac
+            done
           fi
-        done
+        fi
       done
-    fi
-  }
-  function TurnOnAutostart {
+    done
     if ! grep -q "ArchMate" ~root/.bashrc; then
       sh ""$Source_Path"Functions.sh" AutoStartSwitch
       echo "" > ""$Source_Path"autostart"
       reboot
     fi
-  }
-  SetDefaultLists
-  if [[ $(FindStableKernel) = "true" ]]; then
-    while [ "$Security_Q" != "end" ]; do
-      echo "Do you want to keep the default \"Stable\" kernel? yes|no"
-      read Security_Q
-      case $Security_Q in
-        "no" ) echo "" > ""$Source_Path"removekernel"; break;;
-        "yes") break;;
-        * ) echo "Invalid answer!";;
-      esac
-    done
   fi
-  TurnOnAutostart  
   exit
 }
 

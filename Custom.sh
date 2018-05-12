@@ -2,6 +2,10 @@
 clear
 Source_Path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/"
 
+sh ""$Source_Path"Kernel.sh" CheckForReboot
+read -sn1
+exit
+
 #Custom apps
 pacman -S --noconfirm konsole dolphin chromium atom transmission-qt sddm
 #Apply services
