@@ -11,6 +11,7 @@ function EnableMultilib {
   if ! [[ "$StartingLine" = "" ]]; then
     sed -ie ""$StartingLine"s/#//g" /etc/pacman.conf
     sed -ie ""$(($StartingLine + 1))"s/#//g" /etc/pacman.conf
+    pacman -Syy
   fi
 }
 #-------------------------------------------------------------------------------
