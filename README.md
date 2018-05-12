@@ -7,8 +7,7 @@ Only tested with Intel/NVIDIA setup. (VirtualBox environment for now)
 
 #### Features:
 - Change/set default kernel
-- Install CPU stuff e.g. Microcode, Graphics, Vulkan
-- Install GPU drivers
+- Install graphic drivers
 - User management
 - Desktop install
 - Run custom end script (optional)
@@ -23,6 +22,7 @@ Download and run the script rigth after first root login on a fresh install. (Pr
 
 - A working internet connection
 - Logged in as 'root'
+(- There are minimum hardwre requirements, but no exsact information for now.)
 
 ## How to get it
 #### With git
