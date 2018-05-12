@@ -200,11 +200,13 @@ function ListKernelsFromBoot {
 function SetDefaultKernel {
   echo "Choose default kernel:"
   ListKernelsFromBoot
-  read -sn1 SELECTED_OPTION
-  if ! [[ $SELECTED_OPTION = $'\e' ]]; then
-    if [[ $SELECTED_OPTION -le $((${#Version_Stash[@]} + 1)) ]]; then
-      SELECTED_OPTION=$(($SELECTED_OPTION - 1))
-      SetAsDefault $SELECTED_OPTION
+  read -sn1 KEY_PRESS
+  if ! [[ $KEY_PRESS = $'\e' ]]; then
+    if [[ $KEY_PRESS =~ ^[0-9]+$ ]]; then
+      if [[ $KEY_PRESS -le ${#Version_Stash[@]} ]]; then
+        KEY_PRESS=$(($KEY_PRESS - 1))
+        SetAsDefault $KEY_PRESS
+      fi
     fi
   fi
 }

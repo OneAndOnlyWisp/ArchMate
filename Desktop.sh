@@ -1,10 +1,24 @@
-#!/bin/sh
+#Local globals------------------------------------------------------------------
 Source_Path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/"
+Available=(); Packages=(); AutostartScripts=(); Installed=();
+#-------------------------------------------------------------------------------
+#Helper functions area----------------------------------------------------------
+function SetAsDefault {
+  for index in "${!Available[@]}"; do
+    if [[ "${Available[$index]}" = "$1" ]]; then
+      echo "exec ${AutostartScripts[$index]}" > ~/.xinitrc
+    fi
+  done
+}
 
-#Init "Multimedia engine" (Audio + Window system)
-sh ""$Source_Path"Functions.sh" InstallPackages "pulseaudio" "pulseaudio-alsa" "xorg" "xorg-xinit"
-
+function CheckDependancy {
+  #Init "Multimedia engine" (Audio + Window system)
+  sh ""$Source_Path"Functions.sh" InstallPackages "pulseaudio" "pulseaudio-alsa" "xorg" "xorg-xinit"
+}
+#-------------------------------------------------------------------------------
+#Menu item generation elements--------------------------------------------------
 function SetDefaultLists {
+  Available=(); Packages=(); AutostartScripts=();
   #Available options
   Available=("Plasma" "Gnome" "Budgie" "Lumina (AUR)")
   Packages=("plasma-desktop" "gnome" "budgie-desktop" "lumina-desktop")
@@ -16,13 +30,17 @@ function SetDefaultLists {
 }
 
 function SearchForInstalled {
+  SetDefaultLists
+  Installed=()
   for index in ${!Packages[*]}; do
-    echo ${Packages[index]}
+    #echo ${Packages[index]}
     [[ $(sh ""$Source_Path"Functions.sh" _isInstalled "${Packages[index]}") = 0 ]] && Installed+=("${Available[index]}")
   done
+  Installed+=("${Available[1]}")
 }
 
-function GenerateMenuList {
+function GenerateMenuElements {
+  SearchForInstalled
   _temp_aval=()
   _temp_pack=()
   _temp_exec=()
@@ -47,78 +65,102 @@ function GenerateMenuList {
   unset '_temp_pack'
   unset '_temp_exec'
 }
-
-function SetAsDefault {
-  for index in "${!Available[@]}"; do
-    if [[ "${Available[$index]}" = "$1" ]]; then
-      echo "exec ${AutostartScripts[$index]}" > ~/.xinitrc
-    fi
+#-------------------------------------------------------------------------------
+#Set default desktop elements---------------------------------------------------
+function ListInstalledDesktops {
+  for ThisEntry in "${!Installed[@]}"; do #Installed desktops list
+    echo "$(($ThisEntry + 1)). Set ${Installed[ThisEntry]} as default."
   done
 }
 
-#Menu
-while [ "$INPUT_OPTION" != "end" ]
-do
-  #MENU---------------------------------------
-  Available=()
-  Packages=()
-  AutostartScripts=()
-  Installed=()
-  SetDefaultLists
+function SetDefaultDesktop {
   SearchForInstalled
-  GenerateMenuList
-  #-------------------------------------------
-  #clear
-  #UI
-  if [[ ${#Installed[@]} = 0 ]] || [[ ${#Installed[@]} = 1 ]]; then #0 or 1 desktop
-    if [[ ${#Installed[@]} = 0 ]]; then #0 desktop text
-      echo "No desktops installed on this system. (Press \"ESC\" to quit.)"
-    else #1 desktop text
-      echo "${Installed[0]} desktop is already installed on this system. (Press \"ESC\" to quit.)"
-    fi
-    echo "Available options:"
-    for ThisEntry in "${!Available[@]}"; do #List menuentries
-      echo "$(($ThisEntry + 1)). Install ${Available[ThisEntry]} desktop environment."
-    done
-    read -sn1 INPUT_OPTION
-    if [[ $INPUT_OPTION = $'\e' ]]; then #Exit
-      break
-    elif ! [[ $INPUT_OPTION =~ ^[0-9]+$ ]]; then #Not number error
-      echo "Not number!"
-    elif [[ $INPUT_OPTION -gt $((${#Available[@]})) ]]; then #Invalid number error
-      echo "Invalid number!"
-    else #Install packages
-      sh ""$Source_Path"Functions.sh" InstallPackages ${Packages[$(($INPUT_OPTION - 1))]}
-      echo "exec ${AutostartScripts[$(($INPUT_OPTION - 1))]}" > ~/.xinitrc
-    fi
-  else #More than 1 desktops
-    echo "Multiple desktops are installed on this system. (Press \"ESC\" to quit.)"
-    echo "Available options:"
-    echo "1. Set default desktop."
-    for ThisEntry in "${!Available[@]}"; do #List menuentries
-      echo "$(($ThisEntry + 2)). Install ${Available[ThisEntry]} desktop environment."
-    done
-    #Menu options
-    read -sn1 INPUT_OPTION
-    if [[ $INPUT_OPTION = $'\e' ]]; then #Exit
-      break
-    elif ! [[ $INPUT_OPTION =~ ^[0-9]+$ ]]; then #Not number error
-      echo "Not number!"
-    elif [[ $INPUT_OPTION -gt $((${#Available[@]} + 1)) ]]; then #Invalid number error
-      echo "Invalid number!"
-    elif [[ $INPUT_OPTION = 1 ]]; then #Select default
-      echo "Choose default desktop:"
-      for ThisEntry in "${!Installed[@]}"; do #Installed desktops list
-        echo "$(($ThisEntry + 1)). Set ${Installed[ThisEntry]} as default."
-      done
-      SetDefaultLists
-      read -sn1 INPUT_OPTION
-      if ! [[ $INPUT_OPTION -gt ${#Installed[@]} ]]; then
-        SetAsDefault ${Installed[$(($INPUT_OPTION - 1))]}
+  echo "Choose default desktop:"
+  ListInstalledDesktops
+  read -sn1 KEY_PRESS
+  if ! [[ $KEY_PRESS = $'\e' ]]; then
+    if [[ $KEY_PRESS =~ ^[0-9]+$ ]]; then
+      if [[ $KEY_PRESS -le ${#Installed[@]} ]]; then
+        KEY_PRESS=$(($KEY_PRESS - 1))
+        SetAsDefault ${Installed[$KEY_PRESS]}
+        echo "Succesfully set ${Installed[$KEY_PRESS]} desktop as default."
       fi
-    else #Install packages
-      sh ""$Source_Path"Functions.sh" InstallPackages ${Packages[$(($INPUT_OPTION - 2))]}      
-      echo "exec ${AutostartScripts[$(($INPUT_OPTION - 2))]}" > ~/.xinitrc
     fi
   fi
+}
+#-------------------------------------------------------------------------------
+#Draw menu elements-------------------------------------------------------------
+function ListAvailableItems {
+  #List menuentries
+  if [[ "$1" = "" ]]; then
+    for index in "${!Available[@]}"; do
+      echo "$(($index + 1)). Install ${Available[index]} kernel."
+    done
+  else
+    for index in "${!Available[@]}"; do
+      echo "$(($index + $1)). Install ${Available[index]} kernel."
+    done
+  fi
+}
+
+function SimpleDesktop {
+  echo "Available options:"
+  ListAvailableItems
+  read -sn1 KEY_PRESS
+  if ! [[ $KEY_PRESS = $'\e' ]]; then
+    if [[ $KEY_PRESS =~ ^[0-9]+$ ]]; then
+      if [[ $KEY_PRESS -le ${#Available[@]} ]]; then
+        echo "Installing ${Packages[$(($KEY_PRESS - 1))]} desktop package."
+        #sh ""$Source_Path"Functions.sh" InstallPackages ${Packages[$(($KEY_PRESS - 1))]}
+        #echo "exec ${AutostartScripts[$(($KEY_PRESS - 1))]}" > ~/.xinitrc
+      fi
+    fi
+  else
+    exit
+  fi
+}
+
+function MultipleDesktops {
+  echo "Available options:"
+  echo "1. Set default desktop."
+  ListAvailableItems 2
+  read -sn1 KEY_PRESS
+  if ! [[ $KEY_PRESS = $'\e' ]]; then
+    if [[ $KEY_PRESS =~ ^[0-9]+$ ]]; then
+      if [[ $KEY_PRESS -le $((${#Available[@]} + 1)) ]]; then
+        KEY_PRESS=$(($KEY_PRESS - 1))
+        if [[ $KEY_PRESS = 0 ]]; then
+          SetDefaultDesktop
+        else
+          echo "Installing ${Packages[$(($KEY_PRESS - 1))]} desktop package."
+          #sh ""$Source_Path"Functions.sh" InstallPackages ${Packages[$(($KEY_PRESS - 1))]}
+          #echo "exec ${AutostartScripts[$(($KEY_PRESS - 1))]}" > ~/.xinitrc
+        fi
+      fi
+    fi
+  else
+    exit
+  fi
+}
+
+function DrawMenu {
+  if [[ ${#Installed[@]} = 0 ]] || [[ ${#Installed[@]} = 1 ]]; then
+    if [[ ${#Installed[@]} = 0 ]]; then
+      echo "No desktops installed on this system. (Press \"ESC\" to quit.)"
+    else
+      echo "${Installed[0]} desktop is already installed on this system. (Press \"ESC\" to quit.)"
+    fi
+    SimpleDesktop
+  else
+    echo "Multiple desktops are installed on this system. (Press \"ESC\" to quit.)"
+    MultipleDesktops
+  fi
+}
+#-------------------------------------------------------------------------------
+#User interface-----------------------------------------------------------------
+while [ "$INPUT_OPTION" != "end" ]; do
+  clear
+  GenerateMenuElements
+  DrawMenu
+  read -sn1
 done
