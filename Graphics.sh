@@ -47,7 +47,7 @@ function SetDefaultLists {
   Available=(); Packages=();
   #Available options
   Available=("Intel" "NVIDIA" "AMD")
-  Packages=("xf86-video-intel mesa lib32-mesa" "nvidia nvidia-utils lib32-nvidia-utils" "xf86-video-amdgpu mesa lib32-mesa vulkan-radeon")
+  Packages=("mesa lib32-mesa" "nvidia nvidia-utils lib32-nvidia-utils" "xf86-video-amdgpu mesa lib32-mesa vulkan-radeon")
   if ! [[ ${#Available[@]} = ${#Packages[@]} ]]; then
     echo "Error"
     exit
@@ -147,9 +147,7 @@ function DrawMenu {
   if [[ $CPU = *"Intel"* ]]; then
     echo "- $CPU (Intel graphics)"
   fi
-  if ! [[ $GPU = *"VirtualBox"* ]]; then
-    echo "- $GPU"
-  fi
+  echo "- $GPU"
   if [[ ${#Available[@]} = 0 ]]; then #Everything available is installed
     echo "No available options."
     read -sn1 KEY_PRESS

@@ -32,7 +32,7 @@ function GetActiveKernel {
 }
 
 function SetAsDefault {
-  echo ${Version_Stash[$1]}
+  #echo ${Version_Stash[$1]}
   #Set default kernel to load (UUID_Stash)
   ReplaceWith=$(sed -n -e "${UUID_Stash[$1]}p" $BootFile | sed 's/\//\\\//g' | cut -c 2-)
   sed -ie "${VM_Linuz_default[1]}s/.*/$ReplaceWith/g" $BootFile
@@ -302,10 +302,8 @@ function RestartSync {
   }
   SetDefaultLists
   KEEP_KERNEL="$DEFAULT_KERNEL"
-  echo "$KEEP_KERNEL"
   grub-mkconfig -o /boot/grub/grub.cfg
   SetDefaultLists
-  echo "$KEEP_KERNEL ?=? $DEFAULT_KERNEL"
   if ! [[ "$KEEP_KERNEL" = "$DEFAULT_KERNEL" ]]; then
     for index in "${!Available[@]}"; do
       if [[ "${Available[$index]}" = "$KEEP_KERNEL" ]]; then
