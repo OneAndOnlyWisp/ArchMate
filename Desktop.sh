@@ -75,6 +75,7 @@ function ListInstalledDesktops {
 
 function SetDefaultDesktop {
   SearchForInstalled
+  clear
   echo "Choose default desktop:"
   ListInstalledDesktops
   read -sn1 KEY_PRESS
@@ -84,9 +85,12 @@ function SetDefaultDesktop {
         KEY_PRESS=$(($KEY_PRESS - 1))
         SetAsDefault ${Installed[$KEY_PRESS]}
         echo "Succesfully set ${Installed[$KEY_PRESS]} desktop as default."
+      else
+        echo "Invalid number!"
       fi
     fi
   fi
+  read -sn1
 }
 #-------------------------------------------------------------------------------
 #Draw menu elements-------------------------------------------------------------
@@ -110,9 +114,9 @@ function SimpleDesktop {
   if ! [[ $KEY_PRESS = $'\e' ]]; then
     if [[ $KEY_PRESS =~ ^[0-9]+$ ]]; then
       if [[ $KEY_PRESS -le ${#Available[@]} ]]; then
-        echo "Installing ${Packages[$(($KEY_PRESS - 1))]} desktop package."
-        #sh ""$Source_Path"Functions.sh" InstallPackages ${Packages[$(($KEY_PRESS - 1))]}
-        #echo "exec ${AutostartScripts[$(($KEY_PRESS - 1))]}" > ~/.xinitrc
+        KEY_PRESS=$(($KEY_PRESS - 1))
+        sh ""$Source_Path"Functions.sh" InstallPackages ${Packages[$KEY_PRESS)]}
+        SetAsDefault ${Available[$KEY_PRESS]}
       fi
     fi
   else
@@ -132,9 +136,9 @@ function MultipleDesktops {
         if [[ $KEY_PRESS = 0 ]]; then
           SetDefaultDesktop
         else
-          echo "Installing ${Packages[$(($KEY_PRESS - 1))]} desktop package."
-          #sh ""$Source_Path"Functions.sh" InstallPackages ${Packages[$(($KEY_PRESS - 1))]}
-          #echo "exec ${AutostartScripts[$(($KEY_PRESS - 1))]}" > ~/.xinitrc
+          KEY_PRESS=$(($KEY_PRESS - 1))
+          sh ""$Source_Path"Functions.sh" InstallPackages ${Packages[$KEY_PRESS]}
+          SetAsDefault ${Available[$KEY_PRESS]}
         fi
       fi
     fi
@@ -162,5 +166,4 @@ while [ "$INPUT_OPTION" != "end" ]; do
   clear
   GenerateMenuElements
   DrawMenu
-  read -sn1
 done
