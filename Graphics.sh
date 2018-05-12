@@ -5,6 +5,15 @@ CPU=$(lscpu | sed -n 's/^Model name:[[:space:]]*//p')
 GPU=$(lspci | grep -o 'VGA compatible controller: .*' | sed 's/.*: //') #Most likely need a rework later on!!!
 Available=(); Packages=(); Installed=();
 #-------------------------------------------------------------------------------
+#Dependancy check---------------------------------------------------------------
+function EnableMultilib {
+  StartingLine=$(sed -n '/#\[multilib\]/=' /etc/pacman.conf)
+  if ! [[ "$StartingLine" = "" ]]; then
+    sed -ie ""$StartingLine"s/#//g" /etc/pacman.conf
+    sed -ie ""$(($StartingLine + 1))"s/#//g" /etc/pacman.conf
+  fi
+}
+#-------------------------------------------------------------------------------
 #Kernel specific elements-------------------------------------------------------
 function NvidiaDrivers {
   UUID_Stash=()
@@ -159,6 +168,7 @@ function DrawMenu {
   fi
 }
 #-------------------------------------------------------------------------------
+EnableMultilib
 #User interface-----------------------------------------------------------------
 while [ "$INPUT_OPTION" != "end" ]
 do

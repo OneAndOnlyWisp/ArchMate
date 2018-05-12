@@ -80,16 +80,16 @@ function SetDefaultDesktop {
   read -sn1 KEY_PRESS
   if ! [[ $KEY_PRESS = $'\e' ]]; then
     if [[ $KEY_PRESS =~ ^[0-9]+$ ]]; then
-      if [[ $KEY_PRESS -le ${#Installed[@]} ]]; then
+      if [[ $KEY_PRESS -le ${#Installed[@]} ]] && [[ $KEY_PRESS -ne 0 ]]; then
         KEY_PRESS=$(($KEY_PRESS - 1))
         SetAsDefault ${Installed[$KEY_PRESS]}
         echo "Succesfully set ${Installed[$KEY_PRESS]} desktop as default."
       else
         echo "Invalid number!"
       fi
+      read -sn1
     fi
   fi
-  read -sn1
 }
 #-------------------------------------------------------------------------------
 #Draw menu elements-------------------------------------------------------------
@@ -97,11 +97,11 @@ function ListAvailableItems {
   #List menuentries
   if [[ "$1" = "" ]]; then
     for index in "${!Available[@]}"; do
-      echo "$(($index + 1)). Install ${Available[index]} kernel."
+      echo "$(($index + 1)). Install ${Available[index]} desktop."
     done
   else
     for index in "${!Available[@]}"; do
-      echo "$(($index + $1)). Install ${Available[index]} kernel."
+      echo "$(($index + $1)). Install ${Available[index]} desktop."
     done
   fi
 }
@@ -114,7 +114,7 @@ function SimpleDesktop {
     if [[ $KEY_PRESS =~ ^[0-9]+$ ]]; then
       if [[ $KEY_PRESS -le ${#Available[@]} ]]; then
         KEY_PRESS=$(($KEY_PRESS - 1))
-        sh ""$Source_Path"Functions.sh" InstallPackages ${Packages[$KEY_PRESS)]}
+        sh ""$Source_Path"Functions.sh" InstallPackages ${Packages[$KEY_PRESS]}
         SetAsDefault ${Available[$KEY_PRESS]}
       fi
     fi

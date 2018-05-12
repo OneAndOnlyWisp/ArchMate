@@ -2,10 +2,6 @@
 clear
 Source_Path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/"
 
-sh ""$Source_Path"Functions.sh" KernelRemoveCheck
-read -sn1
-exit
-
 #Custom apps
 pacman -S --noconfirm konsole dolphin chromium atom transmission-qt sddm
 #Apply services
