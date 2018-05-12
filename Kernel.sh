@@ -32,6 +32,7 @@ function GetActiveKernel {
 }
 
 function SetAsDefault {
+  echo ${Version_Stash[$1]}
   #Set default kernel to load (UUID_Stash)
   ReplaceWith=$(sed -n -e "${UUID_Stash[$1]}p" $BootFile | sed 's/\//\\\//g' | cut -c 2-)
   sed -ie "${VM_Linuz_default[1]}s/.*/$ReplaceWith/g" $BootFile
@@ -290,14 +291,6 @@ function GetStash_UUID {
 }
 
 function RestartSync {
-  function GetPackageName {
-    for index in "${!Available[@]}"; do
-      if [[ "${Available[$index]}" = "$1" ]]; then
-        echo ${Packages[$index]} | sed 's/\s.*$//'
-        return
-      fi
-    done
-  }
   function FindAndApply {
     for index in "${!Version_Stash[@]}"; do #Linux images(kernel) list
       LinuxVersion=$(sed -n "${UUID_Stash[index]}p" $BootFile | sed 's/.*\/vmlinuz-//' | sed 's/\s.*$//')
@@ -309,10 +302,17 @@ function RestartSync {
   }
   SetDefaultLists
   KEEP_KERNEL="$DEFAULT_KERNEL"
+  echo "$KEEP_KERNEL"
   grub-mkconfig -o /boot/grub/grub.cfg
   SetDefaultLists
+  echo "$KEEP_KERNEL ?=? $DEFAULT_KERNEL"
   if ! [[ "$KEEP_KERNEL" = "$DEFAULT_KERNEL" ]]; then
-    FindAndApply $(GetPackageName $KEEP_KERNEL)
+    for index in "${!Available[@]}"; do
+      if [[ "${Available[$index]}" = "$KEEP_KERNEL" ]]; then
+        FindAndApply $(echo ${Packages[$index]} | sed 's/\s.*$//')
+        break
+      fi
+    done
   fi
   exit
 }

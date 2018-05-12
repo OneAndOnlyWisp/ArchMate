@@ -145,8 +145,9 @@ function KernelRemoveCheck {
   if [[ -e ""$Source_Path"removekernel" ]]; then
     pacman -Rs --noconfirm linux-headers
     pacman -Rs --noconfirm linux
-    rm ""$Source_Path"removekernel"
+    echo "Executing RestartSync..."
     sh ""$Source_Path"Kernel.sh" RestartSync
+    rm ""$Source_Path"removekernel"
   fi
   read -sn1
 }

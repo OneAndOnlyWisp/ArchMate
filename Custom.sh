@@ -2,7 +2,7 @@
 clear
 Source_Path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/"
 
-sh ""$Source_Path"Kernel.sh" CheckForReboot
+sh ""$Source_Path"Functions.sh" KernelRemoveCheck
 read -sn1
 exit
 
