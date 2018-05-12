@@ -53,6 +53,7 @@ function InstallPackages {
           echo "All packages are already installed."
           return
       fi
+  #AUR packages install--------------------------------------------------------------------------------------------
       # Otherwise, install all the packages that have been added to the "${NotFound[@]}" array.
       printf "Packages not found:\n%s\n" "${NotFound[@]}"
       printf "Trying to install from AUR repository."
@@ -60,7 +61,6 @@ function InstallPackages {
         cd $HOME
         echo ""
         #echo "$(ls -A "${NotFound[$index]}" | wc -l)"
-
         #Git clone the package
         if ! [[ -d ${NotFound[$index]} ]]; then
           git clone "https://aur.archlinux.org/${NotFound[$index]}.git"

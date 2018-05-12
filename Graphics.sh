@@ -5,13 +5,10 @@ CPU=$(lscpu | sed -n 's/^Model name:[[:space:]]*//p')
 GPU=$(lspci | grep -o 'VGA compatible controller: .*' | sed 's/.*: //') #Most likely need a rework later on!!!
 Available=(); Packages=(); Installed=();
 #-------------------------------------------------------------------------------
-#Helper functions area----------------------------------------------------------
-
-#-------------------------------------------------------------------------------
 #Kernel specific elements-------------------------------------------------------
 function NvidiaDrivers {
   UUID_Stash=()
-  temp_list=$(sh ""$Source_Path"Kernel.sh" GetUUID)
+  temp_list=$(sh ""$Source_Path"Kernel.sh" GetStash_UUID)
   UUID_Stash=(${temp_list// / })
   unset 'temp_list'
   echo "Installing ${Available[$1]} kernel specific drivers..."
@@ -20,15 +17,12 @@ function NvidiaDrivers {
     if [[ $FirstPackage = "true" ]]; then
       for index in ${!UUID_Stash[*]}; do #Installed kernels
       ThisKernel=$(sed -n "${UUID_Stash[$index]}p" /boot/grub/grub.cfg | sed 's/.*\/vmlinuz-//' | sed 's/\s.*$//')
-      echo $ThisKernel
       KernelSuffix=$(echo $ThisKernel | sed 's/.*linux//')
-      echo "Installing "$Package""$KernelSuffix"..."
-      #sh ""$Source_Path"Functions.sh" InstallPackages ""$ThisPackage""$KernelSuffix""
+      sh ""$Source_Path"Functions.sh" InstallPackages ""$Package""$KernelSuffix""
       FirstPackage="false"
       done
     else
-      echo "Installing $Package package..."
-      #sh ""$Source_Path"Functions.sh" InstallPackages "$Package"
+      sh ""$Source_Path"Functions.sh" InstallPackages "$Package"
     fi
   done
 }
@@ -95,7 +89,7 @@ function RemoveUnused {
 
 function GenerateMenuElements {
   SearchForInstalled
-  #RemoveUnused
+  RemoveUnused
   _temp_aval=()
   _temp_pack=()
   #Clear installed from available
@@ -118,10 +112,6 @@ function GenerateMenuElements {
   Packages=("${_temp_pack[@]}")
   unset '_temp_aval'
   unset '_temp_pack'
-  echo "MENU-------------------------------------------"
-  echo "Available:" ${Available[*]} "| Length:" ${#Available[@]}
-  echo "Packages:" ${Packages[*]}
-  echo "-----------------------------------------------"
 }
 #-------------------------------------------------------------------------------
 #Draw menu elements-------------------------------------------------------------
@@ -130,8 +120,7 @@ function DriverInstall {
     NvidiaDrivers $1
   else
     for Package in $(echo ${Packages[$1]} | tr ";" "\n"); do
-      echo "Installing $Package package..."
-      #sh ""$Source_Path"Functions.sh" InstallPackages "$Package"
+      sh ""$Source_Path"Functions.sh" InstallPackages "$Package"
     done
   fi
 }
@@ -155,6 +144,9 @@ function HasOptions {
 
 function DrawMenu {
   echo "Graphical adapters found:                 (Press \"ESC\" to go back.)"
+  if [[ $CPU = *"Intel"* ]]; then
+    echo "- $CPU (Intel graphics)"
+  fi
   echo "- $GPU"
   if [[ ${#Available[@]} = 0 ]]; then #Everything available is installed
     echo "No available options."
@@ -173,42 +165,4 @@ do
   clear
   GenerateMenuElements
   DrawMenu
-  read -sn1
-  exit
-
-
-  #UI
-  echo "Graphical adapters found:                 (Press \"ESC\" to go back.)"
-  echo "- $GPU"
-  if [[ ${#Available[@]} = 0 ]]; then #Everything available is installed
-    echo "No available options."
-    read -sn1 INPUT_OPTION
-    if [[ $INPUT_OPTION = $'\e' ]]; then #Exit
-      break
-    fi
-  else #Draw menu
-    echo "Available options:"
-    for ThisEntry in "${!Available[@]}"; do #List menuentries
-      echo "$(($ThisEntry + 1)). Install ${Available[ThisEntry]} driver."
-    done
-    read -sn1 INPUT_OPTION
-    if [[ $INPUT_OPTION = $'\e' ]]; then #Exit
-      break
-    elif ! [[ $INPUT_OPTION =~ ^[0-9]+$ ]]; then #Not number error
-      echo "Not number!"
-    elif [[ $INPUT_OPTION -gt $((${#Available[@]})) ]]; then #Invalid number error
-      echo "Invalid number!"
-    else #Install packages
-      for ThisPackage in $(echo ${Packages[$(($INPUT_OPTION - 1))]} | tr ";" "\n")
-      do
-        for index in ${!UUID_Stash[*]}; do #Installed kernels
-          ThisKernel=$(sed -n "${UUID_Stash[$index]}p" $BootFile | sed 's/.*\/vmlinuz-//' | sed 's/\s.*$//')
-          KernelSuffix=$(echo $ThisKernel | sed 's/.*linux//')
-          echo ""$ThisPackage""$KernelSuffix""
-          sh ""$Source_Path"Functions.sh" InstallPackages ""$ThisPackage""$KernelSuffix""
-        done
-      done
-    fi
-    read -sn1
-  fi
 done

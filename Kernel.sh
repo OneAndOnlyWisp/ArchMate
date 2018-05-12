@@ -281,7 +281,7 @@ function DrawMenu {
 }
 #-------------------------------------------------------------------------------
 #Useable from outside-----------------------------------------------------------
-function GetUUID {
+function GetStash_UUID {
   ReadBootCFG
   echo "${UUID_Stash[*]}"
   exit
