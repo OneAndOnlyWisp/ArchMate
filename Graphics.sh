@@ -147,7 +147,9 @@ function DrawMenu {
   if [[ $CPU = *"Intel"* ]]; then
     echo "- $CPU (Intel graphics)"
   fi
-  echo "- $GPU"
+  if ! [[ $GPU = *"VirtualBox"* ]]; then
+    echo "- $GPU"
+  fi
   if [[ ${#Available[@]} = 0 ]]; then #Everything available is installed
     echo "No available options."
     read -sn1 KEY_PRESS
@@ -159,10 +161,11 @@ function DrawMenu {
   fi
 }
 #-------------------------------------------------------------------------------
-#Menu
+#User interface-----------------------------------------------------------------
 while [ "$INPUT_OPTION" != "end" ]
 do
   clear
   GenerateMenuElements
   DrawMenu
 done
+#-------------------------------------------------------------------------------
