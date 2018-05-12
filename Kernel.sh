@@ -318,26 +318,41 @@ function RestartSync {
 }
 
 function CheckForReboot {
-  SetDefaultLists
-  if ! [[ "$ACTIVE_KERNEL" = "$DEFAULT_KERNEL" ]]; then
-    if ! [[ "$DEFAULT_KERNEL" = "Stable" ]]; then
-      while [ "$Security_Q" != "end" ]
-      do
-        echo "Do you want to keep the default \"Stable\" kernel? yes|no"
-        read Security_Q
-        case $Security_Q in
-          "no" ) echo "" > ""$Source_Path"removekernel"; break;;
-          "yes") break;;
-          * ) echo "Invalid answer!";;
-        esac
+  function FindStableKernel {
+    if ! [[ "$ACTIVE_KERNEL" = "$DEFAULT_KERNEL" ]]; then
+      for xindex in "${!Version_Stash[@]}"; do
+        ThisKernel=$(sed -n "${UUID_Stash[xindex]}p" $BootFile | sed 's/.*\/vmlinuz-//' | sed 's/\s.*$//')
+        for yindex in "${!Packages[@]}"; do
+          if [[ "${Packages[$yindex]}" = "$FindMe "* ]]; then
+            if [[ ${Available[$yindex]} = "Stable" ]]; then
+              echo "true"
+              return
+            fi
+          fi
+        done
       done
     fi
+  }
+  function TurnOnAutostart {
     if ! grep -q "ArchMate" ~root/.bashrc; then
       sh ""$Source_Path"Functions.sh" AutoStartSwitch
       echo "" > ""$Source_Path"autostart"
       reboot
     fi
+  }
+  SetDefaultLists
+  if [[ $(FindStableKernel) = "true" ]]; then
+    while [ "$Security_Q" != "end" ]; do
+      echo "Do you want to keep the default \"Stable\" kernel? yes|no"
+      read Security_Q
+      case $Security_Q in
+        "no" ) echo "" > ""$Source_Path"removekernel"; break;;
+        "yes") break;;
+        * ) echo "Invalid answer!";;
+      esac
+    done
   fi
+  TurnOnAutostart  
   exit
 }
 

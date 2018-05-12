@@ -148,6 +148,7 @@ function KernelRemoveCheck {
     rm ""$Source_Path"removekernel"
     sh ""$Source_Path"Kernel.sh" RestartSync
   fi
+  read -sn1
 }
 
 #Allow makepkg to run as root
