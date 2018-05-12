@@ -22,7 +22,7 @@ Download and run the script rigth after first root login on a fresh install. (Pr
 
 - A working internet connection
 - Logged in as 'root'
-- (There are minimum hardwre requirements, but no exact information for now.)
+- (There are minimum hardware requirements, but no exact information for now.)
 
 ## How to get it
 #### With git
