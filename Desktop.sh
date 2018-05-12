@@ -36,7 +36,6 @@ function SearchForInstalled {
     #echo ${Packages[index]}
     [[ $(sh ""$Source_Path"Functions.sh" _isInstalled "${Packages[index]}") = 0 ]] && Installed+=("${Available[index]}")
   done
-  Installed+=("${Available[1]}")
 }
 
 function GenerateMenuElements {

@@ -323,7 +323,7 @@ function CheckForReboot {
     if ! [[ "$DEFAULT_KERNEL" = "Stable" ]]; then
       while [ "$Security_Q" != "end" ]
       do
-        echo "Do you want to keep the default \"Stable\" kernel?"
+        echo "Do you want to keep the default \"Stable\" kernel? yes|no"
         read Security_Q
         case $Security_Q in
           "no" ) echo "" > ""$Source_Path"removekernel"; break;;

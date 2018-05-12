@@ -72,7 +72,7 @@ function SearchForInstalled {
   done
 }
 
-function RemoveUnused {
+function RemoveNotFound {
   for index in "${!Available[@]}"; do
     if [[ "${Available[$index]}" = *"Intel"* ]]; then
       if [[ $CPU = *"Intel"* ]]; then
@@ -89,7 +89,6 @@ function RemoveUnused {
 
 function GenerateMenuElements {
   SearchForInstalled
-  RemoveUnused
   _temp_aval=()
   _temp_pack=()
   #Clear installed from available
@@ -112,6 +111,7 @@ function GenerateMenuElements {
   Packages=("${_temp_pack[@]}")
   unset '_temp_aval'
   unset '_temp_pack'
+  RemoveNotFound
 }
 #-------------------------------------------------------------------------------
 #Draw menu elements-------------------------------------------------------------

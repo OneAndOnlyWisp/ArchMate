@@ -39,6 +39,7 @@ function CheckWheelAdmin {
   if ! [[ "$ReplaceThisLine" = "" ]]; then
     ReplaceWith="%wheel ALL=(ALL) ALL"
     cat /etc/sudoers | sed -e ""$ReplaceThisLine"s/.*/$ReplaceWith/g" | EDITOR='tee' visudo
+    clear
   fi
 }
 #Draw menu elements-------------------------------------------------------------
