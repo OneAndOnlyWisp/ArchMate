@@ -8,6 +8,31 @@ Available=(); Packages=(); Installed=();
 #Helper functions area----------------------------------------------------------
 
 #-------------------------------------------------------------------------------
+#Kernel specific elements-------------------------------------------------------
+function NvidiaDrivers {
+  UUID_Stash=()
+  temp_list=$(sh ""$Source_Path"Kernel.sh" GetUUID)
+  UUID_Stash=(${temp_list// / })
+  unset 'temp_list'
+  echo "Installing ${Available[$1]} kernel specific drivers..."
+  FirstPackage="true"
+  for Package in $(echo ${Packages[$1]} | tr ";" "\n"); do
+    if [[ $FirstPackage = "true" ]]; then
+      for index in ${!UUID_Stash[*]}; do #Installed kernels
+      ThisKernel=$(sed -n "${UUID_Stash[$index]}p" /boot/grub/grub.cfg | sed 's/.*\/vmlinuz-//' | sed 's/\s.*$//')
+      echo $ThisKernel
+      KernelSuffix=$(echo $ThisKernel | sed 's/.*linux//')
+      echo "Installing "$Package""$KernelSuffix"..."
+      #sh ""$Source_Path"Functions.sh" InstallPackages ""$ThisPackage""$KernelSuffix""
+      FirstPackage="false"
+      done
+    else
+      echo "Installing $Package package..."
+      #sh ""$Source_Path"Functions.sh" InstallPackages "$Package"
+    fi
+  done
+}
+#-------------------------------------------------------------------------------
 #Intel specific elements--------------------------------------------------------
 function IntelVulkanCheck {
   CodeName=$(sh ""$Source_Path"Functions.sh" GetCodename)
@@ -70,7 +95,7 @@ function RemoveUnused {
 
 function GenerateMenuElements {
   SearchForInstalled
-  RemoveUnused
+  #RemoveUnused
   _temp_aval=()
   _temp_pack=()
   #Clear installed from available
@@ -101,19 +126,14 @@ function GenerateMenuElements {
 #-------------------------------------------------------------------------------
 #Draw menu elements-------------------------------------------------------------
 function DriverInstall {
-  UUID_Stash=()
-  temp_list=$(sh ""$Source_Path"Kernel.sh" GetUUID)
-  UUID_Stash=(${temp_list// / })
-  unset 'temp_list'
-  echo "${UUID_Stash[*]}"
-  for ThisPackage in $(echo ${Packages[$(($KEY_PRESS - 1))]} | tr ";" "\n"); do
-    for index in ${!UUID_Stash[*]}; do #Installed kernels
-      ThisKernel=$(sed -n "${UUID_Stash[$index]}p" /boot/grub/grub.cfg | sed 's/.*\/vmlinuz-//' | sed 's/\s.*$//')
-      KernelSuffix=$(echo $ThisKernel | sed 's/.*linux//')
-      echo "Installing "$ThisPackage""$KernelSuffix"..."
-      #sh ""$Source_Path"Functions.sh" InstallPackages ""$ThisPackage""$KernelSuffix""
+  if [[ ${Available[$1]} = *"NVIDIA"* ]]; then
+    NvidiaDrivers $1
+  else
+    for Package in $(echo ${Packages[$1]} | tr ";" "\n"); do
+      echo "Installing $Package package..."
+      #sh ""$Source_Path"Functions.sh" InstallPackages "$Package"
     done
-  done
+  fi
 }
 
 function HasOptions {
