@@ -3,6 +3,8 @@ clear
 #Local globals------------------------------------------------------------------
 Source_Path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/"
 #-------------------------------------------------------------------------------
+#AUR package manager
+sh ""$Source_Path"Functions.sh" InstallPackages "aurman"
 
 #Custom apps
 pacman -S --noconfirm konsole dolphin chromium atom transmission-qt sddm
