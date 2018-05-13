@@ -24,7 +24,7 @@ function CheckSteamDependancy {
 }
 
 function WineInstallSteam {
-  CheckSteamDependancy
+  sudo CheckSteamDependancy
   URL="https://steamcdn-a.akamaihd.net/client/installer/"
   FileName="SteamSetup.exe"
   wget -O $HOME/$FileName $URL$FileName
