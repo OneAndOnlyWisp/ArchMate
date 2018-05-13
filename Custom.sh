@@ -4,6 +4,10 @@ clear
 Source_Path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/"
 #-------------------------------------------------------------------------------
 #Wine install elements----------------------------------------------------------
+function CheckDependancy {
+  sh ""$Source_Path"Functions.sh" InstallPackages "wget";
+}
+
 function GenerateLocale {
   StartingLine=$(sed -n '/#en_US\.UTF-8 UTF-8/=' /etc/locale.gen)
   if ! [[ "$StartingLine" = "" ]]; then
@@ -23,11 +27,17 @@ function InstallSteam {
 }
 
 function InstallWINE {
-  echo "WINE"
+  sh ""$Source_Path"Functions.sh" InstallPackages "wine";
+  sh ""$Source_Path"Functions.sh" InstallPackages "wine_gecko";
+  sh ""$Source_Path"Functions.sh" InstallPackages "wine-mono";
 }
 #-------------------------------------------------------------------------------
 
-#wget "https://steamcdn-a.akamaihd.net/client/installer/SteamSetup.exe"
+InstallWINE
+URL="https://steamcdn-a.akamaihd.net/client/installer/"
+FileName="SteamSetup.exe"
+wget -O $HOME/$FileName $URL$FileName
+wine "$HOME/$FileName"
 
 read -sn1
 exit
