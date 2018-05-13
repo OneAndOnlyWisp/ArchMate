@@ -57,7 +57,7 @@ function SetDefaultLists {
   Available=(); Packages=();
   #Available options
   Available=("Intel" "NVIDIA" "AMD")
-  Packages=("mesa lib32-mesa" "nvidia nvidia-utils lib32-nvidia-utils" "xf86-video-amdgpu mesa lib32-mesa vulkan-radeon")
+  Packages=("mesa lib32-mesa" "nvidia nvidia-utils lib32-nvidia-utils nvidia-settings" "xf86-video-amdgpu mesa lib32-mesa vulkan-radeon")
   if ! [[ ${#Available[@]} = ${#Packages[@]} ]]; then
     echo "Error"
     exit
@@ -69,12 +69,23 @@ function SearchForInstalled {
   Installed=()
   for xindex in ${!Packages[*]}; do
     Counter=0
-    for Package in $(echo ${Packages[xindex]} | tr ";" "\n")
-    do
-      if [[ $(sh ""$Source_Path"Functions.sh" _isInstalled "$Package") = 0 ]]; then
-        let Counter=Counter+1
-      fi
-    done
+    if [[ ${Available[xindex]} = "NVIDIA" ]]; then
+      for Package in $(echo ${Packages[xindex]} | tr ";" "\n"); do
+        if [[ $Counter = 0 ]]; then
+          Counter=$(($Counter + 1))
+        elif [[ condition ]]; then
+          if [[ $(sh ""$Source_Path"Functions.sh" _isInstalled "$Package") = 0 ]]; then
+            Counter=$(($Counter + 1))
+          fi
+        fi
+      done
+    else
+      for Package in $(echo ${Packages[xindex]} | tr ";" "\n"); do
+        if [[ $(sh ""$Source_Path"Functions.sh" _isInstalled "$Package") = 0 ]]; then
+          Counter=$(($Counter + 1))
+        fi
+      done
+    fi
     PackageCount=$(($(echo ${Packages[xindex]} | sed 's/[^ ]//g' | tr -d "\n" | wc -c) + 1))
     if [[ $PackageCount = $Counter ]]; then
       Installed+=("${Available[xindex]}")
