@@ -1,7 +1,9 @@
 #!/bin/sh
 clear
+#Local globals------------------------------------------------------------------
 Source_Path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/"
-
+#-------------------------------------------------------------------------------
+#Application installers---------------------------------------------------------
 function InstallSteam {
   function GenerateLocale {
     StartingLine=$(sed -n '/#en_US\.UTF-8 UTF-8/=' /etc/locale.gen)
@@ -19,7 +21,12 @@ function InstallSteam {
   sh ""$Source_Path"Functions.sh" InstallPackages "steam"
 }
 
-InstallSteam
+function InstallWINE {
+  echo "WINE"
+}
+#-------------------------------------------------------------------------------
+
+InstallWINE
 read -sn1
 exit
 
