@@ -7,13 +7,13 @@ Source_Path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/"
 sh ""$Source_Path"Functions.sh" InstallPackages "aurman"
 
 #Custom apps
-pacman -S --noconfirm konsole dolphin chromium atom transmission-qt sddm
+pacman -S --noconfirm konsole dolphin chromium atom transmission-qt plasma-pa sddm
 #Apply services
 systemctl enable sddm.service
 
 #SDDM autologin
 echo "[Autologin]
-User=john
+User=wisp
 Session=plasma.desktop" > /etc/sddm.conf.d/autologin.conf
 
 #Set window system keyboard layout
