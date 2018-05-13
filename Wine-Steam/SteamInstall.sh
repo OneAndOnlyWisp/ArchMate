@@ -32,7 +32,14 @@ function WineInstallSteam {
 }
 #-------------------------------------------------------------------------------
 #Wine install elements----------------------------------------------------------
+function SoundDriver {
+  sh ""$Source_Path"Functions.sh" InstallPackages "lib32-alsa-lib";
+  sh ""$Source_Path"Functions.sh" InstallPackages "lib32-alsa-plugins";
+  sh ""$Source_Path"Functions.sh" InstallPackages "lib32-libpulse";
+}
+
 function InstallWINE {
+  #SoundDriver
   sh ""$Source_Path"Functions.sh" InstallPackages "wine";
   sh ""$Source_Path"Functions.sh" InstallPackages "wine_gecko";
   sh ""$Source_Path"Functions.sh" InstallPackages "wine-mono";
