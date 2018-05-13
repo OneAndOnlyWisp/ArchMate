@@ -13,7 +13,10 @@ function SetAsDefault {
 
 function CheckDependancy {
   #Init "Multimedia engine" (Audio + Window system)
-  sh ""$Source_Path"Functions.sh" InstallPackages "pulseaudio" "pulseaudio-alsa" "xorg" "xorg-xinit"
+  sh ""$Source_Path"Functions.sh" InstallPackages "pulseaudio"
+  sh ""$Source_Path"Functions.sh" InstallPackages "pulseaudio-alsa"
+  sh ""$Source_Path"Functions.sh" InstallPackages "xorg" "xorg-xinit"
+  sh ""$Source_Path"Functions.sh" InstallPackages "xorg-xinit"
 }
 #-------------------------------------------------------------------------------
 #Menu item generation elements--------------------------------------------------
