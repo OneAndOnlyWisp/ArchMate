@@ -9,7 +9,7 @@ sh ""$Source_Path"Functions.sh" InstallPackages "aurman"
 #Must have
 pacman -S --noconfirm plasma-pa; #Volume adjustment app
 pacman -S --noconfirm spectacle; #Print screen tool
-pacman -S --noconfirm deepin-image-viewer; #Image viewer
+pacman -S --noconfirm gwenview; #Image viewer
 #Custom apps
 pacman -S --noconfirm konsole; #Terminal
 pacman -S --noconfirm dolphin; #File manager
