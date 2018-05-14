@@ -7,6 +7,7 @@ Source_Path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/"
 sh ""$Source_Path"Functions.sh" InstallPackages "aurman"
 
 #Must have
+pacman -S --noconfirm ksysguard; #Process manager
 pacman -S --noconfirm powerdevil; #Power management system tool
 pacman -S --noconfirm plasma-pa; #Volume adjustment app
 pacman -S --noconfirm spectacle; #Print screen tool
@@ -14,10 +15,14 @@ pacman -S --noconfirm gwenview; #Image viewer
 #Custom apps
 pacman -S --noconfirm konsole; #Terminal
 pacman -S --noconfirm dolphin; #File manager
-pacman -S --noconfirm chromium; #Browser
 pacman -S --noconfirm atom; #Text editor
 pacman -S --noconfirm transmission-qt; #Torrent
 pacman -S --noconfirm ark unrar; #Archive manager
+pacman -S --noconfirm kodi; #Cloud/Local Audio/Video player
+
+#Browser
+pacman -S --noconfirm chromium;
+echo "--password-store=basic" >> ~/.config/chromium-flags.conf
 
 #Display manager service
 pacman -S --noconfirm sddm
