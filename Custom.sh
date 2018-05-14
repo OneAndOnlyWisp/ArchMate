@@ -7,6 +7,7 @@ Source_Path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/"
 sh ""$Source_Path"Functions.sh" InstallPackages "aurman"
 
 #Must have
+pacman -S --noconfirm powerdevil; #Power management system tool
 pacman -S --noconfirm plasma-pa; #Volume adjustment app
 pacman -S --noconfirm spectacle; #Print screen tool
 pacman -S --noconfirm gwenview; #Image viewer
@@ -26,6 +27,9 @@ systemctl enable sddm.service
 echo "[Autologin]
 User=wisp
 Session=plasma.desktop" > /etc/sddm.conf.d/autologin.conf
+#SDDM desktop theme
+echo "[Theme]
+Current=breeze-dark" > /etc/sddm.conf.d/theme.conf
 
 #Set window system keyboard layout
 localectl set-x11-keymap hu
