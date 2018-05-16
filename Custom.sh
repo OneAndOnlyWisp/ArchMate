@@ -4,23 +4,28 @@ clear
 Source_Path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/"
 #-------------------------------------------------------------------------------
 #AUR package manager
-sh ""$Source_Path"Functions.sh" InstallPackages "aurman"
+sh ""$Source_Path"Functions.sh" InstallPackages "aurman";
 
 #Display manager service
-pacman -S --noconfirm sddm
-systemctl enable sddm.service
+pacman -S --noconfirm sddm;
+systemctl enable sddm.service;
+#Network manager service
+pacman -S --noconfirm networkmanager;
+systemctl enable NetworkManager.service;
+
 
 #SDDM autologin
 echo "[Autologin]
 User=wisp
-Session=plasma.desktop" > /etc/sddm.conf.d/autologin.conf
+Session=plasma.desktop" > /etc/sddm.conf.d/autologin.conf;
 
 #Set window system keyboard layout
-localectl set-x11-keymap hu
+localectl set-x11-keymap hu;
 
 #Sys tool
 pacman -S --noconfirm ksysguard; #Process manager
 pacman -S --noconfirm partitionmanager; #KDE partition manager
+pacman -S --noconfirm plasma-nm; #Network manager app
 
 #Life savers
 pacman -S --noconfirm powerdevil; #Power management system tool
