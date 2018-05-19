@@ -45,8 +45,22 @@ function InstallWINE {
   sh ""$Source_Path"Functions.sh" InstallPackages "wine-mono";
 }
 #-------------------------------------------------------------------------------
-InstallWINE
-WineInstallSteam
+#InstallWINE
+#WineInstallSteam
 
+sudo pacman --noconfirm -S wget
+sudo pacman --noconfirm -S wine
+sudo pacman --noconfirm -S wine_gecko
+sudo pacman --noconfirm -S wine-mono
+
+WINEPREFIX=/ssd/Wine/ winecfg
+
+URL="https://steamcdn-a.akamaihd.net/client/installer/"
+FileName="SteamSetup.exe"
+wget -O $HOME/$FileName $URL$FileName
+WINEPREFIX=/ssd/Wine32/ wine "$HOME/$FileName"
+
+
+echo "Done!"
 read -sn1
 exit
