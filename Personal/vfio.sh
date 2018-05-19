@@ -23,4 +23,4 @@ HOOKS=(... modconf ...)
 
 mkinitcpio -p "LinuxKernel"
 
-pacman -S --noconfirm qemu libvirt ovmf virt-manager
+pacman -S --noconfirm qemu libvirt ovmf virt-manager firewalld dnsmasq
