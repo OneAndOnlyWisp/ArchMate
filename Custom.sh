@@ -6,13 +6,17 @@ Source_Path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/"
 #AUR package manager
 sh ""$Source_Path"Functions.sh" InstallPackages "aurman";
 
+#PC information
+pacman -S --noconfirm neofetch
+#Terminal screensaver
+pacman -S --noconfirm cmatrix
+
 #Display manager service
 pacman -S --noconfirm sddm;
 systemctl enable sddm.service;
 #Network manager service
 pacman -S --noconfirm networkmanager;
 systemctl enable NetworkManager.service;
-
 
 #SDDM autologin
 echo "[Autologin]
