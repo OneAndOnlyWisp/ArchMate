@@ -15,7 +15,8 @@ function CheckDependancy {
   #Init "Multimedia engine" (Audio + Window system)
   sh ""$Source_Path"Functions.sh" InstallPackages "pulseaudio"
   sh ""$Source_Path"Functions.sh" InstallPackages "pulseaudio-alsa"
-  sh ""$Source_Path"Functions.sh" InstallPackages "xorg" "xorg-xinit"
+  sh ""$Source_Path"Functions.sh" InstallPackages "alsa-utils"
+  sh ""$Source_Path"Functions.sh" InstallPackages "xorg"
   sh ""$Source_Path"Functions.sh" InstallPackages "xorg-xinit"
 }
 #-------------------------------------------------------------------------------
