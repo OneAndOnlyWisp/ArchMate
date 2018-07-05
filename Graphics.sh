@@ -15,7 +15,7 @@ function EnableMultilib {
   fi
 }
 #-------------------------------------------------------------------------------
-#Kernel specific elements-------------------------------------------------------
+#CK Kernel specific elements(NOT USED)------------------------------------------
 function NvidiaDrivers {
   UUID_Stash=()
   temp_list=$(sh ""$Source_Path"Kernel.sh" GetStash_UUID)
@@ -57,7 +57,7 @@ function SetDefaultLists {
   Available=(); Packages=();
   #Available options
   Available=("Intel" "NVIDIA" "AMD")
-  Packages=("mesa lib32-mesa" "nvidia nvidia-utils lib32-nvidia-utils nvidia-settings" "xf86-video-amdgpu mesa lib32-mesa vulkan-radeon")
+  Packages=("mesa lib32-mesa xf86-video-intel" "nvidia nvidia-utils lib32-nvidia-utils nvidia-settings" "xf86-video-amdgpu mesa lib32-mesa vulkan-radeon")
   if ! [[ ${#Available[@]} = ${#Packages[@]} ]]; then
     echo "Error"
     exit
@@ -136,16 +136,6 @@ function GenerateMenuElements {
 }
 #-------------------------------------------------------------------------------
 #Draw menu elements-------------------------------------------------------------
-function DriverInstall {
-  if [[ ${Available[$1]} = *"NVIDIA"* ]]; then
-    NvidiaDrivers $1
-  else
-    for Package in $(echo ${Packages[$1]} | tr ";" "\n"); do
-      sh ""$Source_Path"Functions.sh" InstallPackages "$Package"
-    done
-  fi
-}
-
 function HasOptions {
   echo "Available options:"
   for ThisEntry in "${!Available[@]}"; do #List menuentries
@@ -155,7 +145,8 @@ function HasOptions {
   if ! [[ $KEY_PRESS = $'\e' ]]; then
     if [[ $KEY_PRESS =~ ^[0-9]+$ ]]; then
       if [[ $KEY_PRESS -le ${#Available[@]} ]]; then
-        DriverInstall $(($KEY_PRESS - 1))
+        KEY_PRESS=$(($KEY_PRESS - 1))
+        pacman -S --noconfirm ${Packages[$KEY_PRESS]}
       fi
     fi
   else

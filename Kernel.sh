@@ -88,8 +88,8 @@ function ReadBootCFG {
 
 function SetDefaultLists {
   Available=(); Packages=();
-  Available=("Stable" "Hardened" "Longterm" "Zen" "CK (AUR)")
-  Packages=("linux linux-headers" "linux-hardened" "linux-lts linux-lts-headers" "linux-zen linux-zen-headers" "linux-ck-$(CK_CPU_Suffix) linux-ck-headers")
+  Available=("Stable" "Longterm" "Zen" "Hardened")
+  Packages=("linux linux-headers" "linux-lts linux-lts-headers" "linux-zen linux-zen-headers" "linux-hardened")
   if ! [[ ${#Available[@]} = ${#Packages[@]} ]]; then
     echo "Error"
     break
@@ -135,7 +135,7 @@ function GenerateMenuElements {
   unset '_temp_pack'
 }
 #-------------------------------------------------------------------------------
-#Kernel specific elements-------------------------------------------------------
+#CK Kernel specific elements(NOT USED)------------------------------------------
 function EnableCKrepository {
   StartingLine=$(sed -n '/\[repo-ck\]/=' /etc/pacman.conf)
   if [[ "$StartingLine" = "" ]]; then
@@ -230,11 +230,12 @@ function InstallKernel {
   if [[ ${Available[$1]} = *"CK"* ]]; then
     EnableCKrepository
   fi
-  for Package in $(echo ${Packages[$1]} | tr ";" "\n")
-  do
-    sh ""$Source_Path"Functions.sh" InstallPackages $Package
-  done
+  pacman -S --noconfirm ${Packages[$1]}
   grub-mkconfig -o /boot/grub/grub.cfg
+  #for Package in $(echo ${Packages[$1]} | tr ";" "\n")
+  #do
+  #  sh ""$Source_Path"Functions.sh" InstallPackages $Package
+  #done  
 }
 
 function OneKernel {
@@ -327,7 +328,18 @@ function CheckForReboot {
               echo "Do you want to keep the default \"Stable\" kernel? yes|no"
               read Security_Q
               case $Security_Q in
-                "no" ) echo "" > ""$Source_Path"removekernel"; break;;
+                "no")
+                  #Check and add .bashrc for root (needed for automatic restart)
+                  ! [ -e ~root/.bashrc ] && cp /etc/skel/.bash* ~root
+                  #Save answer
+                  echo "" > ""$Source_Path"removekernel"
+                  #Automatic start after login
+                  if ! grep -q "ArchMate" ~root/.bashrc; then
+                    sh ""$Source_Path"Functions.sh" AutoStartSwitch
+                    echo "" > ""$Source_Path"autostart"
+                    reboot
+                  fi
+                  ;;
                 "yes") break;;
                 * ) echo "Invalid answer!";;
               esac
@@ -336,11 +348,6 @@ function CheckForReboot {
         fi
       done
     done
-    if ! grep -q "ArchMate" ~root/.bashrc; then
-      sh ""$Source_Path"Functions.sh" AutoStartSwitch
-      echo "" > ""$Source_Path"autostart"
-      reboot
-    fi
   fi
   exit
 }

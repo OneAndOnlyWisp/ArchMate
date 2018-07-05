@@ -29,7 +29,7 @@ do
   read -sn1 INPUT_OPTION
 
   case $INPUT_OPTION in
-    '1') sh $KERNEL; clear; sh $KERNEL CheckForReboot; clear;;
+    '1') sh $KERNEL; clear; clear;; #sh $KERNEL CheckForReboot; (Removed for now)
     '2') sh $GRAPHICS; clear;;
     '3') sh $USER; clear;;
     '4') sh $DESKTOP; clear;;
@@ -37,3 +37,6 @@ do
     $'\e') clear; break;;
   esac
 done
+
+#Revert changes to makepkg
+cp ""$Source_Path"Assets/SysBU/makepkgBU" /usr/bin/makepkg

@@ -3,8 +3,13 @@ clear
 #Local globals------------------------------------------------------------------
 Source_Path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/"
 #-------------------------------------------------------------------------------
+
+#Fonts
+pacman -S --noconfirm ttf-liberation; #Most popular fonts
+#pacman -S --noconfirm wqy-zenhei; #Chinese Outline Font (Most likely not needed)
+
 #AUR package manager
-sh ""$Source_Path"Functions.sh" InstallPackages "aurman";
+sh ""$Source_Path"Functions.sh" InstallFromAUR "aurman";
 
 #PC information
 pacman -S --noconfirm neofetch
@@ -23,12 +28,12 @@ echo "[Autologin]
 User=wisp
 Session=plasma.desktop" > /etc/sddm.conf.d/autologin.conf;
 
-#Set window system keyboard layout
-localectl set-x11-keymap hu;
+#Set keyboard layouts
+localectl --no-convert set-keymap hu;
+localectl --no-convert set-x11-keymap hu;
 
 #Sys tool
-pacman -S --noconfirm ksysguard; #Process manager
-pacman -S --noconfirm partitionmanager; #KDE partition manager
+pacman -S --noconfirm htop; #Process manage
 pacman -S --noconfirm plasma-nm; #Network manager app
 
 #Life savers
@@ -43,17 +48,18 @@ pacman -S --noconfirm dolphin; #File manager
 pacman -S --noconfirm atom; #Text editor
 pacman -S --noconfirm transmission-qt; #Torrent
 pacman -S --noconfirm ark unrar; #Archive manager
-pacman -S --noconfirm kodi; #Cloud/Local Audio/Video player
+pacman -S --noconfirm kodi; #Multimedia GOD
 
 #Browser
 pacman -S --noconfirm chromium;
 echo "--password-store=basic" >> ~/.config/chromium-flags.conf
 
-#Revert changes to makepkg
-cp ""$Source_Path"Assets/SysBU/makepkgBU" /usr/bin/makepkg
-
 #Display settings
-cp ""$Source_Path"Personal/20-nvidia.conf" /etc/X11/xorg.conf.d/20-nvidia.conf
+cp ""$Source_Path"Personal/20-intel.conf" /etc/X11/xorg.conf.d/20-intel.conf
+
+#Virtualization
+pacman -S --noconfirm qemu libvirt ovmf #Must have
+pacman -S --noconfirm virt-manager #Virtual machine manager with GUI
 
 #Restart
 reboot

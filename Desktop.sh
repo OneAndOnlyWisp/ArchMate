@@ -11,22 +11,19 @@ function SetAsDefault {
   done
 }
 
-function CheckDependancy {
-  #Init "Multimedia engine" (Audio + Window system)
-  sh ""$Source_Path"Functions.sh" InstallPackages "pulseaudio"
-  sh ""$Source_Path"Functions.sh" InstallPackages "pulseaudio-alsa"
-  sh ""$Source_Path"Functions.sh" InstallPackages "alsa-utils"
-  sh ""$Source_Path"Functions.sh" InstallPackages "xorg"
-  sh ""$Source_Path"Functions.sh" InstallPackages "xorg-xinit"
+function InstallDependancies {
+  #"Multimedia engine" (Audio + Window system)
+  pacman -S --noconfirm pulseaudio pulseaudio-alsa alsa-utils; #Audio
+  pacman -S --noconfirm xorg xorg-xinit; #Window system
 }
 #-------------------------------------------------------------------------------
 #Menu item generation elements--------------------------------------------------
 function SetDefaultLists {
   Available=(); Packages=(); AutostartScripts=();
   #Available options
-  Available=("Plasma" "Gnome" "Budgie" "Lumina (AUR)")
-  Packages=("plasma-desktop" "gnome" "budgie-desktop" "lumina-desktop")
-  AutostartScripts=("startkde" "gnome-session" "budgie-desktop" "start-lumina-desktop")
+  Available=("Plasma" "XFCE" "Gnome" "Budgie")
+  Packages=("plasma-desktop" "xfce4" "gnome" "budgie-desktop")
+  AutostartScripts=("startkde" "startxfce4" "gnome-session" "budgie-desktop")
   if ! [[ ${#Available[@]} = ${#Packages[@]} ]]; then
     echo "Error"
     exit
@@ -118,7 +115,7 @@ function SimpleDesktop {
     if [[ $KEY_PRESS =~ ^[0-9]+$ ]]; then
       if [[ $KEY_PRESS -le ${#Available[@]} ]]; then
         KEY_PRESS=$(($KEY_PRESS - 1))
-        sh ""$Source_Path"Functions.sh" InstallPackages ${Packages[$KEY_PRESS]}
+        pacman -S --noconfirm ${Packages[$KEY_PRESS]}
         SetAsDefault ${Available[$KEY_PRESS]}
       fi
     fi
@@ -140,7 +137,7 @@ function MultipleDesktops {
           SetDefaultDesktop
         else
           KEY_PRESS=$(($KEY_PRESS - 1))
-          sh ""$Source_Path"Functions.sh" InstallPackages ${Packages[$KEY_PRESS]}
+          pacman -S --noconfirm ${Packages[$KEY_PRESS]}
           SetAsDefault ${Available[$KEY_PRESS]}
         fi
       fi
@@ -164,6 +161,7 @@ function DrawMenu {
   fi
 }
 #-------------------------------------------------------------------------------
+InstallDependancies
 #User interface-----------------------------------------------------------------
 while [ "$INPUT_OPTION" != "end" ]; do
   clear
