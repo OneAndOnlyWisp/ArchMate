@@ -35,7 +35,7 @@ function SearchForInstalled {
   Installed=()
   for index in ${!Packages[*]}; do
     echo ${Packages[index]}
-    [[ $(sh ""$Source_Path"Functions.sh" _isInstalled "${Packages[index]}") = 0 ]] && Installed+=("${Available[index]}")
+    [[ $(sh ""$Source_Path"Functions.sh" _isInstalled "${Packages[index]}") ]] && Installed+=("${Available[index]}")
   done
 }
 
@@ -162,6 +162,7 @@ function DrawMenu {
 }
 #-------------------------------------------------------------------------------
 InstallDependancies
+clear
 #User interface-----------------------------------------------------------------
 while [ "$INPUT_OPTION" != "end" ]; do
   #clear
