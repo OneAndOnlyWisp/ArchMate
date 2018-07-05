@@ -34,11 +34,9 @@ function SearchForInstalled {
   SetDefaultLists
   Installed=()
   DesktopSessions=("plasma-desktop" "xfdesktop" "gnome-shell" "budgie-desktop")
-  for index in ${!Packages[*]}; do
-    echo ${Packages[index]}
-    [[ $(sh ""$Source_Path"Functions.sh" _isInstalled "${Packages[index]}") = 0 ]] && Installed+=("${Available[index]}")
+  for index in ${!DesktopSessions[*]}; do
+    [[ $(sh ""$Source_Path"Functions.sh" _isInstalled "${DesktopSessions[index]}") = 0 ]] && Installed+=("${Available[index]}")
   done
-  echo ${Installed[@]}
 }
 
 function GenerateMenuElements {
@@ -164,10 +162,9 @@ function DrawMenu {
 }
 #-------------------------------------------------------------------------------
 InstallDependancies
-clear
 #User interface-----------------------------------------------------------------
 while [ "$INPUT_OPTION" != "end" ]; do
-  #clear
+  clear
   GenerateMenuElements
   DrawMenu
 done
