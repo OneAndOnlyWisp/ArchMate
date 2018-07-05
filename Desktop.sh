@@ -37,7 +37,7 @@ function SearchForInstalled {
     echo ${Packages[index]}
     [[ $(sh ""$Source_Path"Functions.sh" _isInstalled "${Packages[index]}") = 0 ]] && Installed+=("${Available[index]}")
   done
-  echo ${Packages[@]}
+  echo ${Installed[@]}
 }
 
 function GenerateMenuElements {
@@ -153,7 +153,7 @@ function DrawMenu {
     if [[ ${#Installed[@]} = 0 ]]; then
       echo "No desktops installed on this system. (Press \"ESC\" to quit.)"
     else
-      echo "${Installed[0]} desktop is already installed on this system. (Press \"ESC\" to quit.)"
+      echo "${Installed[@]} desktop is already installed on this system. (Press \"ESC\" to quit.)"
     fi
     SimpleDesktop
   else
