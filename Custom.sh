@@ -60,9 +60,3 @@ cp ""$Source_Path"Personal/20-intel.conf" /etc/X11/xorg.conf.d/20-intel.conf
 #Virtualization
 pacman -S --noconfirm qemu libvirt ovmf #Must have
 pacman -S --noconfirm virt-manager #Virtual machine manager with GUI
-
-#Restart
-reboot
-
-echo "Done!"
-read -sn1

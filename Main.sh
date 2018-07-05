@@ -22,9 +22,7 @@ do
   echo "2. Graphics"
   echo "3. User"
   echo "4. Desktop"
-  if [[ -e $CUSTOM ]]; then
-    echo "5. Run custom script"
-  fi
+  [[ -e $CUSTOM ]] && echo "5. Run custom script";
 
   read -sn1 INPUT_OPTION
 
@@ -33,7 +31,12 @@ do
     '2') sh $GRAPHICS; clear;;
     '3') sh $USER; clear;;
     '4') sh $DESKTOP; clear;;
-    '5') [[ -e $CUSTOM ]] && sh $CUSTOM; clear;;
+    '5')
+      if [[ -e $CUSTOM ]]; then
+        sh $CUSTOM
+        cp ""$Source_Path"Assets/SysBU/makepkgBU" /usr/bin/makepkg
+        reboot
+      fi;;
     $'\e') clear; break;;
   esac
 done
