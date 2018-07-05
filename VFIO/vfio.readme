@@ -1,1 +1,13 @@
+#Isolate hardvers by IDs
+/etc/modprobe.d/vfio.conf
+options vfio-pci ids=10de:13c2,10de:0fbb
 
+#Add vfio drives to initframs
+/etc/mkinitcpio.conf
+MODULES=(... vfio_pci vfio vfio_iommu_type1 vfio_virqfd ...)
+HOOKS=(... modconf ...)
+#Regenerate initframs
+mkinitcpio -p "LinuxKernel"
+
+#help --> http://ask.xmodulo.com/network-default-is-not-active.html || sudo virsh net-start default
+pacman -S --noconfirm firewalld dnsmasq #Network stuff
