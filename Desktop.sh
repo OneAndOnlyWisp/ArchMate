@@ -33,6 +33,7 @@ function SetDefaultLists {
 function SearchForInstalled {
   SetDefaultLists
   Installed=()
+  DesktopSessions=("plasma-desktop" "xfdesktop" "gnome-shell" "budgie-desktop")
   for index in ${!Packages[*]}; do
     echo ${Packages[index]}
     [[ $(sh ""$Source_Path"Functions.sh" _isInstalled "${Packages[index]}") = 0 ]] && Installed+=("${Available[index]}")
