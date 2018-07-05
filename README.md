@@ -18,7 +18,8 @@ Under development for now. Use at your own risk. Only tested with Intel/NVIDIA s
 
 - A working internet connection
 - Logged in as 'root'
-- (There are minimum hardware requirements, but no exact information for now.)
+- (There are minimum hardware requirements, but no exact information for now)
+- (Preferably pacstrap-base install)
 
 ## How to get it
 #### With git
@@ -26,5 +27,5 @@ Under development for now. Use at your own risk. Only tested with Intel/NVIDIA s
 - Get the script: `git clone git://github.com/OneAndOnlyWisp/ArchMate`
 
 ## How to use
-Download and run the script rigth after first root login on a fresh install. (Preferably after pacstrap-base.)
-sh ArchMate/Main.sh
+- Download and run the script rigth after first root login on a fresh install
+- sh ArchMate/Main.sh
