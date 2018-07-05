@@ -66,6 +66,10 @@ function Plasma {
 DesktopSessions=("plasma-desktop" "xfdesktop" "gnome-shell" "budgie-desktop")
 for index in ${!DesktopSessions[*]}; do
   [[ $(sh ""$Source_Path"Functions.sh" _isInstalled "${DesktopSessions[index]}") = 0 ]] && Installed=$index;
+  if [[ $(sh ""$Source_Path"Functions.sh" _isInstalled "${DesktopSessions[index]}") = 0 ]]; then
+    Installed=$index
+    break
+  fi
 done
 
 case $Installed in
