@@ -34,7 +34,7 @@ function SearchForInstalled {
   SetDefaultLists
   Installed=()
   for index in ${!Packages[*]}; do
-    #echo ${Packages[index]}
+    echo ${Packages[index]}
     [[ $(sh ""$Source_Path"Functions.sh" _isInstalled "${Packages[index]}") = 0 ]] && Installed+=("${Available[index]}")
   done
 }
@@ -164,7 +164,7 @@ function DrawMenu {
 InstallDependancies
 #User interface-----------------------------------------------------------------
 while [ "$INPUT_OPTION" != "end" ]; do
-  clear
+  #clear
   GenerateMenuElements
   DrawMenu
 done
