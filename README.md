@@ -14,9 +14,6 @@ Under development for now. Use at your own risk. Only tested with Intel/NVIDIA s
 #### Will be implemented:
 - Read from config file
 
-## How to use
-Download and run the script rigth after first root login on a fresh install. (Preferably after pacstrap-base.)
-
 ## Prerequisites
 
 - A working internet connection
@@ -27,3 +24,7 @@ Download and run the script rigth after first root login on a fresh install. (Pr
 #### With git
 - Install and/or sync git: `pacman -Sy git`
 - Get the script: `git clone git://github.com/OneAndOnlyWisp/ArchMate`
+
+## How to use
+Download and run the script rigth after first root login on a fresh install. (Preferably after pacstrap-base.)
+sh ArchMate/Main.sh
