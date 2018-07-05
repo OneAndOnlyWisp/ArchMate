@@ -11,9 +11,6 @@ Under development for now. Use at your own risk. Only tested with Intel/NVIDIA s
 - Desktop install
 - Run custom end script (optional)
 
-#### Will be implemented:
-- Read from config file
-
 ## Prerequisites
 
 - A working internet connection
