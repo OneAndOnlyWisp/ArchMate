@@ -1,12 +1,12 @@
 
-# i3
+# i3 Stuff
 ## Description
-This is my i3 folder. C
+This is my i3 folder.
 
 #### Features:
 - Configs
 - Blocklets
-- Install script
+- Install script (Use at your own risk.)
 
 ## How to get it
 #### With git
