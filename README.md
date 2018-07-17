@@ -1,6 +1,6 @@
 # ArchMate
 ## Description
-This script can help you have a working desktop environment in 5 mins. It is really user-friendly, automatic hardware detection doesnt let you install wrong drivers. Later on will be capable of reading config files, which makes the whole process automatic.
+This script can help you have a working desktop environment in 5 mins. It is really user-friendly, automatic hardware detection doesnt let you install wrong drivers.
 
 Under development for now. Use at your own risk. Only tested with Intel/NVIDIA setup.
 
