@@ -4,7 +4,7 @@ This is my custom Arch repository with full off different stuff.
 
 #### Features:
 - Fast Desktop Environment (FDE)
-- i3WM Custom (blocklets, configs, addons)
+- i3WM Custom (install script, configs, blocklets)
 
 ## How to get it
 #### With git
