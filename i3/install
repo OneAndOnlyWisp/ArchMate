@@ -1,0 +1,80 @@
+#!/bin/sh
+clear
+#Local globals------------------------------------------------------------------
+Source_Path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/"
+#-------------------------------------------------------------------------------
+
+#"Multimedia engine" (Audio + Window system)
+pacman -S --noconfirm pulseaudio pulseaudio-alsa alsa-utils; #Audio
+pacman -S --noconfirm xorg xorg-xinit; #Window system
+
+#Install i3 Window managaer
+pacman -S --noconfirm i3;
+
+#Basic fonts
+pacman -S --noconfirm ttf-dejavu ttf-inconsolata ttf-font-awesome;
+sh ""$Source_Path"Functions.sh" InstallFromAUR "ttf-font-logos.git"; #Needed for Arch linux brand logo
+
+#Default apps
+pacman -S --noconfirm neofetch; #PC information
+pacman -S --noconfirm htop; #Process manager
+pacman -S --noconfirm rxvt-unicode urxvt-perls; #Terminal
+pacman -S --noconfirm pavucontrol; #PulseAudio Volume controller
+pacman -S --noconfirm scrot; #Print screen tool (Also install "xclip" for paste support)
+pacman -S --noconfirm pcmanfm; #File manager
+pacman -S --noconfirm file-roller; #Archive manager
+pacman -S --noconfirm chromium; #Browser
+pacman -S --noconfirm atom; #Text editor
+pacman -S --noconfirm transmission-qt; #Torrent
+pacman -S --noconfirm vlc; #Video player
+pacman -S --noconfirm viewnior; #Image viewer
+sh ""$Source_Path"Functions.sh" InstallFromAUR "discord"; #Communication
+
+#Terminal/Shell extensions
+sh ""$Source_Path"Functions.sh" InstallFromAUR "urxvt-resize-font-git"; #Terminal extension (Resize on fly)
+pacman -S --noconfirm bc; #Shell extension - Floating point division
+
+
+
+
+
+
+
+
+#Virtualization technology
+pacman -S --noconfirm qemu libvirt ovmf #Must have
+pacman -S --noconfirm virt-manager #Virtual machine manager with GUI
+
+#Network manager service
+pacman -S --noconfirm networkmanager;
+systemctl enable NetworkManager.service;
+
+
+
+#----------------------------------------ENVIRONMENT CONFIG----------------------------------------
+timedatectl set-timezone Europe/Budapest; #Timezone
+setxkbmap -layout hu; #Set keyboard layouts
+setxkbmap -option 'grp:alt_shift_toggle'; #Toggle key if using multiple layouts
+#----------------------------------------------BACKGROUND----------------------------------------------
+pacman -S --noconfirm feh;
+cp ""$Source_Path"/Personal/default_wallpaper.png" /default_wallpaper.png
+#----------------------------------------------------------------------------------------------------------------
+
+
+
+
+#DOT section------------------------------------------------------------------------------------------------
+#Config files
+cp ""$Source_Path"Personal/00-driver.conf" /etc/X11/xorg.conf.d/00-driver.conf
+cp ""$Source_Path"Personal/.Xresources" ~/.Xresources
+#Wallpaper
+wallpaper_conf="#!/bin/sh\nfeh --bg-fill '/default_wallpaper.png'"
+echo -e $wallpaper_conf > /root/.fehbg; #Set default wallpaper (root)
+sed -n '/\/bin\/bash/p' /etc/passwd | cut -d: -f1 | while read -r username; do
+  if ! [[ $username = "root" ]]; then
+    #Set default wallpaper (everyone)
+    echo -e $wallpaper_conf > /home/$username/.fehbg
+    chown $username: /home/$username/.fehbg
+  fi
+done
+#----------------------------------------------------------------------------------------------------------------
