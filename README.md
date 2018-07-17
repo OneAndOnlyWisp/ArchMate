@@ -10,3 +10,6 @@ This is my custom Arch repository with full off different stuff.
 #### With git
 - Install and/or sync git: `pacman -Sy git`
 - Get the goodies: `git clone git://github.com/OneAndOnlyWisp/ArchMate`
+
+## How to use
+- sh ArchMate/run
