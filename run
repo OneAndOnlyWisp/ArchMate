@@ -1,0 +1,30 @@
+#!/bin/sh
+
+#Locals
+Source_Path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/"
+FDE=$Source_Path"/FDE/run"
+i3=$Source_Path"/i3/install"
+
+#Init
+sh ""$Source_Path"Functions.sh" Init
+
+#Main loop
+INPUT_OPTION=default
+while [ "$INPUT_OPTION" != "end" ]
+do
+  clear
+  #Menu
+  echo "Welcome to ArchMate! Please select an option. (Press \"ESC\" to quit.)"
+  echo "1. FDE"
+  echo "2. i3 Custom install"
+
+  read -sn1 INPUT_OPTION
+  case $INPUT_OPTION in
+    '1') sh $FDE; clear;;
+    '2') sh $i3; clear;;
+    $'\e') clear; break;;
+  esac
+done
+
+#Revert changes to makepkg
+cp ""$Source_Path"patches/makepkg_BU" /usr/bin/makepkg
