@@ -14,5 +14,4 @@ This is my i3 folder.
 - Get the goodies: `git clone git://github.com/OneAndOnlyWisp/ArchMate`
 
 ## How to use
-#### With git
 - Before trying to plug-and-play everything, check the blocklets and config files for settings.
