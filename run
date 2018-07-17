@@ -1,5 +1,5 @@
 #!/bin/sh
-
+clear
 #Locals
 Source_Path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/"
 FDE=$Source_Path"/FDE/run"
