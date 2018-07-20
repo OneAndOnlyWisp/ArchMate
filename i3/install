@@ -131,6 +131,12 @@ virsh net-autostart default; #Autostart default virtual network
 
 
 
+
+
+
+
+
+
 #Stuff related to i3 and/or blocklets only-----------------------------------------------------------
 #EDIT THIS FOR AUTOSTART AFTER SHELL LOGIN
 #echo "startx" HALP
