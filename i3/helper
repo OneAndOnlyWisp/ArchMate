@@ -1,0 +1,28 @@
+#!/bin/sh
+
+#Locals
+Source_Path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/"
+INSTALL_i3=$Source_Path"install"
+FDE_Path="../FDE/"
+KERNEL=$FDE_Path"Kernel.sh"
+GRAPHICS=$FDE_Path"Graphics.sh"
+USER=$FDE_Path"User.sh"
+
+
+#Main loop
+while [ "$INPUT_OPTION" != "end" ]; do
+  #clear
+  echo "Please type the number of selected task! (Press \"ESC\" to quit.)"
+  echo "1. Kernel"
+  echo "2. Graphics"
+  echo "3. User"
+  echo "4. Install i3WM with custom settings"
+  read -sn1 INPUT_OPTION
+  case $INPUT_OPTION in
+    '1') echo $Source_Path ; echo $KERNEL;;# clear;; #sh $KERNEL
+    '2') sh $GRAPHICS; clear;;
+    '3') sh $USER; clear;;
+    '4') sh $INSTALL_i3; clear;;
+    $'\e') clear; break;;
+  esac
+done
