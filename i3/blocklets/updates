@@ -9,6 +9,9 @@ SYSTEM_UPDATE_COLOR="#ff0055"
 UPTODATE_SYMBOL=""
 UPDATE_SYMBOL=""
 IMPORTANT_SYMBOL=""
+#LOCAL
+NeedUpdate="true"
+! [[ $(pacman -Qu | awk '!/\[*\]/ {print}') = "" ]] && NeedUpdate="true" || NeedUpdate="false" #Created exception for ignored packages
 
 #$TEXT_OUT=>text to print || $TEXT_COLOR => display color
 function PrintText {
@@ -17,7 +20,7 @@ function PrintText {
   echo $TEXT_COLOR
 }
 
-if ! [[ $(pacman -Qu) = "" ]]; then
+if [[ $NeedUpdate = "true" ]]; then
   #Regular system updates
   TEXT_COLOR=$REGULAR_UPDATE_COLOR
   TEXT_OUT="$UPDATE_SYMBOL Optional system updates available $UPDATE_SYMBOL"
