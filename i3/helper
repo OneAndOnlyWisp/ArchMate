@@ -19,7 +19,7 @@ while [ "$INPUT_OPTION" != "end" ]; do
   echo "4. Install i3WM with custom settings"
   read -sn1 INPUT_OPTION
   case $INPUT_OPTION in
-    '1') echo $Source_Path ; echo $KERNEL;;# clear;; #sh $KERNEL
+    '1') sh $KERNEL;;# clear;; #sh $KERNEL
     '2') sh $GRAPHICS; clear;;
     '3') sh $USER; clear;;
     '4') sh $INSTALL_i3; clear;;
