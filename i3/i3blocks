@@ -15,19 +15,22 @@ separator_block_width=5
 command=~/.blocklets/bandwidth in
 interval=1
 color=#bbff00
-align=right
 [bandwidth_out]
 command=~/.blocklets/bandwidth out
 interval=1
 color=#ff7700
-align=right
+#--------------------------------------------------------------------
+[separator]
+#GMAIL---------------------------------------------------------------
+[gmail]
+command=~/.blocklets/gmail
+interval=300
 #--------------------------------------------------------------------
 [separator]
 #Updates--------------------------------------------------------
 [updates]
 command=~/.blocklets/updates intel nvidia vulkan tensorflow
 interval=600
-align=left
 #--------------------------------------------------------------------
 [separator]
 #Drives-----------------------------------------------------------
@@ -50,12 +53,15 @@ interval=45
 [cpu0]
 command=~/.blocklets/sensor 0
 interval=1
+[separator]
 [cpu1]
 command=~/.blocklets/sensor 1
 interval=1
+[separator]
 [cpu2]
 command=~/.blocklets/sensor 2
 interval=1
+[separator]
 [cpu3]
 command=~/.blocklets/sensor 3
 interval=1
