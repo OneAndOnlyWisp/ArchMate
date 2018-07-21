@@ -11,6 +11,7 @@ ALL_USER="false"; #Change this if you want to install everything for all user
 pacman -S --noconfirm pulseaudio pulseaudio-alsa alsa-utils; #Audio
 pacman -S --noconfirm xorg xorg-xinit; #Window system
 pacman -S --noconfirm i3; #Window manager
+echo "exec i3" > ~/.xinitrc
 #Environment settings-------------------------------------------------------------------------------------------------------------------------------------------
 timedatectl set-timezone Europe/Budapest; #Timezone
 setxkbmap -layout hu; #Set keyboard layouts
