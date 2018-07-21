@@ -97,11 +97,8 @@ function Microcode {
 }
 
 #Allow makepkg to run as root
-function MakePKG_Patch {
-  #Install base-devel for makepkg usage
-  if ! [[ $(pacman -Qs base-devel) ]]; then
-    pacman -Sy --needed --noconfirm base-devel
-  fi
+function MakePKG_Patch {  
+  pacman -Sy --needed --noconfirm base-devel; #Install base-devel for makepkg usage
   #Allow makepkg to run as root
   if ! [[ $(cat /usr/bin/makepkg | grep -o 'asroot') ]]; then
     cp /usr/bin/makepkg ""$Source_Path"patches/makepkg_BU"
