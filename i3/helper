@@ -3,7 +3,7 @@
 #Locals
 Source_Path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/"
 INSTALL_i3=$Source_Path"install"
-FDE_Path="../FDE/"
+FDE_Path=$Source_Path"../FDE/"
 KERNEL=$FDE_Path"Kernel.sh"
 GRAPHICS=$FDE_Path"Graphics.sh"
 USER=$FDE_Path"User.sh"
