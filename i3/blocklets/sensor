@@ -1,19 +1,13 @@
 #!/bin/bash
 
-LOWEST_TEMP=""
 LOWEST_COLOR="#3a99ff"
-LOWMID_TEMP=""
 LOWMID_COLOR="#40ff40"
-MID_TEMP=""
 MID_COLOR="#ccff00"
-HIGH_TEMP=""
 HIGH_COLOR="#ff8800"
-OVER_TEMP=""
 OVER_COLOR="#dd0000"
 
 TEXT_OUT=""
 SENSOR_VALUE=""
-SYMBOL=""
 TEXT_COLOR=""
 
 #Core temperatures
@@ -29,19 +23,14 @@ esac
 
 function AddDecoration {
   if [[ $SENSOR_VALUE -le 25 ]]; then
-    SYMBOL=$LOWEST_TEMP
     TEXT_COLOR=$LOWEST_COLOR
   elif [[ $SENSOR_VALUE -le 50  ]]; then
-    SYMBOL=$LOWMID_TEMP
     TEXT_COLOR=$LOWMID_COLOR
   elif [[ $SENSOR_VALUE -le 75 ]]; then
-    SYMBOL=$MID_TEMP
     TEXT_COLOR=$MID_COLOR
   elif [[ $SENSOR_VALUE -le 100 ]]; then
-    SYMBOL=$HIGH_TEMP
     TEXT_COLOR=$HIGH_COLOR
   else
-    SYMBOL=$OVER_TEMP
     TEXT_COLOR=$OVER_COLOR
   fi
 }
@@ -63,7 +52,7 @@ function Process {
       _counter=$(($_counter+1))
     done
     AddDecoration
-    TEXT_OUT="$SYMBOL $SENSOR_VALUE"
+    TEXT_OUT="$SENSOR_VALUE"
     if [[ $SENSOR_VALUE = "" ]]; then
       TEXT_OUT="Invalid core id"
       TEXT_COLOR="#ff0000"
@@ -72,7 +61,7 @@ function Process {
     for _Temp in $(echo $CORE_TEMPS | tr ";" "\n"); do
       SENSOR_VALUE=$_Temp
       AddDecoration
-      TEXT_OUT="$TEXT_OUT $SENSOR_VALUE$SYMBOL"
+      TEXT_OUT="$TEXT_OUT $SENSOR_VALUE"
       _counter=$(($_counter+1))
     done
   fi

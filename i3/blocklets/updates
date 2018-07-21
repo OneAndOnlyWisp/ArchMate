@@ -5,10 +5,7 @@ UPTODATE_COLOR="#40ff40"
 REGULAR_UPDATE_COLOR="#bbff00"
 IMPORTANT_UPDATE_COLOR="#ff7700"
 SYSTEM_UPDATE_COLOR="#ff0055"
-#BRANDS AREA
-UPTODATE_SYMBOL=""
-UPDATE_SYMBOL=""
-IMPORTANT_SYMBOL=""
+
 #LOCAL
 NeedUpdate="true"
 ! [[ $(pacman -Qu | awk '!/\[*\]/ {print}') = "" ]] && NeedUpdate="true" || NeedUpdate="false" #Created exception for ignored packages
@@ -23,24 +20,24 @@ function PrintText {
 if [[ $NeedUpdate = "true" ]]; then
   #Regular system updates
   TEXT_COLOR=$REGULAR_UPDATE_COLOR
-  TEXT_OUT="$UPDATE_SYMBOL Optional system updates available $UPDATE_SYMBOL"
+  TEXT_OUT="Optional system updates available"
   #Watched updates (@Important)
   if [ "$#" -ne 0 ]; then
     for _watched in "$@";  do
       if ! [[ $(pacman -Qu | grep $_watched) = "" ]]; then
         TEXT_COLOR=$IMPORTANT_UPDATE_COLOR
-        TEXT_OUT="$IMPORTANT_SYMBOL Important system updates available $IMPORTANT_SYMBOL"
+        TEXT_OUT="Important system updates available"
       fi
     done
   fi
   #System updates
   if ! [[ $(pacman -Qu | grep linux) = "" ]]; then
     TEXT_COLOR=$SYSTEM_UPDATE_COLOR
-    TEXT_OUT="$IMPORTANT_SYMBOL Critical system updates available $IMPORTANT_SYMBOL"
+    TEXT_OUT="Critical system updates available"
   fi
 else
   TEXT_COLOR=$UPTODATE_COLOR
-  TEXT_OUT="$UPTODATE_SYMBOL All packages are up to date $UPTODATE_SYMBOL"
+  TEXT_OUT="All packages are up to date"
 fi
 #Display info
 PrintText
