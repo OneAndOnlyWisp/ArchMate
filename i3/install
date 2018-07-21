@@ -20,11 +20,11 @@ pacman -S --noconfirm cron; systemctl enable cronie.service; #Time based task sc
 #----------------------------------------------------------------------i3 Settings------------------------------------------------------------------------------------
 # $1 = $HOME folder---------------------------------------------------------------------------------------------------------------------------------------------
 function CopyConfigs {
-  cp ""$Source_Path"i3/config" "$1".config/i3/config; #i3 config
+  echo "" > "$1".config/i3/config; cp ""$Source_Path"i3/config" "$1".config/i3/config; #i3 config
   cp ""$Source_Path"i3/i3blocks" "$1".i3blocks.conf; #i3blocks config
-  cp ""$Source_Path"i3/blocklets" "$1".blocklets; #i3 blocklets
-  cp ""$Source_Path"i3/Xresources" "$1".config/i3/Xresources; #Xorg display settings
-  cp ""$Source_Path"i3/background" "$1".config/i3/background; #Set background script
+  cp -r ""$Source_Path"i3/blocklets" "$1".blocklets; #i3 blocklets
+  echo "" > "$1".config/i3/Xresources; cp ""$Source_Path"i3/Xresources" "$1".config/i3/Xresources; #Xorg display settings
+  echo "" > "$1".config/i3/background; cp ""$Source_Path"i3/background" "$1".config/i3/background; #Set background script
 }
 #Defaults-------------------------------------------------------------------------------------------------------------------------------------------------------------
 cp ""$Source_Path"Personal/00-driver.conf" /etc/X11/xorg.conf.d/00-driver.conf; #Xorg driver settings
