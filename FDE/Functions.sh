@@ -48,7 +48,7 @@ function InstallFromAUR {
       cd ${toInstall[$index]}
       git pull
     fi
-    makepkg -Si --noconfirm; #Install
+    makepkg -Si --noconfirm --skippgpcheck; #Install
     cd $HOME; rm -rf "${toInstall[$index]}"; #Remove source
   done
 }
