@@ -1,7 +1,7 @@
 #!/bin/sh
 clear;
 #Local globals-------------------------------------------------------------------------------------------------------------------------------------------------------
-Source_Path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/";
+Source_Path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/../";
 DEFAULT_USER="wisp"; #Edit this to your username
 FANCY_ROOT="true"; #Change this if you dont need anything for root
 ALL_USER="false"; #Change this if you want to install everything for all user
@@ -11,28 +11,60 @@ ALL_USER="false"; #Change this if you want to install everything for all user
 pacman -S --noconfirm pulseaudio pulseaudio-alsa alsa-utils; #Audio
 pacman -S --noconfirm xorg xorg-xinit; #Window system
 pacman -S --noconfirm i3; #Window manager
-#Environment settings--------------------------------------------------------------------------------------------------------------------------------------------
+#Environment settings-------------------------------------------------------------------------------------------------------------------------------------------
 timedatectl set-timezone Europe/Budapest; #Timezone
 setxkbmap -layout hu; #Set keyboard layouts
 setxkbmap -option 'grp:alt_shift_toggle'; #Toggle key if using multiple layouts
 pacman -S --noconfirm feh; #Background handler
 pacman -S --noconfirm cron; systemctl enable cronie.service; #Time based task scheduler
-#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-# <= PUT i3 CONFIGS HERE =>
-cp ""$Source_Path"/Personal/default_wallpaper.png" /default_wallpaper.png; #Copy a default wallpaper
-crontab ""$Source_Path"i3/premade_cron"; #ALL TIME BASED STUFF
+#----------------------------------------------------------------------i3 Settings------------------------------------------------------------------------------------
+# $1 = $HOME folder---------------------------------------------------------------------------------------------------------------------------------------------
+function CopyConfigs {
+  cp ""$Source_Path"i3/.Xresources" "$1".config/i3/config; #i3 config
+  cp ""$Source_Path"i3/blocklets" "$1".blocklets; #i3 blocklets
+  cp ""$Source_Path"i3/.Xresources" "$1".config/i3/Xresources; #Xorg display settings
+  cp ""$Source_Path"i3/background" "$1".config/i3/background; #Set background script
+}
+#Defaults-------------------------------------------------------------------------------------------------------------------------------------------------------------
 cp ""$Source_Path"Personal/00-driver.conf" /etc/X11/xorg.conf.d/00-driver.conf; #Xorg driver settings
-cp ""$Source_Path"Personal/.Xresources" ~/.Xresources; #Xorg display settings
-# <= PUT i3 CONFIGS HERE =>
+cp ""$Source_Path"is/default_wallpaper.png" /default_wallpaper.png; #Copy a default wallpaper
+crontab ""$Source_Path"i3/root_cron"; #Cron tasks for root
+#Split copy stuff by user settings-----------------------------------------------------------------------------------------------------------------------------
+if [[ $ALL_USER = "true" ]]; then
+  if [[ $FANCY_ROOT = "true" ]]; then
+    sed -n '/\/bin\/bash/p' /etc/passwd | cut -d: -f1 | while read -r username; do
+      if [[ $username = "root" ]]; then
+        CopyConfigs "~/"
+      else
+        CopyConfigs "/home/$username/"
+      fi
+    done
+  else
+    sed -n '/\/bin\/bash/p' /etc/passwd | cut -d: -f1 | while read -r username; do
+      if ! [[ $username = "root" ]]; then
+        CopyConfigs "/home/$username/"
+      fi
+    done
+  fi
+else
+  if [[ $FANCY_ROOT = "true" ]]; then
+    CopyConfigs "~/"
+    CopyConfigs "/home/$DEFAULT_USER/"
+  else
+    CopyConfigs "/home/$DEFAULT_USER/"
+  fi
+fi
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #Fonts-----------------------------------------------------------------------------------------------------------------------------------------------------------------
 pacman -S --noconfirm ttf-dejavu ttf-inconsolata ttf-font-awesome; #To look atleast decent
-sh ""$Source_Path"Functions.sh" InstallFromAUR "ttf-font-logos.git"; #Needed for Arch linux logo
+sh ""$Source_Path"FDE/Functions.sh" InstallFromAUR "ttf-font-logos.git"; #Needed for Arch linux logo
 #Default apps-------------------------------------------------------------------------------------------------------------------------------------------------------
 pacman -S --noconfirm neofetch; #PC information
 pacman -S --noconfirm htop; #Process manager
 pacman -S --noconfirm rxvt-unicode urxvt-perls; #Terminal
 pacman -S --noconfirm pavucontrol; #PulseAudio Volume controller
 pacman -S --noconfirm scrot xclip; #Print screen tool/Copy to clipboard
+pacman -S --noconfirm udiskie; #Automount removable media
 pacman -S --noconfirm pcmanfm; #File manager
 pacman -S --noconfirm file-roller; #Archive manager
 pacman -S --noconfirm chromium; #Browser
@@ -40,126 +72,8 @@ pacman -S --noconfirm atom; #Text editor
 pacman -S --noconfirm transmission-qt; #Torrent
 pacman -S --noconfirm vlc; #Video player
 pacman -S --noconfirm viewnior; #Image viewer
-sh ""$Source_Path"Functions.sh" InstallFromAUR "discord"; #Communication
+sh ""$Source_Path"FDE/Functions.sh" InstallFromAUR "discord"; #Communication
 #Terminal/Shell extensions--------------------------------------------------------------------------------------------------------------------------------------
 pacman -S --noconfirm bc; #Shell extension - Floating point division
-sh ""$Source_Path"Functions.sh" InstallFromAUR "urxvt-resize-font-git"; #Terminal extension (Resize font on fly)
+sh ""$Source_Path"FDE/Functions.sh" InstallFromAUR "urxvt-resize-font-git"; #Terminal extension (Resize font on fly)
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-#-----------------------------------------------------------------------Development tools------------------------------------------------------------------------
-#Vulkan SDK----------------------------------------------------------------------------------------------------------------------------------------------------------
-#Download Vulkan SDK from: https://vulkan.lunarg.com/sdk/home
-# - Create folder for SDK files, and enter it
-# - "tar zxf $PATH_TO_FILE/vulkansdk-linux-x86_64-1.1.xx.y.tar.gz"
-#  - Run => $SDK_PATH/1.1.xx.y/setup-env.sh
-pacman -S --noconfirm vulkan-devel; #Vulkan development package group
-#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-#Tensorflow(GPU) - Python ---------------------------------------------------------------------------------------------------------------------------------------
-#More info -> https://www.tensorflow.org/install/install_sources
-pacman -S --noconfirm python-pip; #Must have - Needed to install tensorflow-gpu
-pacman -S --noconfirm swig; #Must have - Scripting interface to C/C++ code
-pacman -U --noconfirm https://archive.archlinux.org/packages/g/gcc6-libs/gcc6-libs-6.4.1-5-x86_64.pkg.tar.xz; #Must have - CUDA/cuDNN dependancy
-pacman -U --noconfirm https://archive.archlinux.org/packages/g/gcc6/gcc6-6.4.1-5-x86_64.pkg.tar.xz; #Must have - CUDA/cuDNN dependancy
-pacman -U --noconfirm https://archive.archlinux.org/packages/c/cuda/cuda-9.0.176-4-x86_64.pkg.tar.xz; #Must have - CUDA v9.0 - Recommended version
-pacman -U --noconfirm https://archive.archlinux.org/packages/c/cudnn/cudnn-7.0.5-2-x86_64.pkg.tar.xz; #Must have - cuDNN v7.0 - Recommended version
-pip3 install -U tensorflow-gpu; # Tensorflow
-#Add to pacman ignore list--------------------------------------------------------------------------------------------------------------------------------------
-LineCount=1
-while read line; do
-  LineCount=$(($LineCount + 1))
-  if [[ $line = *"IgnorePkg"* ]]; then
-    break
-  fi
-done < /etc/pacman.conf
-sed -ie ""$LineCount"s/.*/IgnorePkg = cuda cudnn/g"  /etc/pacman.conf
-#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-#--------------------------------------------------------------------Virtualization technology---------------------------------------------------------------------
-#Enable IOMMU on kernel boot (Intel)-------------------------------------------------------------------------------------------------------------------------
-LineCount=0
-while read line; do
-  LineCount=$(($LineCount + 1))
-  if [[ $line = *"GRUB_CMDLINE_LINUX_DEFAULT"* ]]; then
-    NewText=$(echo $line | head -c-2)" intel_iommu=on iommu=pt\""
-    break
-  fi
-done < /etc/default/grub
-sed -ie $LineCount"s/.*/$NewText/g"  /etc/default/grub; #Edit grub config
-grub-mkconfig -o /boot/grub/grub.cfg; #Regenerate boot config
-#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-#Install dependencies----------------------------------------------------------------------------------------------------------------------------------------------
-pacman -S --noconfirm qemu libvirt ovmf; #Must have
-pacman -S --noconfirm virt-manager; #Virtual machine manager GUI
-#Add nvram location to qemu config--------------------------------------------------------------------------------------------------------------------------
-TagFound="false"
-LineCount=0
-while read line; do
-  LineCount=$(($LineCount + 1))
-  if [[ $TagFound = "true" ]]; then
-    if [[ $line = "" ]]; then
-      break
-    fi
-  fi
-  if [[ $line = *"#nvram"* ]]; then
-    TagFound="true"
-  fi
-done < /etc/libvirt/qemu.conf
-TextToAdd="nvram = [\"\/usr\/share\/ovmf\/x64\/OVMF_CODE\.fd\:\/usr\/share\/ovmf\/x64\/OVMF_VARS\.fd\"]\n"
-sed -ie ""$LineCount"s/.*/$TextToAdd/g" /etc/libvirt/qemu.conf
-#Passing VM audio to host via PulseAudio-------------------------------------------------------------------------------------------------------------------
-TagFound="false"
-LineCount=0
-while read line; do
-  LineCount=$(($LineCount + 1))
-  if [[ $TagFound = "true" ]]; then
-    if [[ $line = "" ]]; then
-      break
-    fi
-  fi
-  if [[ $line = *"#user"* ]]; then
-    TagFound="true"
-  fi
-done < qemu.conf
-TextToAdd="user = \"$DEFAULT_USER\"\n"
-sed -ie ""$LineCount"s/.*/$TextToAdd/g" qemu.conf
-usermod -aG libvirt $DEFAULT_USER; #Add default user to libvirt group
-systemctl enable libvirtd.service; #Enable virtualization service
-#Networkworking----------------------------------------------------------------------------------------------------------------------------------------------------
-pacman -S --noconfirm firewalld dnsmasq; #Packages
-systemctl enable firewalld.service; #Enable service
-firewall-cmd --permanent --zone=public --add-port=8080/tcp; #Open port for VLC remote controll
-virsh net-autostart default; #Autostart default virtual network
-#---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-
-
-
-
-
-
-
-#Stuff related to i3 and/or blocklets only-----------------------------------------------------------
-#EDIT THIS FOR AUTOSTART AFTER SHELL LOGIN
-#echo "startx" HALP
-if grep -q "ArchMate" ~root/.bashrc; then
-  sed -ie '/^ArchMate/,+2d' ~root/.bashrc
-  sed -i -e :a -e '/^\n*$/{$d;N};/\n$/ba' ~root/.bashrc
-  echo "Autostart Off."
-else
-  echo $'\n'"ArchMate=\""$Source_Path"Main.sh\""$'\n'"sh \$ArchMate" >> ~root/.bashrc
-  echo "Autostart On."
-fi
-#-----------------------------------------------------------------------------------------------------------------
-#DOT section------------------------------------------------------------------------------------------------
-
-#----------------------------------------------------------------------------------------------------------------
-#Copy setting for every user--------------------------------------------------------------------------
-wallpaper="#!/bin/sh\nfeh --bg-fill '/default_wallpaper.png'"; #Wallpaper
-sed -n '/\/bin\/bash/p' /etc/passwd | cut -d: -f1 | while read -r username; do
-  if ! [[ $username = "root" ]]; then #Root exception (stuff root doesnt need)
-    echo -e $wallpaper > /home/$username/.fehbg
-    chown $username: /home/$username/.fehbg
-  fi
-done
-#Copy settings for root only
-echo -e $wallpaper > /root/.fehbg; #Set default wallpaper (root)
-#----------------------------------------------------------------------------------------------------------------

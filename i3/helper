@@ -3,6 +3,7 @@
 #Locals
 Source_Path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/"
 INSTALL_i3=$Source_Path"install"
+INSTALL_DEV=$Source_Path"dev_install"
 FDE_Path=$Source_Path"../FDE/"
 KERNEL=$FDE_Path"Kernel.sh"
 GRAPHICS=$FDE_Path"Graphics.sh"
@@ -18,6 +19,7 @@ while [ "$INPUT_OPTION" != "end" ]; do
   echo "2. Graphics"
   echo "3. User"
   echo "4. Install i3WM with custom settings"
+  echo "4. Install developer packages"
   read -sn1 INPUT_OPTION
   case $INPUT_OPTION in
     '1') sh $KERNEL;;# clear;; #sh $KERNEL
