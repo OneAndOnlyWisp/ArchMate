@@ -99,7 +99,7 @@ function Microcode {
 #Allow makepkg to run as root
 function MakePKG_Patch {
   #Install base-devel for makepkg usage
-  if ! [[ $(sudo pacman -Qs base-devel) ]]; then
+  if ! [[ $(pacman -Qs base-devel) ]]; then
     pacman -Sy --needed --noconfirm base-devel
   fi
   #Allow makepkg to run as root
