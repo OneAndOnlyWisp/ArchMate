@@ -48,7 +48,7 @@ function InstallFromAUR {
       cd ${toInstall[$index]}
       git pull
     fi
-    makepkg -si --noconfirm; #Install
+    makepkg -Si --noconfirm; #Install
     cd $HOME; rm -rf "${toInstall[$index]}"; #Remove source
   done
 }
@@ -97,7 +97,7 @@ function Microcode {
 }
 
 #Allow makepkg to run as root
-function MakePKG_Patch {  
+function MakePKG_Patch {
   pacman -Sy --needed --noconfirm base-devel; #Install base-devel for makepkg usage
   #Allow makepkg to run as root
   if ! [[ $(cat /usr/bin/makepkg | grep -o 'asroot') ]]; then
