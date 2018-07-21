@@ -19,13 +19,14 @@ while [ "$INPUT_OPTION" != "end" ]; do
   echo "2. Graphics"
   echo "3. User"
   echo "4. Install i3WM with custom settings"
-  echo "4. Install developer packages"
+  echo "5. Install developer packages"
   read -sn1 INPUT_OPTION
   case $INPUT_OPTION in
     '1') sh $KERNEL;;# clear;; #sh $KERNEL
     '2') sh $GRAPHICS; clear;;
     '3') sh $USER; clear;;
     '4') sh $INSTALL_i3; clear;;
+    '5') sh $INSTALL_DEV; clear;;
     $'\e') clear; break;;
   esac
 done

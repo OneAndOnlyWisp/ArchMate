@@ -20,14 +20,14 @@ pacman -S --noconfirm cron; systemctl enable cronie.service; #Time based task sc
 #----------------------------------------------------------------------i3 Settings------------------------------------------------------------------------------------
 # $1 = $HOME folder---------------------------------------------------------------------------------------------------------------------------------------------
 function CopyConfigs {
-  cp ""$Source_Path"i3/.Xresources" "$1".config/i3/config; #i3 config
-  cp ""$Source_Path"i3/blocklets" "$1".blocklets; #i3 blocklets
-  cp ""$Source_Path"i3/.Xresources" "$1".config/i3/Xresources; #Xorg display settings
-  cp ""$Source_Path"i3/background" "$1".config/i3/background; #Set background script
+  cp -R ""$Source_Path"i3/.Xresources" "$1".config/i3/config; #i3 config
+  cp -R ""$Source_Path"i3/blocklets" "$1".blocklets; #i3 blocklets
+  cp -R ""$Source_Path"i3/.Xresources" "$1".config/i3/Xresources; #Xorg display settings
+  cp -R ""$Source_Path"i3/background" "$1".config/i3/background; #Set background script
 }
 #Defaults-------------------------------------------------------------------------------------------------------------------------------------------------------------
-cp ""$Source_Path"Personal/00-driver.conf" /etc/X11/xorg.conf.d/00-driver.conf; #Xorg driver settings
-cp ""$Source_Path"is/default_wallpaper.png" /default_wallpaper.png; #Copy a default wallpaper
+cp -R ""$Source_Path"Personal/00-driver.conf" /etc/X11/xorg.conf.d/00-driver.conf; #Xorg driver settings
+cp ""$Source_Path"i3/default_wallpaper.png" /default_wallpaper.png; #Copy a default wallpaper
 crontab ""$Source_Path"i3/root_cron"; #Cron tasks for root
 #Split copy stuff by user settings-----------------------------------------------------------------------------------------------------------------------------
 if [[ $ALL_USER = "true" ]]; then
@@ -54,6 +54,8 @@ else
     CopyConfigs "/home/$DEFAULT_USER/"
   fi
 fi
+read -sn1
+exit
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #Fonts-----------------------------------------------------------------------------------------------------------------------------------------------------------------
 pacman -S --noconfirm ttf-dejavu ttf-inconsolata ttf-font-awesome; #To look atleast decent
