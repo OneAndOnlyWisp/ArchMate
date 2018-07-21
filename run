@@ -1,32 +1,27 @@
 #!/bin/sh
-
+clear
 #Locals
 Source_Path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/"
-KERNEL=$Source_Path"Kernel.sh"
-GRAPHICS=$Source_Path"Graphics.sh"
-USER=$Source_Path"User.sh"
-DESKTOP=$Source_Path"Desktop.sh"
-CUSTOM=$Source_Path"Custom.sh"
+FDE=$Source_Path"/FDE/run"
+i3=$Source_Path"/i3/helper"
 
 #Init
 sh ""$Source_Path"Functions.sh" Init
 
 #Main loop
-while [ "$INPUT_OPTION" != "end" ]; do
+INPUT_OPTION=default
+while [ "$INPUT_OPTION" != "end" ]
+do
   clear
-  echo "Please type the number of selected task! (Press \"ESC\" to quit.)"
-  echo "1. Kernel"
-  echo "2. Graphics"
-  echo "3. User"
-  echo "4. Desktop"
-  [[ -e $CUSTOM ]] && echo "5. Run custom script";
+  #Menu
+  echo "Welcome to ArchMate! Please select an option. (Press \"ESC\" to quit.)"
+  echo "1. FDE"
+  echo "2. i3 Custom install"
+
   read -sn1 INPUT_OPTION
   case $INPUT_OPTION in
-    '1') sh $KERNEL; clear;; #sh $KERNEL CheckForReboot; (Removed for now)
-    '2') sh $GRAPHICS; clear;;
-    '3') sh $USER; clear;;
-    '4') sh $DESKTOP; clear;;
-    '5') [[ -e $CUSTOM ]] && sh $CUSTOM; clear;;
+    '1') sh $FDE; clear;;
+    '2') sh $i3; clear;;
     $'\e') clear; break;;
   esac
 done
