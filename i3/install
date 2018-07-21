@@ -61,8 +61,6 @@ fi
 #Fonts-----------------------------------------------------------------------------------------------------------------------------------------------------------------
 pacman -S --noconfirm ttf-dejavu ttf-inconsolata ttf-font-awesome; #To look atleast decent
 sh ""$Source_Path"FDE/Functions.sh" InstallFromAUR "ttf-font-logos"; #Needed for Arch linux logo
-echo "Press a button to continue..."
-read -sn1
 #Default apps-------------------------------------------------------------------------------------------------------------------------------------------------------
 pacman -S --noconfirm neofetch; #PC information
 pacman -S --noconfirm htop; #Process manager
@@ -78,11 +76,7 @@ pacman -S --noconfirm transmission-qt; #Torrent
 pacman -S --noconfirm vlc; #Video player
 pacman -S --noconfirm viewnior; #Image viewer
 sh ""$Source_Path"FDE/Functions.sh" InstallFromAUR "discord"; #Communication
-echo "Press a button to continue..."
-read -sn1
 #Terminal/Shell extensions--------------------------------------------------------------------------------------------------------------------------------------
 pacman -S --noconfirm bc; #Shell extension - Floating point division
 sh ""$Source_Path"FDE/Functions.sh" InstallFromAUR "urxvt-resize-font-git"; #Terminal extension (Resize font on fly)
-echo "Press a button to continue..."
-read -sn1
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
