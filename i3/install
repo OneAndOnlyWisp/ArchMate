@@ -37,7 +37,7 @@ if [[ $ALL_USER = "true" ]]; then
   if [[ $FANCY_ROOT = "true" ]]; then
     sed -n '/\/bin\/bash/p' /etc/passwd | cut -d: -f1 | while read -r username; do
       if [[ $username = "root" ]]; then
-        CopyConfigs "~/"
+        CopyConfigs
       else
         CopyConfigs "/home/$username/"
       fi
@@ -51,7 +51,7 @@ if [[ $ALL_USER = "true" ]]; then
   fi
 else
   if [[ $FANCY_ROOT = "true" ]]; then
-    CopyConfigs "~/"
+    CopyConfigs
     CopyConfigs "/home/$DEFAULT_USER/"
   else
     CopyConfigs "/home/$DEFAULT_USER/"
