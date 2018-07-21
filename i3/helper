@@ -8,6 +8,7 @@ KERNEL=$FDE_Path"Kernel.sh"
 GRAPHICS=$FDE_Path"Graphics.sh"
 USER=$FDE_Path"User.sh"
 
+sh ""$FDE_Path"Functions.sh" MakePKG_Patch
 
 #Main loop
 while [ "$INPUT_OPTION" != "end" ]; do
@@ -26,3 +27,6 @@ while [ "$INPUT_OPTION" != "end" ]; do
     $'\e') clear; break;;
   esac
 done
+
+#Revert changes to makepkg
+cp ""$FDE_Path"patches/makepkg_BU" /usr/bin/makepkg
