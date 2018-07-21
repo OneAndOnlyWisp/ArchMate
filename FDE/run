@@ -26,7 +26,7 @@ while [ "$INPUT_OPTION" != "end" ]; do
     '2') sh $GRAPHICS; clear;;
     '3') sh $USER; clear;;
     '4') sh $DESKTOP; clear;;
-    '5') [[ -e $CUSTOM ]] sh $CUSTOM && ; clear;;
+    '5') [[ -e $CUSTOM ]] && sh $CUSTOM; clear;;
     $'\e') clear; break;;
   esac
 done
