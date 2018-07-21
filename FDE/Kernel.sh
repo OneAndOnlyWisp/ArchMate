@@ -235,7 +235,7 @@ function InstallKernel {
   #for Package in $(echo ${Packages[$1]} | tr ";" "\n")
   #do
   #  sh ""$Source_Path"Functions.sh" InstallPackages $Package
-  #done  
+  #done
 }
 
 function OneKernel {
