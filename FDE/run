@@ -12,22 +12,17 @@ CUSTOM=$Source_Path"Custom.sh"
 sh ""$Source_Path"Functions.sh" Init
 
 #Main loop
-INPUT_OPTION=default
-while [ "$INPUT_OPTION" != "end" ]
-do
+while [ "$INPUT_OPTION" != "end" ]; do
   clear
-  #Menu
   echo "Please type the number of selected task! (Press \"ESC\" to quit.)"
   echo "1. Kernel"
   echo "2. Graphics"
   echo "3. User"
   echo "4. Desktop"
   [[ -e $CUSTOM ]] && echo "5. Run custom script";
-
   read -sn1 INPUT_OPTION
-
   case $INPUT_OPTION in
-    '1') sh $KERNEL; clear; clear;; #sh $KERNEL CheckForReboot; (Removed for now)
+    '1') sh $KERNEL; clear;; #sh $KERNEL CheckForReboot; (Removed for now)
     '2') sh $GRAPHICS; clear;;
     '3') sh $USER; clear;;
     '4') sh $DESKTOP; clear;;
