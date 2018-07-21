@@ -177,7 +177,7 @@ hide_edge_borders smart
 exec_always xrdb ~/.config/i3/Xresources
 
 #Background
-exec ~/.config/i3/background
+exec sh ~/.fehbg
 
 # All desktop print screen
 bindsym --release Print exec "scrot '%s_%H%M_%d.%m.%Y_$wx$h.png' -e 'xclip -selection clipboard -target image/png -i $f'"
