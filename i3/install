@@ -3,7 +3,7 @@ clear;
 #Local globals-------------------------------------------------------------------------------------------------------------------------------------------------------
 Source_Path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/../";
 DEFAULT_USER="wisp"; #Edit this to your username
-FANCY_ROOT="true"; #Change this if you dont need anything for root
+FANCY_ROOT="false"; #Change this if you dont need anything for root
 ALL_USER="false"; #Change this if you want to install everything for all user
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #----------------------------------------------------Install default packages to create environment----------------------------------------------------
@@ -11,7 +11,6 @@ ALL_USER="false"; #Change this if you want to install everything for all user
 pacman -S --noconfirm pulseaudio pulseaudio-alsa alsa-utils; #Audio
 pacman -S --noconfirm xorg xorg-xinit; #Window system
 pacman -S --noconfirm i3; #Window manager
-echo "exec i3" > ~/.xinitrc
 #Environment settings-------------------------------------------------------------------------------------------------------------------------------------------
 timedatectl set-timezone Europe/Budapest; #Timezone
 setxkbmap -layout hu; #Set keyboard layouts
@@ -21,6 +20,7 @@ pacman -S --noconfirm cron; systemctl enable cronie.service; #Time based task sc
 #----------------------------------------------------------------------i3 Settings------------------------------------------------------------------------------------
 # $1 = $HOME folder---------------------------------------------------------------------------------------------------------------------------------------------
 function CopyConfigs {
+  echo "exec i3" > "$1".xinitrc
   mkdir -p "$1".config/i3/
   echo "" > "$1".config/i3/config; cp ""$Source_Path"i3/config" "$1".config/i3/config; #i3 config
   cp ""$Source_Path"i3/i3blocks" "$1".i3blocks.conf; #i3blocks config
@@ -67,7 +67,6 @@ pacman -S --noconfirm htop; #Process manager
 pacman -S --noconfirm rxvt-unicode urxvt-perls; #Terminal
 pacman -S --noconfirm pavucontrol; #PulseAudio Volume controller
 pacman -S --noconfirm scrot xclip; #Print screen tool/Copy to clipboard
-pacman -S --noconfirm udiskie; #Automount removable media
 pacman -S --noconfirm pcmanfm; #File manager
 pacman -S --noconfirm file-roller; #Archive manager
 pacman -S --noconfirm chromium; #Browser
