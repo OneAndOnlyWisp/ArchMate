@@ -20,11 +20,11 @@ pacman -S --noconfirm cron; systemctl enable cronie.service; #Time based task sc
 #----------------------------------------------------------------------i3 Settings------------------------------------------------------------------------------------
 # $1 = $HOME folder---------------------------------------------------------------------------------------------------------------------------------------------
 function CopyConfigs {
-  echo "exec i3" > "$1".xinitrc; chown $username "$1".xinitrc
-  mkdir -p "$1".config/i3/; chown $username "$1".config/i3/
-  echo "" > "$1".config/i3/config; cp ""$Source_Path"i3/config" "$1".config/i3/config; chown $username "$1".config/i3/config; #i3 config
-  cp ""$Source_Path"i3/i3blocks" "$1".i3blocks.conf; chown $username "$1".i3blocks.conf; #i3blocks config
-  cp -r ""$Source_Path"i3/blocklets" "$1".blocklets; chown $username "$1".i3blocks.conf; #i3 blocklets
+  echo "exec i3" > "$1".xinitrc
+  mkdir -p "$1".config/i3/
+  echo "" > "$1".config/i3/config; cp ""$Source_Path"i3/config" "$1".config/i3/config; #i3 config
+  cp ""$Source_Path"i3/i3blocks" "$1".i3blocks.conf; #i3blocks config
+  cp -r ""$Source_Path"i3/blocklets" "$1".blocklets; #i3 blocklets
   echo "" > "$1".config/i3/Xresources; cp ""$Source_Path"i3/Xresources" "$1".config/i3/Xresources; #Xorg display settings
   echo "" > "$1".fehbg; cp ""$Source_Path"i3/background" "$1".fehbg; #Set background script
   if ! [[ $username = "" ]]; then

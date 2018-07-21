@@ -177,7 +177,7 @@ hide_edge_borders smart
 exec_always xrdb ~/.config/i3/Xresources
 
 #Background
-exec sh ~/.config/i3/background
+exec sh ~/.fehbg
 
 # All desktop print screen
 bindsym --release Print exec "scrot '%s_%H%M_%d.%m.%Y_$wx$h.png' -e 'xclip -selection clipboard -target image/png -i $f'"
@@ -193,6 +193,10 @@ focus_follows_mouse no
 for_window [class="Pavucontrol"] floating enable
 for_window [class="Pavucontrol"] resize set 720 600
 for_window [class="Pavucontrol"] move absolute position center
+
+#Virt-manager window settings
+for_window [class="Virt-manager"] floating enable
+for_window [class="Virt-manager"] move absolute position center
 
 #Media keybindings
 bindsym XF86AudioRaiseVolume exec amixer -q -D pulse sset Master 5%+ && pkill -RTMIN+1 i3blocks
