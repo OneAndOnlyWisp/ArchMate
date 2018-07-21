@@ -78,10 +78,10 @@ done < qemu.conf
 TextToAdd="user = \"$USER\"\n"
 sed -ie ""$LineCount"s/.*/$TextToAdd/g" qemu.conf
 usermod -aG libvirt $USER; #Add default user to libvirt group
-systemctl enable libvirtd.service; #Enable virtualization service
+systemctl enable libvirtd.service; systemctl start libvirtd.service; #Enable virtualization service
 #Networkworking----------------------------------------------------------------------------------------------------------------------------------------------------
 pacman -S --noconfirm firewalld dnsmasq; #Packages
-systemctl enable firewalld.service; #Enable service
+systemctl enable firewalld.service; systemctl start firewalld.service; #Enable service
 firewall-cmd --permanent --zone=public --add-port=8080/tcp; #Open port for VLC remote controll
 virsh net-autostart default; #Autostart default virtual network
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
