@@ -13,7 +13,7 @@ sh ""$FDE_Path"Functions.sh" MakePKG_Patch
 
 #Main loop
 while [ "$INPUT_OPTION" != "end" ]; do
-  #clear
+  clear
   echo "Please type the number of selected task! (Press \"ESC\" to quit.)"
   echo "1. Kernel"
   echo "2. Graphics"
