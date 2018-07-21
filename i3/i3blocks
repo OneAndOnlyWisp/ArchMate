@@ -26,7 +26,7 @@ align=right
 #Updates--------------------------------------------------------
 [updates]
 command=~/.blocklets/updates intel nvidia vulkan tensorflow
-interval=300
+interval=600
 align=left
 #--------------------------------------------------------------------
 [separator]
