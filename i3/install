@@ -59,7 +59,7 @@ fi
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #Fonts-----------------------------------------------------------------------------------------------------------------------------------------------------------------
 pacman -S --noconfirm ttf-dejavu ttf-inconsolata ttf-font-awesome; #To look atleast decent
-sh ""$Source_Path"FDE/Functions.sh" InstallFromAUR "ttf-font-logos.git"; #Needed for Arch linux logo
+sh ""$Source_Path"FDE/Functions.sh" InstallFromAUR "ttf-font-logos"; #Needed for Arch linux logo
 echo "Press a button to continue..."
 read -sn1
 #Default apps-------------------------------------------------------------------------------------------------------------------------------------------------------
