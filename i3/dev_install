@@ -2,7 +2,7 @@
 clear;
 #Local globals-------------------------------------------------------------------------------------------------------------------------------------------------------
 Source_Path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/../";
-DEFAULT_USER="wisp"; #Edit this to your username
+USER="wisp"; #Edit this to your username
 #-----------------------------------------------------------------------Development tools------------------------------------------------------------------------
 #Vulkan SDK----------------------------------------------------------------------------------------------------------------------------------------------------------
 #Download Vulkan SDK from: https://vulkan.lunarg.com/sdk/home
@@ -76,9 +76,9 @@ while read line; do
     TagFound="true"
   fi
 done < qemu.conf
-TextToAdd="user = \"$DEFAULT_USER\"\n"
+TextToAdd="user = \"$USER\"\n"
 sed -ie ""$LineCount"s/.*/$TextToAdd/g" qemu.conf
-usermod -aG libvirt $DEFAULT_USER; #Add default user to libvirt group
+usermod -aG libvirt $USER; #Add default user to libvirt group
 systemctl enable libvirtd.service; #Enable virtualization service
 #Networkworking----------------------------------------------------------------------------------------------------------------------------------------------------
 pacman -S --noconfirm firewalld dnsmasq; #Packages
