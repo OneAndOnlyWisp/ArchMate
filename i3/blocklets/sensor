@@ -1,12 +1,18 @@
 #!/bin/bash
 
 LOWEST_COLOR="#3a99ff"
+LOWEST_SYMBOL=""
 LOWMID_COLOR="#40ff40"
+LOWMID_SYMBOL=""
 MID_COLOR="#ccff00"
+MID_SYMBOL=""
 HIGH_COLOR="#ff8800"
+HIGH_SYMBOL=""
 OVER_COLOR="#dd0000"
+OVER_SYMBOL=""
 
 TEXT_OUT=""
+SYMBOL=""
 SENSOR_VALUE=""
 TEXT_COLOR=""
 
@@ -24,20 +30,25 @@ esac
 function AddDecoration {
   if [[ $SENSOR_VALUE -le 25 ]]; then
     TEXT_COLOR=$LOWEST_COLOR
+    SYMBOL=$LOWEST_SYMBOL
   elif [[ $SENSOR_VALUE -le 50  ]]; then
     TEXT_COLOR=$LOWMID_COLOR
+    SYMBOL=$LOWMID_SYMBOL
   elif [[ $SENSOR_VALUE -le 75 ]]; then
     TEXT_COLOR=$MID_COLOR
+    SYMBOL=$MID_SYMBOL
   elif [[ $SENSOR_VALUE -le 100 ]]; then
     TEXT_COLOR=$HIGH_COLOR
+    SYMBOL=$HIGH_SYMBOL
   else
     TEXT_COLOR=$OVER_COLOR
+    SYMBOL=$OVER_SYMBOL
   fi
 }
 
 function PrintText {
-  echo $TEXT_OUT
-  echo $TEXT_OUT
+  echo $SYMBOL $TEXT_OUT
+  echo $SYMBOL $TEXT_OUT
   echo $TEXT_COLOR
 }
 
