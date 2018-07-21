@@ -13,9 +13,9 @@ pacman -S --noconfirm xorg xorg-xinit; #Window system
 pacman -S --noconfirm i3; #Window manager
 #Environment settings-------------------------------------------------------------------------------------------------------------------------------------------
 timedatectl set-timezone Europe/Budapest; #Timezone
-setxkbmap -layout hu; #Set keyboard layouts
-setxkbmap -option 'grp:alt_shift_toggle'; #Toggle key if using multiple layouts
+localectl --no-convert set-x11-keymap hu; #Set keyboard layout
 pacman -S --noconfirm feh; #Background handler
+pacman -S --noconfirm dmenu; #Application launcher
 pacman -S --noconfirm cron; systemctl enable cronie.service; #Time based task scheduler
 #----------------------------------------------------------------------i3 Settings------------------------------------------------------------------------------------
 # $1 = $HOME folder---------------------------------------------------------------------------------------------------------------------------------------------
