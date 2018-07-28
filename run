@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 clear
 #Locals
 Source_Path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/"
@@ -6,7 +6,7 @@ FDE=$Source_Path"/FDE/run"
 i3=$Source_Path"/i3/helper"
 
 #Init
-sh ""$Source_Path"Functions.sh" Init
+sh $Source_Path"Functions.sh" Init
 
 #Main loop
 INPUT_OPTION=default

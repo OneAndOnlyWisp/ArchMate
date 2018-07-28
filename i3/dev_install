@@ -10,6 +10,7 @@ USER="wisp"; #Edit this to your username
 #  - Run => $SDK_PATH/1.1.xx.y/setup-env.sh
 pacman -S --noconfirm cmake;
 pacman -S --noconfirm vulkan-devel; #Vulkan development package group
+pacman -S --noconfirm glfw-x11 glm;
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #Tensorflow(GPU) - Python ---------------------------------------------------------------------------------------------------------------------------------------
 #More info -> https://www.tensorflow.org/install/install_sources
