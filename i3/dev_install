@@ -8,7 +8,7 @@ USER="wisp"; #Edit this to your username
 # - Create folder for SDK files, and enter it
 # - "tar zxf $PATH_TO_FILE/vulkansdk-linux-x86_64-1.1.xx.y.tar.gz"
 #  - Run => $SDK_PATH/1.1.xx.y/setup-env.sh
-pacman -S --noconfirm cmake;
+pacman -S --noconfirm cmake gtest;
 pacman -S --noconfirm vulkan-devel; #Vulkan development package group
 pacman -S --noconfirm glfw-x11 glm;
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
