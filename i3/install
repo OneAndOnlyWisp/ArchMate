@@ -83,5 +83,6 @@ pacman -S --noconfirm viewnior; #Image viewer
 #Terminal/Shell extensions--------------------------------------------------------------------------------------------------------------------------------------
 pacman -S --noconfirm bc; #Shell extension - Floating point division
 sh ""$Source_Path"FDE/Functions.sh" InstallFromAUR "urxvt-resize-font-git"; #Terminal extension (Resize font on fly)
-pacman -S --noconfirm awesome-terminal-fonts;
+pacman -S --noconfirm awesome-terminal-fonts; #Awesome fonts for terminal use
+sh ""$Source_Path"FDE/Functions.sh" InstallFromAUR "aurman"; #AUR package installer
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
