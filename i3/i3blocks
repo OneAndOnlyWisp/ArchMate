@@ -85,3 +85,4 @@ color=#f4f4f4
 command=~/.blocklets/sysinfo
 interval=7200
 #--------------------------------------------------------------------
+[separator]
