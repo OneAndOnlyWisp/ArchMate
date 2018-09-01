@@ -85,4 +85,11 @@ pacman -S --noconfirm bc; #Shell extension - Floating point division
 sh ""$Source_Path"FDE/Functions.sh" InstallFromAUR "urxvt-resize-font-git"; #Terminal extension (Resize font on fly)
 pacman -S --noconfirm awesome-terminal-fonts; #Awesome fonts for terminal use
 sh ""$Source_Path"FDE/Functions.sh" InstallFromAUR "aurman"; #AUR package installer
+#Atom extensions----------------------------------------------------------------------------------------------------------------------------------------------------------
+apm install linter; # Atom linter
+apm install linter-ui-default; # Linter Atom-UI
+apm install linter-cpplint; # Atom C++ linter
+apm install clang-format; # Reformat C/C++ code
+apm install language-cmake; # Atom CMake language
+apm install autocomplete-cmake; # Atom CMake autocomplete
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
