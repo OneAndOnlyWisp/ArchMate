@@ -93,4 +93,5 @@ apm install clang-format; # Reformat C/C++ code
 apm install language-cmake; # Atom CMake language
 apm install autocomplete-cmake; # Atom CMake autocomplete
 apm install intentions busy-signal; # Atom random stuff
+apm install atom-discord; # Atom Discord plugin
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
