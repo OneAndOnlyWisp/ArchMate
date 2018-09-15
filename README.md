@@ -1,15 +1,22 @@
 # ArchMate
 ## Description
-This is my custom Arch repository with full off different stuff.
+This is my custom Arch repository. It contains a tool to be able to easily set up a working graphical environment in a few minutes.
 
 #### Features:
-- Fast Desktop Environment (FDE)
-- i3WM Custom (install script, configs, blocklets)
+- Install and remove kernels
+- Change default kernel
+- Install graphics easily (Intel, NVIDIA, AMD)
+- Add and remove regular or admin users
+- Install dekstop environments
+- Install i3WM only or with custom apps
+- Install premade configs for i3WM
+- Set up KVM/QEMU passthrough ready virtual machines (Beta) [Intel only at this point]
+- Install software developer packages
 
 ## How to get it
 #### With git
-- Install and/or sync git: `pacman -Sy git`
+- Install and sync git: `pacman -Sy git`
 - Get the goodies: `git clone git://github.com/OneAndOnlyWisp/ArchMate`
 
 ## How to use
-- sh ArchMate/run
+- sh ArchMate/run.sh
