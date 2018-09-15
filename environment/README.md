@@ -1,6 +1,6 @@
 ## Available environment settings:
 - Install desktop environments
-- Install windows manager only
+- Install window manager only
 
 ## Information
 - Desktop environment install menu is a bit old. Migth need a rework.
