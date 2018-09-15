@@ -43,7 +43,7 @@ sed -n '/\/bin\/bash/p' /etc/passwd | cut -d: -f1 | while read -r username; do
     #Atom Discord plugin--------------------------------------------------------
     runuser -l $username -c 'apm install atom-discord';
     #Atom GoTo Definition plugin------------------------------------------------
-    runuser -l $username -c 'apm install linter';
+    runuser -l $username -c 'apm install goto-definition';
     #Atom linter----------------------------------------------------------------
     runuser -l $username -c 'apm install linter';
     #Linter Atom-UI-------------------------------------------------------------
