@@ -1,0 +1,13 @@
+#--------------------------------Totally unsafe---------------------------------
+#-------------------------------------------------------------------------------
+#Enable PulseAudio for root-----------------------------------------------------
+# Causes system vulnerability with automatic module loading
+# Suggested use as root is: "pulseaudio -D --system --disallow-module-loading"
+# Needs a dedicated UNIX user to set it up. (TIME)
+#-------------------------------------------------------------------------------
+echo "pulseaudio -D" > /root/.bash_profile
+#Enable using chromium as root--------------------------------------------------
+# Causes system vulnerability. No suggested usage. "Never" use it.
+#-------------------------------------------------------------------------------
+echo "--no-sandbox" > /root/.config/chromium-flags.conf
+#-------------------------------------------------------------------------------

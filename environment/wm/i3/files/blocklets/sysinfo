@@ -1,0 +1,25 @@
+#!/bin/bash
+
+#BRANDS AREA
+ARCH_BRAND=""
+ARCH_COLOR="#00ffff"
+
+#Click actions
+case "$BLOCK_BUTTON" in
+    1) urxvt -hold -e neofetch;; #Left Click - Neofetch
+esac
+
+#$TEXT_OUT=>text to print || $TEXT_COLOR => display color
+function PrintText {
+  echo $TEXT_OUT
+  echo $TEXT_OUT
+  echo $TEXT_COLOR
+}
+
+#Find Distro (need for distro specific brand)
+case $(neofetch | awk '/OS/ {print $2}') in #Distro name
+  "Arch" ) TEXT_OUT=$ARCH_BRAND; TEXT_COLOR=$ARCH_COLOR;;
+esac
+
+#Display info
+PrintText
