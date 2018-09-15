@@ -5,7 +5,7 @@ This is my custom Arch repository. It contains a tool to be able to easily set u
 #### Features:
 - Install and remove kernels
 - Change default kernel
-- Install graphics easily (Intel, NVIDIA, AMD)
+- Install graphics (Intel, NVIDIA, AMD)
 - Add and remove regular or admin users
 - Install dekstop environments
 - Install i3WM only or with custom apps
