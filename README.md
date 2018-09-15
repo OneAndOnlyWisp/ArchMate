@@ -1,6 +1,6 @@
 # ArchMate
 ## Description
-This is my custom Arch repository. It contains a tool to be able to easily set up a working graphical environment in a few minutes.
+This is my custom Arch repository. It contains a tool to be able to easily set up a working graphical environment in a few minutes. (Tested with real hardware, dropped virtual machine support.)
 
 #### Features:
 - Install and remove kernels
