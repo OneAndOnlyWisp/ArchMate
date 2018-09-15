@@ -13,6 +13,8 @@ sed -n '/\/bin\/bash/p' /etc/passwd | cut -d: -f1 | while read -r username; do
     #Add gdbgui to path
     echo "
 export PATH=\$PATH:/home/$username/.local/V_ENV/bin" >> /home/$username/.bashrc
+    #Fix ownership
+    chown -R $username:users "/home/$username/.local/"
   fi
 done
 #-------------------------------------------------------------------------------

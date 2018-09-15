@@ -16,4 +16,6 @@ sed -n '/\/bin\/bash/p' /etc/passwd | cut -d: -f1 | while read -r username; do
   #Set home_folder location-----------------------------------------------------
   [[ $username = "root" ]] && home_folder="/root" || home_folder="/home/$username"
   cp "$src_path/files/wifi" "$home_folder/wifi.readme";
+  #Fix ownership
+  chown $username:users "$home_folder/wifi.readme"
 done
