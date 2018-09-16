@@ -18,6 +18,8 @@ sh $functions InstallFromAUR "aurman"; #AUR package installer
 #-------------------------------------------------------------------------------
 #---------------------------Terminal/Shell extensions---------------------------
 #Shell extension - Floating point division--------------------------------------
+pacman -S --noconfirm p7zip;
+#Shell extension - Floating point division--------------------------------------
 pacman -S --noconfirm bc;
 #Terminal extension (Resize font on fly)----------------------------------------
 sh $functions InstallFromAUR "urxvt-resize-font-git";
