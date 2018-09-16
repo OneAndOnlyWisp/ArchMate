@@ -201,6 +201,10 @@ for_window [class="Pavucontrol"] floating enable
 for_window [class="Pavucontrol"] resize set 720 600
 for_window [class="Pavucontrol"] move absolute position center
 
+#Doxywizard window settings
+for_window [class="doxywizard"] floating enable
+for_window [class="doxywizard"] move absolute position center
+
 #Virt-manager window settings
 for_window [class="Virt-manager"] floating enable
 for_window [class="Virt-manager"] move absolute position center
