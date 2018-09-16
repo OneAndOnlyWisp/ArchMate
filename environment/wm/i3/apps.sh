@@ -17,7 +17,7 @@ pacman -S --noconfirm vlc; #Video player
 sh $functions InstallFromAUR "aurman"; #AUR package installer
 #-------------------------------------------------------------------------------
 #---------------------------Terminal/Shell extensions---------------------------
-#Shell extension - Floating point division--------------------------------------
+#Shell extension - Extract .7z files--------------------------------------------
 pacman -S --noconfirm p7zip;
 #Shell extension - Floating point division--------------------------------------
 pacman -S --noconfirm bc;
