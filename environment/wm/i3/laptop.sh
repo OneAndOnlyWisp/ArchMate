@@ -2,6 +2,9 @@
 clear;
 src_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )";
 
+#Turn off beep sounds (soooo annoying, remove kernel module pls)
+echo "blacklist pcspkr" > /etc/modprobe.d/nobeep.conf; #Blacklist kernel module
+
 # Special time settings for laptops
 pacman -S --noconfirm ntp; #Install Network Time Protocol package
 systemctl enable ntpd.service; #Enable NTP service
