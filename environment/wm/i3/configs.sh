@@ -40,8 +40,6 @@ sed -n '/\/bin\/bash/p' /etc/passwd | cut -d: -f1 | while read -r username; do
     chown -R $username:users "$home_folder/"
     #---------------------------------------------------------------------------
     #-------------------------------Atom extensions-----------------------------
-    #Atom Discord plugin--------------------------------------------------------
-    runuser -l $username -c 'apm install atom-discord';
     #Atom GoTo Definition plugin------------------------------------------------
     runuser -l $username -c 'apm install goto-definition';
     #Atom linter----------------------------------------------------------------
@@ -50,12 +48,16 @@ sed -n '/\/bin\/bash/p' /etc/passwd | cut -d: -f1 | while read -r username; do
     runuser -l $username -c 'apm install linter-ui-default';
     #Atom C++ linter------------------------------------------------------------
     runuser -l $username -c 'apm install linter-cpplint';
+    #Atom C++14 linter----------------------------------------------------------
+    runuser -l $username -c 'apm install language-cpp14';
     #Reformat C/C++ code--------------------------------------------------------
     runuser -l $username -c 'apm install clang-format';
     #Atom CMake language--------------------------------------------------------
     runuser -l $username -c 'apm install language-cmake';
     #Atom CMake autocomplete----------------------------------------------------
     runuser -l $username -c 'apm install autocomplete-cmake';
+    #Atom gdb debugger----------------------------------------------------------
+    runuser -l $username -c 'apm install dbg-gdb dbg output-panel';
     #Atom random stuff----------------------------------------------------------
     runuser -l $username -c 'apm install intentions busy-signal';
     #---------------------------------------------------------------------------
