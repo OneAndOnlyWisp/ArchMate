@@ -53,4 +53,9 @@ systemctl enable libvirtd.service;
 pacman -S --noconfirm dnsmasq; pacman -S --noconfirm firewalld;
 #systemctl enable firewalld.service;
 #firewall-cmd --permanent --zone=public --add-port=8080/tcp; #Open port for VLC remote controll
-#--------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------
+#---------------------------------GPU isolation---------------------------------
+#-------------------------------------------------------------------------------
+src_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )";
+sh "$src_path/isolation.sh";
+#-------------------------------------------------------------------------------
