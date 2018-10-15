@@ -10,7 +10,7 @@ timedatectl set-timezone Europe/Budapest; #Timezone
 localectl --no-convert set-x11-keymap hu; #Set keyboard layout
 #-------------------------------------------------------------------------------
 #Basic system applications------------------------------------------------------
-pacman -S --noconfirm feh; #Background handler
+pacman -S --noconfirm feh; #Background "service"/Image viewer
 pacman -S --noconfirm dmenu; #Application launcher
 #Time based task scheduler------------------------------------------------------
 pacman -S --noconfirm cron; systemctl enable cronie.service;
