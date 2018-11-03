@@ -62,8 +62,8 @@ sed -n '/\/bin\/bash/p' /etc/passwd | cut -d: -f1 | while read -r username; do
     runuser -l $username -c 'apm install linter';
     #Linter Atom-UI-------------------------------------------------------------
     runuser -l $username -c 'apm install linter-ui-default';
-    #Atom C++ linter------------------------------------------------------------
-    runuser -l $username -c 'apm install linter-cpplint';
+    #Atom C/C++ linter----------------------------------------------------------
+    runuser -l $username -c 'apm install linter-gcc';
     #Atom C++14 linter----------------------------------------------------------
     runuser -l $username -c 'apm install language-cpp14';
     #Reformat C/C++ code--------------------------------------------------------
