@@ -5,7 +5,7 @@ info:
 todo:
 - update iwctl guide
 - add touchpad config
-
+- curlftpfs package
 
 totodo:
 - NAS
