@@ -49,7 +49,7 @@ sed -n '/\/bin\/bash/p' /etc/passwd | cut -d: -f1 | while read -r username; do
   echo "export HISTFILE=~/.bash_eternal_history" >> "$home_folder/.bashrc";
   # Force prompt to write history after every command.
   # http://superuser.com/questions/20900/bash-history-loss
-  echo "PROMPT_COMMAND=\"history -a; $PROMPT_COMMAND\"" >> "$home_folder/.bashrc";
+  echo "PROMPT_COMMAND=\"history -a;\"" >> "$home_folder/.bashrc";
   #-----------------------------------------------------------------------------
   if ! [[ $username = "root" ]]; then
     #Fix ownership--------------------------------------------------------------
