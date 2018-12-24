@@ -37,19 +37,12 @@ sed -n '/\/bin\/bash/p' /etc/passwd | cut -d: -f1 | while read -r username; do
   #Set background script--------------------------------------------------------
   touch "$home_folder/.fehbg";
   cp "$src_path/files/background" "$home_folder/.fehbg";
-  #Eternal bash history---------------------------------------------------------
-  # Undocumented feature which sets the size to "unlimited".
-  # http://stackoverflow.com/questions/9457233/unlimited-bash-history
-  echo "export HISTFILESIZE=" >> "$home_folder/.bashrc";
-  echo "export HISTSIZE=" >> "$home_folder/.bashrc";
-  echo "export HISTTIMEFORMAT=\"[%F %T] \"" >> "$home_folder/.bashrc";
-  # Change the file location because certain bash sessions truncate .bash_history file upon close.
-  # http://superuser.com/questions/575479/bash-history-truncated-to-500-lines-on-each-login
-  touch "$home_folder/.bash_eternal_history";
-  echo "export HISTFILE=~/.bash_eternal_history" >> "$home_folder/.bashrc";
-  # Force prompt to write history after every command.
-  # http://superuser.com/questions/20900/bash-history-loss
-  echo "PROMPT_COMMAND=\"history -a;\"" >> "$home_folder/.bashrc";
+  #bashrc-----------------------------------------------------------------------
+  # Features:
+  # - eternal bash history
+  # - terminal colored use
+  # - extractor
+  cp "$src_path/files/bashrc" "$home_folder/.bashrc";
   #-----------------------------------------------------------------------------
   if ! [[ $username = "root" ]]; then
     #Fix ownership--------------------------------------------------------------

@@ -64,7 +64,7 @@ bindsym $mod+v split v
 bindsym $mod+f fullscreen toggle
 
 # change container layout (stacked, tabbed, toggle split)
-bindsym $mod+s layout stacking
+# bindsym $mod+s layout stacking
 bindsym $mod+w layout tabbed
 bindsym $mod+e layout toggle split
 
@@ -151,9 +151,35 @@ mode "resize" {
 
 bindsym $mod+r mode "resize"
 
+################################################################################
+##                              personal-section                              ##
+################################################################################
+
+# Colors from ~/.Xresources file
+set_from_resource $term_background background
+set_from_resource $term_foreground foreground
+set_from_resource $term_color0     color0
+set_from_resource $term_color1     color1
+set_from_resource $term_color2     color2
+set_from_resource $term_color3     color3
+set_from_resource $term_color4     color4
+set_from_resource $term_color5     color5
+set_from_resource $term_color6     color6
+set_from_resource $term_color7     color7
+set_from_resource $term_color8     color8
+set_from_resource $term_color9     color9
+set_from_resource $term_color10    color10
+set_from_resource $term_color11    color11
+set_from_resource $term_color12    color12
+set_from_resource $term_color13    color13
+set_from_resource $term_color14    color14
+set_from_resource $term_color15    color15
 
 #Screen settings
-exec_always --no-startup-id xrandr --output HDMI-3 --mode 1280x1024 --rate 75 --pos 0x0 --rotate normal --output HDMI-2 --mode 1920x1080 --rate 60 --pos 3200x0 --rotate normal --output DP-1 --primary --mode 1920x1080 --rate 144 --pos 1280x0 --rotate normal
+exec_always --no-startup-id xrandr \
+--output HDMI-3 --mode 1280x1024 --rate 75 --pos 0x0 --rotate normal \
+--output HDMI-2 --mode 1920x1080 --rate 60 --pos 3200x0 --rotate normal \
+--output DP-1 --primary --mode 1920x1080 --rate 144 --pos 1280x0 --rotate normal
 
 #Primary monitor
 bar {
@@ -177,8 +203,10 @@ bar {
         status_command i3blocks
 }
 
-#Window border settings
+#Window settings
 hide_edge_borders smart
+new_window pixel 1
+new_float normal
 
 #Color scheme
 exec_always xrdb ~/.config/i3/.Xresources
@@ -198,18 +226,76 @@ focus_follows_mouse no
 
 #PulseAudio volume manager settings
 for_window [class="Pavucontrol"] floating enable
-for_window [class="Pavucontrol"] resize set 720 600
-for_window [class="Pavucontrol"] move absolute position center
+assign [class="Pavucontrol"] → output primary
 
 #Doxywizard window settings
 for_window [class="doxywizard"] floating enable
-for_window [class="doxywizard"] move absolute position center
+assign [class="doxywizard"] → output primary
 
 #Virt-manager window settings
 for_window [class="Virt-manager"] floating enable
-for_window [class="Virt-manager"] move absolute position center
+assign [class="Virt-manager"] → output primary
 
 #Media keybindings
 bindsym XF86AudioRaiseVolume exec amixer -q -D pulse sset Master 5%+ && pkill -RTMIN+1 i3blocks
 bindsym XF86AudioLowerVolume exec amixer -q -D pulse sset Master 5%- && pkill -RTMIN+1 i3blocks
 bindsym XF86AudioMute exec amixer -q -D pulse sset Master toggle && pkill -RTMIN+1 i3blocks
+
+# Screen brightness controls
+# bindsym XF86MonBrightnessUp exec "xbacklight -inc 10; notify-send 'brightness up'"
+# bindsym XF86MonBrightnessDown exec "xbacklight -dec 10; notify-send 'brightness down'"
+
+# Set inner/outer gaps
+gaps inner 10
+gaps outer -2
+
+# Additionally, you can issue commands with the following syntax. This is useful to bind keys to changing the gap size.
+# gaps inner|outer current|all set|plus|minus <px>
+# gaps inner all set 10
+# gaps outer all plus 5
+
+# Smart gaps (gaps used if only more than one container on the workspace)
+smart_gaps on
+
+# Smart borders (draw borders around container only if it is not the only container on this workspace)
+# on|no_gaps (on=always activate and no_gaps=only activate if the gap size to the edge of the screen is 0)
+smart_borders on
+
+# Press $mod+Shift+g to enter the gap mode. Choose o or i for modifying outer/inner gaps. Press one of + / - (in-/decrement for current workspace) or 0 (remove gaps for current workspace). If you also press Shift with these keys, the change will be global for all workspaces.
+set $mode_gaps Gaps: (o) outer, (i) inner
+set $mode_gaps_outer Outer Gaps: +|-|0 (local), Shift + +|-|0 (global)
+set $mode_gaps_inner Inner Gaps: +|-|0 (local), Shift + +|-|0 (global)
+bindsym $mod+Shift+g mode "$mode_gaps"
+
+mode "$mode_gaps" {
+        bindsym o      mode "$mode_gaps_outer"
+        bindsym i      mode "$mode_gaps_inner"
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+}
+mode "$mode_gaps_inner" {
+        bindsym plus  gaps inner current plus 5
+        bindsym minus gaps inner current minus 5
+        bindsym 0     gaps inner current set 0
+
+        bindsym Shift+plus  gaps inner all plus 5
+        bindsym Shift+minus gaps inner all minus 5
+        bindsym Shift+0     gaps inner all set 0
+
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+}
+mode "$mode_gaps_outer" {
+        bindsym plus  gaps outer current plus 5
+        bindsym minus gaps outer current minus 5
+        bindsym 0     gaps outer current set 0
+
+        bindsym Shift+plus  gaps outer all plus 5
+        bindsym Shift+minus gaps outer all minus 5
+        bindsym Shift+0     gaps outer all set 0
+
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+}
+
+################################################################################
