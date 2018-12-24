@@ -36,3 +36,7 @@ URxvt.resize-font.bigger:	C-Up
 !! Matcher
 URxvt.url-launcher:	linkhandler
 URxvt.matcher.button:	1
+
+! blue
+*.color4:       #404fe7
+*.color12:      #4063e7
