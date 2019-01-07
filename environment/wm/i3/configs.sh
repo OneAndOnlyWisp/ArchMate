@@ -8,6 +8,7 @@ src_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )";
 #Terminal identity -------------------------------------------------------------
 terminal="/etc/profile.d/terminal.sh"; touch $terminal;
 echo "declare -x TERM=\"xterm-256color\"" | sudo tee $terminal > /dev/null;
+echo "declare -x EDITOR=\"/usr/bin/nano\"" | sudo tee $terminal > /dev/null;
 #Xorg driver settings-----------------------------------------------------------
 cp "$src_path/files/graphics" /etc/X11/xorg.conf.d/00-driver.conf;
 #Copy a default wallpaper-------------------------------------------------------
