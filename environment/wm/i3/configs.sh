@@ -25,8 +25,9 @@ sh $functions InstallFromAUR "cpplint";
 sed -n '/\/bin\/bash/p' /etc/passwd | cut -d: -f1 | while read -r username; do
   #Set home_folder location-----------------------------------------------------
   [[ $username = "root" ]] && home_folder="/root" || home_folder="/home/$username"
-  #Start i3 with startx---------------------------------------------------------
+  #Start i3 after login---------------------------------------------------------
   echo "exec i3" > "$home_folder/.xinitrc";
+  echo "startx" >> "$home_folder/.bash_profile";
   #Copy i3 files----------------------------------------------------------------
   mkdir -p "$home_folder/.config/i3/"; touch "$home_folder/.config/i3/config";
   cp "$src_path/files/config" "$home_folder/.config/i3/config"; #i3
