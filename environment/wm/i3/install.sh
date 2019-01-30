@@ -16,5 +16,5 @@ pacman -S --noconfirm dmenu; #Application launcher
 pacman -S --noconfirm cron; systemctl enable cronie.service;
 #-------------------------------------------------------------------------------
 #Fonts (To look atleast decent)-------------------------------------------------
-pacman -S --noconfirm ttf-dejavu ttf-inconsolata ttf-font-awesome;
+pacman -S --noconfirm ttf-dejavu ttf-inconsolata;
 #-------------------------------------------------------------------------------
