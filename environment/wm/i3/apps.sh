@@ -26,5 +26,5 @@ pacman -S --noconfirm bc;
 #Terminal extension (Resize font on fly)----------------------------------------
 sh $functions InstallFromAUR "urxvt-resize-font-git";
 #Awesome fonts for terminal use-------------------------------------------------
-pacman -S --noconfirm awesome-terminal-fonts;
+sh $functions InstallFromAUR "ttf-font-awesome-4";
 #-------------------------------------------------------------------------------
