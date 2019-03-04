@@ -16,6 +16,7 @@ pacman -S --noconfirm transmission-qt; #Torrent
 pacman -S --noconfirm vlc; #Video player
 pacman -S --noconfirm openssh; #SSH connection
 pacman -S --noconfirm bash-completion; #Super intelligent completion
+pacman -S --noconfirm networkmanager networkmanager-openvpn network-manager-applet; systemctl enable NetworkManager # VPN support
 sh $functions InstallFromAUR "aurman"; #AUR package installer
 #-------------------------------------------------------------------------------
 #---------------------------Terminal/Shell extensions---------------------------

@@ -214,6 +214,9 @@ exec_always xrdb ~/.config/i3/.Xresources
 #Background
 exec sh ~/.fehbg
 
+#Network manager
+exec nm-applet
+
 # All desktop print screen
 bindsym --release Print exec "scrot '%s_%H%M_%d.%m.%Y_$wx$h.png' -e 'xclip -selection clipboard -target image/png -i $f'"
 # Custom box print screen
