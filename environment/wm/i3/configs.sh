@@ -22,59 +22,40 @@ sh $functions InstallFromAUR "ttf-font-logos";
 sh $functions InstallFromAUR "cpplint";
 #-------------------------------------------------------------------------------
 #--------------------------Copy settings for all users--------------------------
+#-------------------------------------------------------------------------------
 sed -n '/\/bin\/bash/p' /etc/passwd | cut -d: -f1 | while read -r username; do
-  #Set home_folder location-----------------------------------------------------
+  # Set home_folder location----------------------------------------------------
   [[ $username = "root" ]] && home_folder="/root" || home_folder="/home/$username"
-  #Start i3 after login---------------------------------------------------------
-  echo "exec i3" > "$home_folder/.xinitrc";
-  echo "startx" >> "$home_folder/.bash_profile";
-  #Copy i3 files----------------------------------------------------------------
-  mkdir -p "$home_folder/.config/i3/"; touch "$home_folder/.config/i3/config";
-  cp "$src_path/files/config" "$home_folder/.config/i3/config"; #i3
-  cp "$src_path/files/i3blocks" "$home_folder/.i3blocks.conf"; #i3blocks
-  cp -r "$src_path/files/blocklets/." "$home_folder/.blocklets"; #i3 blocklets
-  find "$home_folder/.blocklets" -type f -exec chmod 755 {} \; #Fix permissions
-  #Xorg display settings--------------------------------------------------------
+  # Common ---------------------------------------------------------------------
   cp "$src_path/files/resource" "$home_folder/.config/i3/.Xresources";
-  #Set background script--------------------------------------------------------
-  touch "$home_folder/.fehbg";
   cp "$src_path/files/background" "$home_folder/.fehbg";
-  #bashrc-----------------------------------------------------------------------
-  # Features:
-  # - eternal bash history
-  # - terminal colored use
-  # - extractor
   cp "$src_path/files/bashrc" "$home_folder/.bashrc";
-  #-----------------------------------------------------------------------------
-  if ! [[ $username = "root" ]]; then
-    #Fix ownership--------------------------------------------------------------
-    chown -R $username:users "$home_folder/"
-    #---------------------------------------------------------------------------
-    #-------------------------------Atom extensions-----------------------------
-    #Atom GoTo Definition plugin------------------------------------------------
+  cp "$src_path/files/bash_profile" "$home_folder/.bash_profile";
+  cp "$src_path/files/xinitrc" "$home_folder/.xinitrc";
+  # Window Manager -------------------------------------------------------------
+  mkdir -p "$home_folder/.config/i3/"; touch "$home_folder/.config/i3/config";
+  cp "$src_path/files/config" "$home_folder/.config/i3/config";
+  cp "$src_path/files/i3blocks" "$home_folder/.i3blocks.conf";
+  cp -r "$src_path/files/blocklets/." "$home_folder/.blocklets";
+  # Fix permissions
+  find "$home_folder/.blocklets" -type f -exec chmod 755 {} \;
+  # Fix ownership---------------------------------------------------------------
+  [[ $username -ne "root" ]] && chown -R $username:users "$home_folder/"
+  # Atom plugins ---------------------------------------------------------------
+  if [[ $username -ne "root" ]]; then
     runuser -l $username -c 'apm install goto-definition';
-    #Atom linter----------------------------------------------------------------
     runuser -l $username -c 'apm install linter';
-    #Linter Atom-UI-------------------------------------------------------------
     runuser -l $username -c 'apm install linter-ui-default';
-    #Atom C/C++ linter----------------------------------------------------------
     runuser -l $username -c 'apm install linter-gcc';
-    #Atom C++14 linter----------------------------------------------------------
     runuser -l $username -c 'apm install language-cpp14';
-    #Reformat C/C++ code--------------------------------------------------------
     runuser -l $username -c 'apm install clang-format';
-    #Atom CMake language--------------------------------------------------------
     runuser -l $username -c 'apm install language-cmake';
-    #Atom CMake autocomplete----------------------------------------------------
     runuser -l $username -c 'apm install autocomplete-cmake';
-    #Atom gdb debugger----------------------------------------------------------
     runuser -l $username -c 'apm install dbg-gdb dbg output-panel';
-    #Atom random stuff----------------------------------------------------------
     runuser -l $username -c 'apm install intentions busy-signal';
-    #---------------------------------------------------------------------------
   fi
 done
 #-------------------------------------------------------------------------------
-#Copy help for root-------------------------------------------------------------
+#------------------------------Copy help for root-------------------------------
 cp "$src_path/files/root_help" "/root/root.readme";
 #-------------------------------------------------------------------------------
