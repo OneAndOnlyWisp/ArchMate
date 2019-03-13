@@ -20,6 +20,7 @@ alias hs='history | grep'
 # Colors
 PS1='\[\033[01;32m\][\[\033[01;36m\]\u\[\033[01;32m\]@\[\033[01;36m\]\h\[\033[01;37m\] \W\[\033[01;32m\]]\$\[\033[00m\] '
 alias ls='ls --color=auto'
+alias ll='ls -la'
 alias grep='grep --colour=auto'
 alias egrep='egrep --colour=auto'
 alias fgrep='fgrep --colour=auto'
