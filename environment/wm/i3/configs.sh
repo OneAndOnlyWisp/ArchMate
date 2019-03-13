@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 clear;
 #Local globals------------------------------------------------------------------
 functions="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/../../../functions.sh"
@@ -47,11 +47,12 @@ sed -n '/\/bin\/bash/p' /etc/passwd | cut -d: -f1 | while read -r username; do
     runuser -l $username -c 'apm install linter';
     runuser -l $username -c 'apm install linter-ui-default';
     runuser -l $username -c 'apm install linter-gcc';
+    runuser -l $username -c 'apm install linter-shellcheck';
     runuser -l $username -c 'apm install language-cpp14';
     runuser -l $username -c 'apm install clang-format';
     runuser -l $username -c 'apm install language-cmake';
     runuser -l $username -c 'apm install autocomplete-cmake';
-    runuser -l $username -c 'apm install dbg-gdb dbg output-panel';
+    runuser -l $username -c 'apm install output-panel';
     runuser -l $username -c 'apm install intentions busy-signal';
   fi
 done
