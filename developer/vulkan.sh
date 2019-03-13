@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 clear;
 #-------------------------------------------------------------------------------
 #Download Vulkan SDK from: https://vulkan.lunarg.com/sdk/home

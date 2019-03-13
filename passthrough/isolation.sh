@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 #VFIO
 file="/etc/modprobe.d/vfio.conf"; touch $file;

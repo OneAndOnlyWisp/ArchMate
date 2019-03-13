@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 clear;
 src_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )";
 
