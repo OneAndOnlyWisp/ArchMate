@@ -14,9 +14,9 @@ pacman -S --noconfirm chromium; #Browser
 pacman -S --noconfirm atom; #Text editor
 pacman -S --noconfirm transmission-qt; #Torrent
 pacman -S --noconfirm vlc; #Video player
-pacman -S --noconfirm openssh; #SSH connection
 pacman -S --noconfirm bash-completion; #Super intelligent completion
-pacman -S --noconfirm networkmanager networkmanager-openvpn network-manager-applet; systemctl enable NetworkManager # VPN support
+pacman -S --noconfirm kvantum-qt5; #Window system theme manager
+pacman -S --noconfirm udiskie; #USB Automount
 sh $functions InstallFromAUR "aurman"; #AUR package installer
 #-------------------------------------------------------------------------------
 #---------------------------Terminal/Shell extensions---------------------------
