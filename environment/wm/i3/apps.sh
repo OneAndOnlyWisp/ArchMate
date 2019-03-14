@@ -8,7 +8,7 @@ pacman -S --noconfirm htop; #Process manager
 pacman -S --noconfirm rxvt-unicode urxvt-perls; #Terminal
 pacman -S --noconfirm pavucontrol; #PulseAudio Volume controller
 pacman -S --noconfirm scrot xclip; #Print screen tool/Copy to clipboard
-pacman -S --noconfirm pcmanfm; #File manager
+pacman -S --noconfirm pcmanfm-gtk3; #File manager
 pacman -S --noconfirm file-roller; #Archive manager
 pacman -S --noconfirm chromium; #Browser
 pacman -S --noconfirm atom; #Text editor
