@@ -5,13 +5,9 @@
 [[ -f ~/.bashrc ]] && . ~/.bashrc
 
 if [[ ! $DISPLAY && $XDG_VTNR -eq 1 ]]; then
-  exec startx
+  exec startx;
 fi
 
-if [[ $XDG_VTNR ]]; then
-  if [[ ! $DISPLAY && $XDG_VTNR -eq 1 ]]; then
-    exec startx
-  fi
-else
-  echo "# Insert cool SSH welcome here #"
+if [[ ! $XDG_VTNR ]]; then
+  neofetch;
 fi
