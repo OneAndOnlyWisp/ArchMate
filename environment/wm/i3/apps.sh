@@ -23,6 +23,7 @@ pacman -S --noconfirm tigervnc; #VNC client
 sh $functions InstallFromAUR "aurman"; #AUR package installer
 #-------------------------------------------------------------------------------
 # pacman -S --noconfirm xfce4-panel; # Only for the weak
+# pacman -S --noconfirm x11vnc; # To share screen through VNC
 #-------------------------------------------------------------------------------
 #---------------------------Terminal/Shell extensions---------------------------
 #Shell extension - Extract .7z files--------------------------------------------
