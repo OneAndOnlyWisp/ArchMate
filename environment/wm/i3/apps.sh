@@ -3,6 +3,7 @@
 functions="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/../../../functions.sh"
 #-------------------------------------------------------------------------------
 #---------------------------------Default apps----------------------------------
+#-------------------------------------------------------------------------------
 pacman -S --noconfirm neofetch; #PC information
 pacman -S --noconfirm htop; #Process manager
 pacman -S --noconfirm rxvt-unicode urxvt-perls; #Terminal
@@ -17,7 +18,11 @@ pacman -S --noconfirm vlc; #Video player
 pacman -S --noconfirm bash-completion; #Super intelligent completion
 pacman -S --noconfirm kvantum-qt5; #Window system theme manager
 pacman -S --noconfirm udiskie; #USB Automount
+pacman -S --noconfirm gparted; #Partition manager
+pacman -S --noconfirm tigervnc; #VNC client
 sh $functions InstallFromAUR "aurman"; #AUR package installer
+#-------------------------------------------------------------------------------
+# pacman -S --noconfirm xfce4-panel; # Only for the weak
 #-------------------------------------------------------------------------------
 #---------------------------Terminal/Shell extensions---------------------------
 #Shell extension - Extract .7z files--------------------------------------------
