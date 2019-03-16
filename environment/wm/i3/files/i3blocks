@@ -33,19 +33,15 @@ command=~/.blocklets/updates intel nvidia vulkan tensorflow
 interval=600
 #--------------------------------------------------------------------
 [separator]
-#Drives-----------------------------------------------------------
-#SSD ultrafast - interval=5
-#SSD normal - interval=20
-#HDD or slower - interval=40 or more
 #--------------------------------------------------------------------
 [main_drive]
 command=~/.blocklets/drive
 interval=15
 [ssd]
-command=~/.blocklets/drive /ssd
+command=~/.blocklets/drive /SSD
 interval=15
 [hdd]
-command=~/.blocklets/drive /hdd
+command=~/.blocklets/drive /HDD
 interval=45
 #--------------------------------------------------------------------
 [separator]
