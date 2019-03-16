@@ -47,7 +47,6 @@ sed -n '/\/bin\/bash/p' /etc/passwd | cut -d: -f1 | while read -r username; do
     runuser -l $username -c 'apm install linter';
     runuser -l $username -c 'apm install linter-ui-default';
     runuser -l $username -c 'apm install linter-gcc';
-    runuser -l $username -c 'apm install linter-shellcheck';
     runuser -l $username -c 'apm install language-cpp14';
     runuser -l $username -c 'apm install clang-format';
     runuser -l $username -c 'apm install language-cmake';
