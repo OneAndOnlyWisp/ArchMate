@@ -1,42 +1,43 @@
-!!-INFO------------------------------------------------------------
-!! File location: /home/$USER/.config/i3/config
-!!--------------------------------------------------------------------
-
-!! Misc
-Xft.autohint: 0
-Xft.lcdfilter: lcddefault
-Xft.hintstyle: hintslight
-Xft.hinting: 1
-Xft.antialias: 1
-Xft.rgba: rgb
-
-!!Window frame DPI
-Xft.dpi: 96
-
-!! URxvt
-urxvt*transparent: true
-urxvt*shading: 30
-URxvt.scrollBar: false
+!!------------------------------------------------------------------------------
+!!----------------------------- Font configuration -----------------------------
+Xft.autohint:           0
+Xft.lcdfilter:          lcddefault
+Xft.hintstyle:          hintslight
+Xft.hinting:            1
+Xft.antialias:          1
+Xft.rgba:               rgb
+Xft.dpi:                96
+!!------------------------------------------------------------------------------
+!!----------------------------------- URxvt ------------------------------------
+!!-------- Appearance ----------------------------------------------------------
+urxvt*transparent:      true
+urxvt*shading:          30
+URxvt.scrollBar:        False
 URxvt.iso14755:         False
 URxvt.reverseVideo:     True
 URxvt.font:             xft:inconsolata:pixelsize=14
+URxvt.colorUL:		      #4682B4
+!!------------------------------------------------------------------------------
+!!-------- Keybindings ---------------------------------------------------------
+!! Control + Up/Down (resize-font)
+URxvt.resize-font.smaller:	  C-Down
+URxvt.resize-font.bigger:	    C-Up
+!!-----------------------------------
+!! Control + Left/Right (word jump)
+*URxvt*keysym.C-Right:		    \033[1;5C
+*URxvt*keysym.C-Left:		      \033[1;5D
+!!------------------------------------------------------------------------------
+!!---------- Addons ------------------------------------------------------------
+URxvt.perl-ext-common:	      default,resize-font,url-select
+URxvt.url-select.underline:   true
+!-------------------------------------------------------------------------------
 
-!! URxvt extensions
-URxvt.perl-ext-common:	default,matcher,resize-font,url-select,keyboard-select
-URxvt.colorUL:		#4682B4
-!! url-select
-URxvt.keysym.M-u:	perl:url-select:select_next
-URxvt.url-select.launcher: linkhandler
-URxvt.url-select.underline: true
-!! keyboard-select:
-URxvt.keysym.M-Escape: perl:keyboard-select:activate
-!! resize-font
-URxvt.resize-font.smaller:	C-Down
-URxvt.resize-font.bigger:	C-Up
-!! Matcher
-URxvt.url-launcher:	linkhandler
-URxvt.matcher.button:	1
+
+!-------------------------------------------------------------------------------
+!!----------------------------------- Colors -----------------------------------
 
 ! blue
 *.color4:       #404fe7
 *.color12:      #4063e7
+
+!!------------------------------------------------------------------------------
