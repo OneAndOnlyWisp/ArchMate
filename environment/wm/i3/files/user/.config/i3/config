@@ -155,7 +155,10 @@ bindsym $mod+r mode "resize"
 ##                              personal-section                              ##
 ################################################################################
 
-# Colors from ~/.Xresources file
+# Load ~/.Xresources
+exec_always xrdb ~/.Xresources
+
+# Copy color settings from ~/.Xresources
 set_from_resource $term_background background
 set_from_resource $term_foreground foreground
 set_from_resource $term_color0     color0
@@ -207,9 +210,6 @@ bar {
 hide_edge_borders smart
 new_window pixel 1
 new_float normal
-
-#Color scheme
-exec_always xrdb ~/.config/i3/.Xresources
 
 #Background
 exec sh ~/.fehbg

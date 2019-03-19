@@ -1,0 +1,1 @@
+*/30 * * * * pacman -Sy; #Needed for update blocklet to work properly
