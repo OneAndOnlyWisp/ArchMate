@@ -1,5 +1,7 @@
 #!/bin/bash
 #-------------------------------------------------------------------------------
+functions="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/../../../functions.sh"
+#-------------------------------------------------------------------------------
 #------------------------ Install i3WM and dependencies ------------------------
 #-------------------------------------------------------------------------------
 pacman -S --noconfirm pulseaudio pulseaudio-alsa alsa-utils; # Audio
@@ -29,4 +31,7 @@ pacman -S --noconfirm avahi; systemctl enable avahi-daemon.service;
 pacman -S --noconfirm nss-mdns; # Local hostname resolution
 #--------------------------- Device mount protocols ----------------------------
 pacman -S --noconfirm gvfs-afc gvfs-gphoto2 gvfs-mtp gvfs-nfs gvfs-smb
+#----------------------------- NumLock on service ------------------------------
+sh $functions InstallFromAUR "systemd-numlockontty";
+systemctl enable numLockOnTty;
 #-------------------------------------------------------------------------------
