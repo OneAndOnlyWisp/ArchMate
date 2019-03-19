@@ -1,61 +1,43 @@
 #!/bin/bash
 clear;
-#Local globals------------------------------------------------------------------
-functions="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/../../../functions.sh"
-src_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )";
+# Paths ------------------------------------------------------------------------
+_SOURCE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )";
+_SYSTEM_DIR="$_SOURCE/files/system";
+_USER_DIR="$_SOURCE/files/user";
+_CUSTOM_DIR="$_SOURCE/files/custom";
 #-------------------------------------------------------------------------------
-#------------------------------Stuff for everyone-------------------------------
-#Terminal identity -------------------------------------------------------------
-terminal="/etc/profile.d/terminal.sh"; touch $terminal;
-echo "declare -x TERM=\"xterm-256color\"" | sudo tee $terminal > /dev/null;
-echo "declare -x EDITOR=\"/usr/bin/nano\"" | sudo tee $terminal > /dev/null;
-#Xorg driver settings-----------------------------------------------------------
-cp "$src_path/files/graphics" /etc/X11/xorg.conf.d/00-driver.conf;
-#Copy a default wallpaper-------------------------------------------------------
-cp "$src_path/files/wallpaper.png" /wallpaper.png;
-#Cron jobs for root-------------------------------------------------------------
-crontab "$src_path/files/cron";
+#---------------------------- System configuration -----------------------------
 #-------------------------------------------------------------------------------
-#Needed for Arch linux logo-----------------------------------------------------
-sh $functions InstallFromAUR "ttf-font-logos";
-#Needed for atom cpp-linter plugin----------------------------------------------
-sh $functions InstallFromAUR "cpplint";
+# Cron jobs for root
+crontab "$_SYSTEM_DIR/cron";
+# Terminal identity
+cp "$_SYSTEM_DIR/nsswitch.conf" /etc/nsswitch.conf;
+# Terminal identity
+cp "$_SYSTEM_DIR/terminal.sh" /etc/profile.d/terminal.sh;
+# Copy help for root
+cp "$_SYSTEM_DIR/root_help" /root/root.readme;
 #-------------------------------------------------------------------------------
-#--------------------------Copy settings for all users--------------------------
+#-------------------------- Copy default user configs --------------------------
 #-------------------------------------------------------------------------------
-sed -n '/\/bin\/bash/p' /etc/passwd | cut -d: -f1 | while read -r username; do
-  # Set home_folder location----------------------------------------------------
-  [[ $username = "root" ]] && home_folder="/root" || home_folder="/home/$username"
-  # Common ---------------------------------------------------------------------
-  cp "$src_path/files/resource" "$home_folder/.config/i3/.Xresources";
-  cp "$src_path/files/background" "$home_folder/.fehbg";
-  cp "$src_path/files/bashrc" "$home_folder/.bashrc";
-  cp "$src_path/files/bash_profile" "$home_folder/.bash_profile";
-  cp "$src_path/files/xinitrc" "$home_folder/.xinitrc";
-  # Window Manager -------------------------------------------------------------
-  mkdir -p "$home_folder/.config/i3/"; touch "$home_folder/.config/i3/config";
-  cp "$src_path/files/config" "$home_folder/.config/i3/config";
-  cp "$src_path/files/i3blocks" "$home_folder/.i3blocks.conf";
-  cp -r "$src_path/files/blocklets/." "$home_folder/.blocklets";
-  # Fix permissions
-  find "$home_folder/.blocklets" -type f -exec chmod 755 {} \;
-  # Fix ownership---------------------------------------------------------------
-  [[ $username -ne "root" ]] && chown -R $username:users "$home_folder/"
-  # Atom plugins ---------------------------------------------------------------
-  if [[ $username -ne "root" ]]; then
-    runuser -l $username -c 'apm install goto-definition';
-    runuser -l $username -c 'apm install linter';
-    runuser -l $username -c 'apm install linter-ui-default';
-    runuser -l $username -c 'apm install linter-gcc';
-    runuser -l $username -c 'apm install language-cpp14';
-    runuser -l $username -c 'apm install clang-format';
-    runuser -l $username -c 'apm install language-cmake';
-    runuser -l $username -c 'apm install autocomplete-cmake';
-    runuser -l $username -c 'apm install output-panel';
-    runuser -l $username -c 'apm install intentions busy-signal';
-  fi
+sed -n '/\/bin\/bash/p' /etc/passwd | cut -d: -f1 | while read -r _USER; do
+  # Set home folder location
+  [[ $_USER = "root" ]] && _USER_HOME_DIR="/root" || _USER_HOME_DIR="/home/$_USER"
+  # Copy config files
+  cp -r "$_USER_DIR/*" "$_USER_HOME_DIR/";
+  # Fix blocklets permissions
+  find "$_USER_HOME_DIR/.blocklets" -type f -exec chmod 755 {} \;
+  # Fix ownership
+  [[ $_USER -ne "root" ]] && chown -R $_USER:users "$_USER_HOME_DIR/"
 done
 #-------------------------------------------------------------------------------
-#------------------------------Copy help for root-------------------------------
-cp "$src_path/files/root_help" "/root/root.readme";
+#---------------------------- Custom configuration -----------------------------
+#-------------------------------------------------------------------------------
+# Xorg driver settings
+cp "$_CUSTOM_DIR/graphics" /etc/X11/xorg.conf.d/00-driver.conf;
+# Ethernet killer
+cp "$_CUSTOM_DIR/disable_usb_port.sh" /etc/NetworkManager/dispatcher.d/disable_usb_port.sh;
+# Copy a default wallpaper
+cp "$_CUSTOM_DIR/wallpaper.png" /wallpaper.png;
+# Turn off beep sounds (Blacklist kernel module)
+echo "blacklist pcspkr" > /etc/modprobe.d/nobeep.conf;
 #-------------------------------------------------------------------------------

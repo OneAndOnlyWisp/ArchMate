@@ -12,13 +12,11 @@ while [ "$INPUT_OPTION" != "end" ]; do
   echo "1. Install i3wm"
   echo "2. Install default apps"
   echo "3. Copy custom settings"
-  echo "4. Install laptop extras"
   read -sn1 INPUT_OPTION
   case $INPUT_OPTION in
     '1') sh $WM; clear;;
     '2') sh $APPS; clear;;
     '3') sh $CONFIG; clear;;
-    '4') sh $LAPTOP; clear;;
     $'\e') clear; break;;
   esac
 done
