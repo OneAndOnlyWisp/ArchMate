@@ -8,13 +8,15 @@ _CUSTOM_DIR="$_SOURCE/files/custom";
 #-------------------------------------------------------------------------------
 #---------------------------- System configuration -----------------------------
 #-------------------------------------------------------------------------------
-# Cron jobs for root
+# Cron jobs
 crontab "$_SYSTEM_DIR/cron";
 # Terminal identity
 cp "$_SYSTEM_DIR/nsswitch.conf" /etc/nsswitch.conf;
 # Terminal identity
 cp "$_SYSTEM_DIR/terminal.sh" /etc/profile.d/terminal.sh;
-# Copy help for root
+# SSH config
+cp "$_SYSTEM_DIR/sshd_config" /etc/ssh/sshd_config;
+# Copy info for root
 cp "$_SYSTEM_DIR/root_help" /root/root.readme;
 #-------------------------------------------------------------------------------
 #-------------------------- Copy default user configs --------------------------
