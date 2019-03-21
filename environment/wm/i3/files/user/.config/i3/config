@@ -220,6 +220,9 @@ exec nm-applet
 #USB Automount
 exec udiskie --tray --use-udisks2
 
+#Torrent daemon
+exec transmission-daemon --auth --username wisp --password torrent --port 45454
+
 # All desktop print screen
 bindsym --release Print exec "scrot '%s_%H%M_%d.%m.%Y_$wx$h.png' -e 'xclip -selection clipboard -target image/png -i $f'"
 # Custom box print screen

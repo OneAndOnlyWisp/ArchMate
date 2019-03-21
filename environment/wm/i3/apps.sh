@@ -16,7 +16,7 @@ pacman -S --noconfirm pcmanfm-gtk3; #File manager
 pacman -S --noconfirm file-roller; #Archive manager
 pacman -S --noconfirm chromium; #Browser
 pacman -S --noconfirm atom; #Text editor
-pacman -S --noconfirm transmission-qt; #Torrent
+pacman -S --noconfirm transmission-cli; #Torrent daemon
 pacman -S --noconfirm vlc; #Video player
 pacman -S --noconfirm bash-completion; #Super intelligent completion
 pacman -S --noconfirm kvantum-qt5; #Window system theme manager
