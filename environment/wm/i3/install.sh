@@ -14,6 +14,10 @@ timedatectl set-timezone Europe/Budapest; # Set timezone
 localectl --no-convert set-x11-keymap hu; # Set keyboard layout
 pacman -S --noconfirm ntp; systemctl enable ntpd.service; # Network Time Protocol
 timedatectl set-ntp true; #Enable autosync with NTP
+#--------------------------------- NumLock ON ----------------------------------
+sh $functions InstallFromAUR "systemd-numlockontty";
+systemctl enable numLockOnTty;
+pacman -S --noconfirm numlockx;
 #-------------------------------------------------------------------------------
 #------------------------- Default system applications -------------------------
 #-------------------------------------------------------------------------------
@@ -31,7 +35,4 @@ pacman -S --noconfirm avahi; systemctl enable avahi-daemon.service;
 pacman -S --noconfirm nss-mdns; # Local hostname resolution
 #--------------------------- Device mount protocols ----------------------------
 pacman -S --noconfirm gvfs-afc gvfs-gphoto2 gvfs-mtp gvfs-nfs gvfs-smb
-#----------------------------- NumLock on service ------------------------------
-sh $functions InstallFromAUR "systemd-numlockontty";
-systemctl enable numLockOnTty;
 #-------------------------------------------------------------------------------
