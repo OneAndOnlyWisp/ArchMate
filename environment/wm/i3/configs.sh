@@ -10,10 +10,8 @@ _CUSTOM_DIR="$_SOURCE/files/custom";
 #-------------------------------------------------------------------------------
 # Cron jobs
 crontab "$_SYSTEM_DIR/cron";
-# Terminal identity
+# Local domain resolve
 cp "$_SYSTEM_DIR/nsswitch.conf" /etc/nsswitch.conf;
-# Terminal identity
-cp "$_SYSTEM_DIR/terminal.sh" /etc/profile.d/terminal.sh;
 # SSH config
 cp "$_SYSTEM_DIR/sshd_config" /etc/ssh/sshd_config;
 # Copy info for root
