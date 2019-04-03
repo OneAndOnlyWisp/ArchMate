@@ -7,6 +7,8 @@ functions="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/../../../functions.
 pacman -S --noconfirm pulseaudio pulseaudio-alsa alsa-utils; # Audio
 pacman -S --noconfirm xorg xorg-xinit; # Window system
 pacman -S --noconfirm i3; # Window manager
+# Replace default lock screen with fuzzy one
+pacman -R --noconfirm i3lock; sh $functions InstallFromAUR i3lock-blur;
 #-------------------------------------------------------------------------------
 #------------------------------- System settings -------------------------------
 #-------------------------------------------------------------------------------
