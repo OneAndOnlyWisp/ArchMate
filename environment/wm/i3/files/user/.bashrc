@@ -29,7 +29,7 @@ alias egrep='egrep --colour=auto'
 alias fgrep='fgrep --colour=auto'
 #-------------------------------------------------------------------------------
 alias sudo='sudo '                     # To make aliases work with sudo
-alias ll='ls -l -all'                  # Detailed list
+alias ll='ls -l -A -h'                 # Detailed list
 alias cp='cp -i'                       # Confirm before overwriting something
 alias df='df -h'                       # Human-readable sizes
 alias hs='history | grep'              # History Search
