@@ -9,12 +9,12 @@ separator_block_width=5
 
 #Bandwidth-----------------------------------------------------
 [bandwidth_in]
-command=~/.blocklets/bandwidth -d in
+command=~/.blocklets/bandwidth -d in -i enp6s0
 interval=persist
 color=#bbff00
 markup=pango
 [bandwidth_out]
-command=~/.blocklets/bandwidth -d out
+command=~/.blocklets/bandwidth -d out -i enp6s0
 interval=persist
 color=#ff7700
 markup=pango
