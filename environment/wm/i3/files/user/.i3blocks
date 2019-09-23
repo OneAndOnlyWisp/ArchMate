@@ -1,22 +1,20 @@
 #INFO-------------------------------------------------------------
 #File location: /home/$USER
 #--------------------------------------------------------------------
-full_text=|
+full_text= 
 align=center
 color=#bb00ff
 separator=false
 separator_block_width=5
 
 #Bandwidth-----------------------------------------------------
-#Use -i to specify interface
-#--------------------------------------------------------------------
 [bandwidth_in]
-command=~/.blocklets/bandwidth -d in
+command=~/.blocklets/bandwidth -d in -i enp6s0
 interval=persist
 color=#bbff00
 markup=pango
 [bandwidth_out]
-command=~/.blocklets/bandwidth -d out
+command=~/.blocklets/bandwidth -d out -i enp6s0
 interval=persist
 color=#ff7700
 markup=pango
@@ -50,15 +48,12 @@ interval=45
 [cpu0]
 command=~/.blocklets/sensor 0
 interval=1
-[separator]
 [cpu1]
 command=~/.blocklets/sensor 1
 interval=1
-[separator]
 [cpu2]
 command=~/.blocklets/sensor 2
 interval=1
-[separator]
 [cpu3]
 command=~/.blocklets/sensor 3
 interval=1
