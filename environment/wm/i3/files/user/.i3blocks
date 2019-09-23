@@ -7,18 +7,19 @@ color=#bb00ff
 separator=false
 separator_block_width=5
 
-
 #Bandwidth-----------------------------------------------------
-#Use instance to specify device - instance=eth0
+#Use -i to specify interface
 #--------------------------------------------------------------------
 [bandwidth_in]
-command=~/.blocklets/bandwidth in
-interval=1
+command=~/.blocklets/bandwidth -d in
+interval=persist
 color=#bbff00
+markup=pango
 [bandwidth_out]
-command=~/.blocklets/bandwidth out
-interval=1
+command=~/.blocklets/bandwidth -d out
+interval=persist
 color=#ff7700
+markup=pango
 #--------------------------------------------------------------------
 [separator]
 #GMAIL---------------------------------------------------------------
