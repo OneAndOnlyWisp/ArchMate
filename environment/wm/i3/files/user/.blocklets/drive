@@ -27,7 +27,7 @@ fi
 
 #Click actions
 case "$BLOCK_BUTTON" in
-    1) pcmanfm $LOCATION &;;
+    1) $(pcmanfm $LOCATION);;
 esac
 
 #Get data
