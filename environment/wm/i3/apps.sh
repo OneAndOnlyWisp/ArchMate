@@ -25,7 +25,7 @@ pacman -S --noconfirm gparted; #P artition manager with GUI
 pacman -S --noconfirm remmina libvncserver freerdp; # VNC client
 pacman -S --noconfirm tigervnc; # VNC server for separate workspace
 pacman -S --noconfirm x11vnc; # VNC server to share workspace
-sh $functions InstallFromAUR "aurman"; # AUR package installer
+sh $functions InstallFromAUR "yay"; # AUR package manager
 sh $functions InstallFromAUR "urxvt-resize-font-git"; # Resize font on fly
 sh $functions InstallFromAUR "ttf-font-awesome-4"; # Awesome 4 fonts
 sh $functions InstallFromAUR "ttf-font-logos"; # Arch linux logo
