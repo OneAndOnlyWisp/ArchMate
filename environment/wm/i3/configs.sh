@@ -2,9 +2,9 @@
 clear;
 # Paths ------------------------------------------------------------------------
 _SOURCE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )";
-_SYSTEM_DIR="$_SOURCE/files/system";
-_USER_DIR="$_SOURCE/files/user";
-_CUSTOM_DIR="$_SOURCE/files/custom";
+_SYSTEM_DIR="$_SOURCE_DIR/files/system";
+_USER_DIR="$_SOURCE_DIR/files/user";
+_CUSTOM_DIR="$_SOURCE_DIR/files/custom";
 #-------------------------------------------------------------------------------
 #---------------------------- System configuration -----------------------------
 #-------------------------------------------------------------------------------
