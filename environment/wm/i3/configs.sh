@@ -1,5 +1,5 @@
 #!/bin/bash
-#clear;
+clear;
 # Paths ------------------------------------------------------------------------
 _SOURCE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )";
 _SYSTEM_DIR="$_SOURCE_DIR/files/system";
@@ -28,7 +28,7 @@ sed -n '/\/bin\/bash/p' /etc/passwd | cut -d: -f1 | while read -r _USER; do
   find "$_USER_HOME_DIR/.blocklets" -type f -exec chmod 700 {} \;
   # Fix ownership
   [[ $_USER -ne "root" ]] && chown -R $_USER:users "$_USER_HOME_DIR/"
-  [[ $_USER -e "root" ]] && rm "$_USER_HOME_DIR/.bash_profile"
+  [[ $_USER -eq "root" ]] && rm "$_USER_HOME_DIR/.bash_profile"
 done
 #-------------------------------------------------------------------------------
 #---------------------------- Custom configuration -----------------------------
@@ -42,4 +42,3 @@ cp "$_CUSTOM_DIR/wallpaper.png" /wallpaper.png;
 # Turn off beep sounds (Blacklist kernel module)
 echo "blacklist pcspkr" > /etc/modprobe.d/nobeep.conf;
 #-------------------------------------------------------------------------------
-read -sn1
