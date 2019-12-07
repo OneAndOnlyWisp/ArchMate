@@ -28,11 +28,8 @@ sed -n '/\/bin\/bash/p' /etc/passwd | cut -d: -f1 | while read -r _USER; do
   rsync -aq "$_USER_DIR/" "$_USER_HOME_DIR/";
   # Fix blocklets permissions
   find "$_USER_HOME_DIR/.blocklets" -type f -exec chmod 700 {} \;
-  # Fix ownership
-  [[ $_USER = "root" ]] && echo "is root" || echo "non root";
-  [[ $_USER = "root" ]] && \
-  rm "$_USER_HOME_DIR/.bash_profile" || \   # Remove WM autostart for root
-  chown -R $_USER:users "$_USER_HOME_DIR/"; # Fix ownership for non-root users
+  # Remove WM autostart for root and fix ownership for non-root users
+  [[ $_USER = "root" ]] && rm "$_USER_HOME_DIR/.bash_profile" || chown -R $_USER:users "$_USER_HOME_DIR/"; #
 done
 #-------------------------------------------------------------------------------
 #---------------------------- Custom configuration -----------------------------
