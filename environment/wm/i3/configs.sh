@@ -41,3 +41,4 @@ cp "$_CUSTOM_DIR/wallpaper.png" /wallpaper.png;
 # Turn off beep sounds (Blacklist kernel module)
 echo "blacklist pcspkr" > /etc/modprobe.d/nobeep.conf;
 #-------------------------------------------------------------------------------
+read -sn1 
