@@ -20,10 +20,8 @@ cp "$_SYSTEM_DIR/root_help" /root/root.readme;
 #-------------------------- Copy default user configs --------------------------
 #-------------------------------------------------------------------------------
 sed -n '/\/bin\/bash/p' /etc/passwd | cut -d: -f1 | while read -r _USER; do
-  echo "Setting environment for user: $_USER"
   # Set home folder location
   [[ $_USER = "root" ]] && _USER_HOME_DIR="/root" || _USER_HOME_DIR="/home/$_USER"
-  echo "Home folder: $_USER_HOME_DIR"
   # Copy config files
   rsync -aq "$_USER_DIR/" "$_USER_HOME_DIR/";
   # Fix blocklets permissions
@@ -43,4 +41,3 @@ cp "$_CUSTOM_DIR/wallpaper.png" /wallpaper.png;
 # Turn off beep sounds (Blacklist kernel module)
 echo "blacklist pcspkr" > /etc/modprobe.d/nobeep.conf;
 #-------------------------------------------------------------------------------
-read -sn1
