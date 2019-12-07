@@ -23,13 +23,16 @@ sed -n '/\/bin\/bash/p' /etc/passwd | cut -d: -f1 | while read -r _USER; do
   echo "Setting environment for user: $_USER"
   # Set home folder location
   [[ $_USER = "root" ]] && _USER_HOME_DIR="/root" || _USER_HOME_DIR="/home/$_USER"
+  echo "Home folder: $_USER_HOME_DIR"
   # Copy config files
   rsync -av "$_USER_DIR/" "$_USER_HOME_DIR/";
   # Fix blocklets permissions
   find "$_USER_HOME_DIR/.blocklets" -type f -exec chmod 700 {} \;
   # Fix ownership
+  [[ $_USER -ne "root" ]] && echo "is root";
   [[ $_USER -ne "root" ]] && chown -R $_USER:users "$_USER_HOME_DIR/";
   # Remove WM autostart for root
+  [[ $_USER -eq "root" ]] && echo "not root";
   [[ $_USER -eq "root" ]] && rm "$_USER_HOME_DIR/.bash_profile";
 done
 #-------------------------------------------------------------------------------
