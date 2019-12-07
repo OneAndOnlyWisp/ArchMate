@@ -1,5 +1,5 @@
 #!/bin/bash
-clear;
+#clear;
 # Paths ------------------------------------------------------------------------
 _SOURCE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )";
 _SYSTEM_DIR="$_SOURCE_DIR/files/system";
@@ -42,3 +42,4 @@ cp "$_CUSTOM_DIR/wallpaper.png" /wallpaper.png;
 # Turn off beep sounds (Blacklist kernel module)
 echo "blacklist pcspkr" > /etc/modprobe.d/nobeep.conf;
 #-------------------------------------------------------------------------------
+read -sn1
