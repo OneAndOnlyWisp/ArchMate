@@ -13,7 +13,7 @@ pacman -R --noconfirm i3lock; sh $functions InstallFromAUR i3lock-blur;
 #------------------------------- System settings -------------------------------
 #-------------------------------------------------------------------------------
 timedatectl set-timezone Europe/Budapest; # Set timezone
-localectl --no-convert set-x11-keymap hu; # Set keyboard layout
+localectl --no-convert set-x11-keymap us; # Set keyboard layout
 pacman -S --noconfirm ntp; systemctl enable ntpd.service; # Network Time Protocol
 timedatectl set-ntp true; #Enable autosync with NTP
 #--------------------------------- NumLock ON ----------------------------------
