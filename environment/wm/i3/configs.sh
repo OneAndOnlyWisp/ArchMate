@@ -23,7 +23,7 @@ sed -n '/\/bin\/bash/p' /etc/passwd | cut -d: -f1 | while read -r _USER; do
   # Set home folder location
   [[ $_USER = "root" ]] && _USER_HOME_DIR="/root" || _USER_HOME_DIR="/home/$_USER"
   # Copy config files
-  rsync -aq "$_USER_DIR/" "$_USER_HOME_DIR/";
+  cp -r "$_USER_DIR/." "$_USER_HOME_DIR/";
   # Fix blocklets permissions
   find "$_USER_HOME_DIR/.blocklets" -type f -exec chmod 700 {} \;
   # Create default bash_profile for root and fix ownership for non-root users

@@ -7,7 +7,6 @@ functions="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/../../../functions.
 pacman -S --noconfirm ttf-dejavu ttf-inconsolata; # Default fonts
 pacman -S --noconfirm p7zip; # Extract .7z files
 pacman -S --noconfirm bc; # Floating point division (shell)
-pacman -S --noconfirm rsync; # File and folder syncronisation
 pacman -S --noconfirm neofetch; # PC information
 pacman -S --noconfirm htop; # Process manager
 pacman -S --noconfirm rxvt-unicode urxvt-perls; # Terminal
