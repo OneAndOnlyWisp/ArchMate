@@ -25,6 +25,7 @@ pacman -S --noconfirm gparted; #P artition manager with GUI
 pacman -S --noconfirm remmina libvncserver freerdp; # VNC client
 pacman -S --noconfirm tigervnc; # VNC server for separate workspace
 pacman -S --noconfirm x11vnc; # VNC server to share workspace
+pacman -S --noconfirm wireguard-tools wireguard-lts; # Private network protocol
 sh $functions InstallFromAUR "yay"; # AUR package manager
 sh $functions InstallFromAUR "urxvt-resize-font-git"; # Resize font on fly
 sh $functions InstallFromAUR "ttf-font-awesome-4"; # Awesome 4 fonts
