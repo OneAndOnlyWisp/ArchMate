@@ -21,8 +21,8 @@ URxvt.colorUL:		      #4682B4
 !!-------- Keybindings ---------------------------------------------------------
 !! Control + Up/Down (resize-font)
 URxvt.perl-ext-common:	      default,resize-font,url-select
-URxvt.keysym.C-Down:          resize-font:smaller
-URxvt.keysym.C-Up:            resize-font:bigger
+URxvt.resize-font.smaller:	  C-Down
+URxvt.resize-font.bigger:	    C-Up
 !!-----------------------------------
 !! Control + Left/Right (word jump)
 *URxvt*keysym.C-Right:		    \033[1;5C
