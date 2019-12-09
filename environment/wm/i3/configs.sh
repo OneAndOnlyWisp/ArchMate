@@ -13,7 +13,7 @@ crontab "$_SYSTEM_DIR/cron";
 # Local domain resolve
 cp "$_SYSTEM_DIR/nsswitch.conf" /etc/nsswitch.conf;
 # SSH config
-cp "$_SYSTEM_DIR/sshd_config" /etc/ssh/sshd_config;
+cp "$_SYSTEM_DIR/sshd_config" /etc/ssh/sshd_config; systemctl enable sshd.service;
 # Copy info for root
 cp "$_SYSTEM_DIR/root_help" /root/root.readme;
 #-------------------------------------------------------------------------------
