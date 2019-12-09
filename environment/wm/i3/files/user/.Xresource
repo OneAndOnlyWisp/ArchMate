@@ -20,19 +20,15 @@ URxvt.colorUL:		      #4682B4
 !!------------------------------------------------------------------------------
 !!-------- Keybindings ---------------------------------------------------------
 !! Control + Up/Down (resize-font)
-URxvt.resize-font.smaller:	  C-Down
-URxvt.resize-font.bigger:	    C-Up
+URxvt.perl-ext-common:	      default,resize-font,url-select
+URxvt.keysym.C-Down:          resize-font:smaller
+URxvt.keysym.C-Up:            resize-font:bigger
 !!-----------------------------------
 !! Control + Left/Right (word jump)
 *URxvt*keysym.C-Right:		    \033[1;5C
 *URxvt*keysym.C-Left:		      \033[1;5D
-!!------------------------------------------------------------------------------
-!!---------- Addons ------------------------------------------------------------
-URxvt.perl-ext-common:	      default,resize-font,url-select
+!!-----------------------------------
 URxvt.url-select.underline:   true
-!-------------------------------------------------------------------------------
-
-
 !-------------------------------------------------------------------------------
 !!----------------------------------- Colors -----------------------------------
 
