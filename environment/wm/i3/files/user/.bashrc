@@ -11,6 +11,13 @@ PS1='\[\033[01;32m\][\[\033[01;36m\]\u\[\033[01;32m\]@\[\033[01;36m\]\h\[\033[01
 # Terminal identity
 export TERM=xterm
 
+# GTK theme
+export GTK_THEME=Adwaita:dark
+
+# QT theme
+export QT_QPA_PLATFORMTHEME=qt5ct
+export QT_AUTO_SCREEN_SCALE_FACTOR=0
+
 ################################### HISTORY ####################################
 # Terminal startup command -----------------------------------------------------
 PROMPT_COMMAND="history -a; echo -ne \"\033]0;${USER}@${HOSTNAME%%.*}:${PWD/#$HOME/\~}\007\""
